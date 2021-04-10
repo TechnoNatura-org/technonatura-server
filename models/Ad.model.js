@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 // const path = require('path');
 // const coverImageBasePath = 'uploads/bookCovers';
 
-const blogPostSchema = new mongoose.Schema({
+const AdSchema = new mongoose.Schema({
   title: {
     type: String,
     required: [true, 'Title Cannot Be Blank'],
@@ -16,9 +16,13 @@ const blogPostSchema = new mongoose.Schema({
     required: true,
     default: Date.now,
   },
-  thumbnail: {
+  adType: {
     type: String,
     required: true,
+    default: 'image',
+  },
+  imageAd: {
+    type: String,
   },
   author: {
     type: mongoose.Schema.Types.ObjectId,
@@ -27,4 +31,4 @@ const blogPostSchema = new mongoose.Schema({
   },
 });
 
-module.exports = mongoose.model('BlogPost', blogPostSchema);
+module.exports = mongoose.model('Ad', AdSchema);

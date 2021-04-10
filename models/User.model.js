@@ -7,6 +7,11 @@ const {
 // const coverImageBasePath = 'uploads/bookCovers';
 
 const userSchema = new mongoose.Schema({
+  points: {
+    type: Number,
+    require: true,
+    default: 0,
+  },
   email: {
     type: String,
     required: [true, 'Please enter an email'],
@@ -16,6 +21,7 @@ const userSchema = new mongoose.Schema({
   },
   isAccountVerified: {
     type: Boolean,
+    required: true,
   },
   password: {
     type: String,
@@ -35,6 +41,16 @@ const userSchema = new mongoose.Schema({
     accountCreated: {
       type: Date,
       default: Date.now,
+    },
+    follows: {
+      type: Number,
+      require: true,
+      default: 0,
+    },
+    followers: {
+      type: Number,
+      require: true,
+      default: 0,
     },
   },
   birthDate: {
