@@ -10,7 +10,7 @@ const AuthRouter = express.Router();
 const maxAge = 3 * 24 * 60 * 60 * 60;
 const createToken = (user) => {
   return jwt.sign({ ...user }, 'asodjijiej3q9iej93qjeiqwijdnasdini', {
-    expiresIn: '120y',
+    expiresIn: '120',
   });
 };
 
@@ -20,10 +20,15 @@ AuthRouter.post('/login', async (req, res) => {
 
   try {
     const user = await User.login(email, password);
-    const token = createToken(user);
-    console.log(token);
-    // res.cookie('jwt', token, { httpOnly: true, maxAge: maxAge * 1000 });
-    res.status(200).json({ jwt: token });
+    try {
+      const verifyToken = jwt.verify(
+        token,
+        'asodjijiej3q9iej93qjeiqwijdnasdini',
+      );
+      res.status(200).json({ jwt: token });
+    } catch (err) {
+      res.status(400).json({ message: 'token might expired' });
+    }
   } catch (err) {
     const errors = handleErrors(err);
     res.status(400).json({ errors });

@@ -13,7 +13,6 @@ const userSchema = new mongoose.Schema({
   email: {
     type: String,
     required: [true, 'Please enter an email'],
-    unique: true,
     lowercase: true,
     validate: [isEmail, 'Please enter a valid email'],
   },
@@ -35,6 +34,7 @@ const userSchema = new mongoose.Schema({
   username: {
     type: String,
     lowercase: true,
+    unique: true,
     required: [true, 'username cannot be blank'],
   },
   meta: {
@@ -72,7 +72,7 @@ userSchema.pre('save', async function (next) {
 
 // static method to login user
 userSchema.statics.login = async (username, password) => {
-  const user = await this.findOne({ username });
+  const user = await this.findOne({ username: username });
   if (user) {
     const auth = await bcrypt.compare(password, user.password);
     if (auth) {
@@ -82,5 +82,6 @@ userSchema.statics.login = async (username, password) => {
   }
   throw Error('incorrect email');
 };
+const User = mongoose.model('User', userSchema);
 
-module.exports = mongoose.model('User', userSchema);
+module.exports = User;
