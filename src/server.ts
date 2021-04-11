@@ -1,26 +1,14 @@
 import * as express from 'express';
-import PostRouter from './routes/post';
-import AuthRouter from './routes/auth';
-import mongoose from 'mongoose';
-const db = mongoose.connection;
+import * as bodyParser from 'body-parser';
+
 const app = express();
 
-let MongoDB_URI =
-  process.env.mongoDB_URI ||
-  'mongodb://127.0.0.1:27017/mts-technonatura-server';
-mongoose.connect(MongoDB_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-});
-// app.use(express.json());
-
-// db.on('error', (err) => console.error('error when connecting to db'));
-// db.once('open', () => console.log('connected to mongoose'));
-
-// app.use('/', PostRouter);
-// app.use('/', AuthRouter);
+app.use(bodyParser.json());
 
 app.get('/', (req, res) => {
   res.json({ message: 'hey' });
 });
-app.listen(process.env.PORT || 3000, () => {});
+
+app.listen(process.env.PORT || 3000, () => {
+  console.log(`server started on port ${process.env.PORT}`);
+});
