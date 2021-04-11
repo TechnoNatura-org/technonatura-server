@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const {
-  default: { isEmail },
+  default: { isEmail, isURL },
 } = require('validator');
 const bcrypt = require('bcrypt');
 
@@ -51,8 +51,20 @@ const userSchema = new mongoose.Schema({
   birthDate: {
     type: Date,
   },
-  Badges: [String], // the Id of the badge
   role: [String], // the Object Id of the role
+  socialMedias: [
+    {
+      name: {
+        type: String,
+        required: [true, 'Please enter social media'],
+      },
+      url: {
+        type: String,
+        required: [true, 'Please enter social media'],
+        validate: [isURL, 'Please enter a valid url'],
+      },
+    },
+  ],
 });
 
 // fire a function before doc saved to db

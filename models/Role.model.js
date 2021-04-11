@@ -7,11 +7,11 @@ const mongoose = require('mongoose');
 // const path = require('path');
 // const coverImageBasePath = 'uploads/bookCovers';
 
-const badgeSchema = new mongoose.Schema({
+const roleModel = new mongoose.Schema({
   name: {
     type: String,
-    required: [true, 'Please enter badge name'],
-    minlength: [4, 'Minimum length of badge name is 4 characters'],
+    required: [true, 'Please enter role name'],
+    minlength: [4, 'Minimum length of role name is 4 characters'],
   },
   users: [String],
 });
@@ -36,4 +36,4 @@ const badgeSchema = new mongoose.Schema({
 //   throw Error('incorrect email');
 // };
 
-module.exports = mongoose.model('Badge', badgeSchema);
+module.exports = mongoose.model('Role', roleModel);
