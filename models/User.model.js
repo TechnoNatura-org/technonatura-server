@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const {
   default: { isEmail },
 } = require('validator');
+const bcrypt = require('bcrypt');
 
 // const path = require('path');
 // const coverImageBasePath = 'uploads/bookCovers';
@@ -22,6 +23,7 @@ const userSchema = new mongoose.Schema({
   isAccountVerified: {
     type: Boolean,
     required: true,
+    default: false,
   },
   password: {
     type: String,
@@ -35,6 +37,7 @@ const userSchema = new mongoose.Schema({
   },
   username: {
     type: String,
+    lowercase: true,
     required: [true, 'username cannot be blank'],
   },
   meta: {
@@ -42,20 +45,34 @@ const userSchema = new mongoose.Schema({
       type: Date,
       default: Date.now,
     },
-    follows: {
-      type: Number,
-      require: true,
-      default: 0,
-    },
-    followers: {
-      type: Number,
-      require: true,
-      default: 0,
-    },
+    follows: [String],
+    followers: [String],
   },
   birthDate: {
     type: Date,
   },
+  Badges: [String], // the Id of the badge
+  role: [String], // the Object Id of the role
 });
+
+// fire a function before doc saved to db
+userSchema.pre('save', async function (next) {
+  const salt = await bcrypt.genSalt();
+  this.password = await bcrypt.hash(this.password, salt);
+  next();
+});
+
+// static method to login user
+userSchema.statics.login = async (username, password) => {
+  const user = await this.findOne({ username });
+  if (user) {
+    const auth = await bcrypt.compare(password, user.password);
+    if (auth) {
+      return user;
+    }
+    throw Error('incorrect password');
+  }
+  throw Error('incorrect email');
+};
 
 module.exports = mongoose.model('User', userSchema);
