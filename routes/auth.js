@@ -8,18 +8,19 @@ const AuthRouter = express.Router();
 
 // max age
 const maxAge = 3 * 24 * 60 * 60 * 60;
-const createToken = (id) => {
-  return jwt.sign({ id }, 'asodjijiej3q9iej93qjeiqwijdnasdini', {
-    expiresIn: maxAge,
+const createToken = (user) => {
+  return jwt.sign({ ...user }, 'asodjijiej3q9iej93qjeiqwijdnasdini', {
+    expiresIn: '120y',
   });
 };
 
 AuthRouter.post('/login', async (req, res) => {
   const { email, password } = req.body;
+  const { token } = req.headers;
 
   try {
     const user = await User.login(email, password);
-    const token = createToken(user._id);
+    const token = createToken(user);
     console.log(token);
     // res.cookie('jwt', token, { httpOnly: true, maxAge: maxAge * 1000 });
     res.status(200).json({ jwt: token });
@@ -34,9 +35,30 @@ AuthRouter.post('/signup', async (req, res) => {
   const { email, password, username, name } = req.body;
 
   try {
-    const user = await User.create({ email, password, username, name });
-    const token = createToken(user._id);
-    console.log(token);
+    const user = new User({ email, password, username, name });
+    await user.save();
+    console.log(user);
+
+    const token = createToken(user);
+    // const p = jwt.verify(token, 'asodjijiej3q9iej93qjeiqwijdnasdini');
+    // console.log(p._doc);
+
+    /*
+      {
+        meta: { follows: [], accountCreated: '2021-04-11T15:02:40.836Z' },
+        points: 0,
+        isAccountVerified: false,
+        role: [],
+        _id: '60730f900a6ecb2a4ccbe984',
+        email: 'sad@gmail.com',
+        password: oops,
+        username: 'aldhanekaa',
+        name: 'Aldhaneka',
+        socialMedias: [],
+        __v: 0
+      }
+    */
+
     // res.cookie('jwt', token, { httpOnly: true, maxAge: maxAge * 1000 });
     res.status(201).json({ token: token });
   } catch (err) {

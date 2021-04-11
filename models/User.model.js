@@ -4,9 +4,6 @@ const {
 } = require('validator');
 const bcrypt = require('bcrypt');
 
-// const path = require('path');
-// const coverImageBasePath = 'uploads/bookCovers';
-
 const userSchema = new mongoose.Schema({
   points: {
     type: Number,
@@ -46,7 +43,6 @@ const userSchema = new mongoose.Schema({
       default: Date.now,
     },
     follows: [String],
-    followers: [String],
   },
   birthDate: {
     type: Date,
