@@ -1,7 +1,7 @@
-const express = require('express');
-const bcrypt = require('bcrypt');
-const mongoose = require('mongoose');
-const jwt = require('jsonwebtoken');
+import * as express from 'express';
+import * as bcrypt from 'bcrypt';
+import * as mongoose from 'mongoose';
+import * as jwt from 'jsonwebtoken';
 const User = require('../models/User.model');
 
 const AuthRouter = express.Router();

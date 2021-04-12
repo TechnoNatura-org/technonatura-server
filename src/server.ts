@@ -1,6 +1,6 @@
 import * as express from 'express';
 // import * as PostRouter from './routes/post';
-// import * as AuthRouter from './routes/auth';
+import * as AuthRouter from './routes/auth';
 import * as mongoose from 'mongoose';
 const db = mongoose.connection;
 const app = express();
