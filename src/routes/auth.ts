@@ -2,13 +2,13 @@ import * as express from 'express';
 import * as bcrypt from 'bcrypt';
 import * as mongoose from 'mongoose';
 import * as jwt from 'jsonwebtoken';
-import User from '../models/User.model';
+import User, { UserBaseDocument } from '../models/User.model';
 
 const AuthRouter = express.Router();
 
 // max age
 const maxAge = 3 * 24 * 60 * 60 * 60;
-const createToken = (user) => {
+const createToken = (user: UserBaseDocument) => {
   return jwt.sign({ ...user }, 'asodjijiej3q9iej93qjeiqwijdnasdini', {
     expiresIn: '120',
   });
@@ -16,16 +16,20 @@ const createToken = (user) => {
 
 AuthRouter.post('/login', async (req, res) => {
   const { email, password } = req.body;
-  const { token } = req.headers;
+  const { authorization } = req.headers;
 
   try {
     const user = await User.login(email, password);
     try {
-      const verifyToken = jwt.verify(
-        token,
-        'asodjijiej3q9iej93qjeiqwijdnasdini',
-      );
-      res.status(200).json({ jwt: token });
+      if (authorization) {
+        const verifyToken = jwt.verify(
+          authorization,
+          'asodjijiej3q9iej93qjeiqwijdnasdini',
+        );
+        res.status(200).json({ message: 'success' });
+      } else {
+        throw Error('authorization undefined');
+      }
     } catch (err) {
       res.status(400).json({ message: 'token might expired' });
     }
@@ -73,12 +77,19 @@ AuthRouter.post('/signup', async (req, res) => {
   }
 });
 
-module.exports = AuthRouter;
+interface Errors {
+  email: string;
+  password: string;
+}
 
 // handle errors
-function handleErrors(err) {
-  console.log(err.message, err);
-  let errors = {};
+function handleErrors(err: {
+  message: string;
+  code: number;
+  _message: string;
+}) {
+  // @ts-ignore
+  let errors: Errors = {};
 
   // incorrect email
   if (err.message === 'incorrect email') {
@@ -99,11 +110,14 @@ function handleErrors(err) {
   // validation errors
   if (err._message.includes('User validation failed')) {
     // console.log(err);
+
+    // @ts-ignore
     Object.values(err.errors).forEach(({ properties }) => {
       // console.log(val);
       // console.log(properties);
       console.log(properties.path);
       if (properties.message != '') {
+        // @ts-ignore
         errors[properties.path] = properties.message;
       }
     });
@@ -111,3 +125,5 @@ function handleErrors(err) {
 
   return errors;
 }
+
+export default AuthRouter;

@@ -25,7 +25,7 @@ export interface User {
   socialMedias?: Array<SocialMedia>;
 }
 
-interface UserBaseDocument extends User, Document {
+export interface UserBaseDocument extends User, Document {
   roles: Types.Array<string>;
   socialMedias?: Types.Array<SocialMedia>;
   follows?: Types.Array<string>;
