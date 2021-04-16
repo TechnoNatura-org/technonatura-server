@@ -11,7 +11,7 @@ interface SocialMedia {
   url: string;
 }
 
-export interface User {
+export interface UserInterface {
   points: number;
   email: string;
   name: string;
@@ -25,7 +25,7 @@ export interface User {
   socialMedias?: Array<SocialMedia>;
 }
 
-export interface UserBaseDocument extends User, Document {
+export interface UserBaseDocument extends UserInterface, Document {
   roles: Types.Array<string>;
   socialMedias?: Types.Array<SocialMedia>;
   follows?: Types.Array<string>;
@@ -36,7 +36,7 @@ export interface UserDocument extends UserBaseDocument {}
 
 // For model
 export interface UserModel extends Model<UserBaseDocument> {
-  login(username: string, password: string): Promise<User>;
+  login(username: string, password: string): Promise<UserBaseDocument>;
 }
 
 const userSchema = new Schema<UserDocument, UserModel>({
@@ -117,8 +117,8 @@ userSchema.statics.login = async function (
     }
     throw Error('incorrect password');
   }
-  throw Error('incorrect email');
+  console.log(user);
+  throw Error('incorrect username');
 };
-const User = mongoose.model('User', userSchema);
 
 export default model<UserDocument, UserModel>('User', userSchema);
