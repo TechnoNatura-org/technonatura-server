@@ -1,8 +1,43 @@
-const mongoose = require('mongoose');
+import { Schema, Model, Document, model, Types, Query } from 'mongoose';
+import * as Validator from 'validator';
+import * as bcrypt from 'bcrypt';
+
 const {
   default: { isEmail, isURL },
-} = require('validator');
-const bcrypt = require('bcrypt');
+} = Validator;
+
+interface SocialMedia {
+  name: string;
+  url: string;
+}
+
+export interface User {
+  points: number;
+  email: string;
+  name: string;
+  username: string;
+  isAccountVerified: boolean;
+  password: string;
+  accountCreated: Date;
+  follows?: Array<string>;
+  birthDate: Date;
+  roles: Array<string>;
+  socialMedias?: Array<SocialMedia>;
+}
+
+interface UserBaseDocument extends User, Document {
+  roles: Types.Array<string>;
+  socialMedias?: Types.Array<SocialMedia>;
+  follows?: Types.Array<string>;
+}
+
+// Export this for strong typing
+export interface UserDocument extends UserBaseDocument {}
+
+// For model
+export interface UserModel extends Model<UserDocument> {
+  findMyCompany(id: string): Promise<UserPopulatedDocument>;
+}
 
 const userSchema = new mongoose.Schema({
   points: {
@@ -37,17 +72,15 @@ const userSchema = new mongoose.Schema({
     unique: true,
     required: [true, 'username cannot be blank'],
   },
-  meta: {
-    accountCreated: {
-      type: Date,
-      default: Date.now,
-    },
-    follows: [String],
+  accountCreated: {
+    type: Date,
+    default: Date.now,
   },
+  follows: [String],
   birthDate: {
     type: Date,
   },
-  role: [String], // the Object Id of the role
+  roles: [String], // the Object Id of the role
   socialMedias: [
     {
       name: {
@@ -66,7 +99,9 @@ const userSchema = new mongoose.Schema({
 // fire a function before doc saved to db
 userSchema.pre('save', async function (next) {
   const salt = await bcrypt.genSalt();
-  this.password = await bcrypt.hash(this.password, salt);
+  if (this.isModified('password')) {
+    this.password = await bcrypt.hash(this.password, salt);
+  }
   next();
 });
 
