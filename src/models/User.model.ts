@@ -35,11 +35,11 @@ interface UserBaseDocument extends User, Document {
 export interface UserDocument extends UserBaseDocument {}
 
 // For model
-export interface UserModel extends Model<UserDocument> {
-  findMyCompany(id: string): Promise<UserPopulatedDocument>;
+export interface UserModel extends Model<UserBaseDocument> {
+  login(username: string, password: string): Promise<User>;
 }
 
-const userSchema = new mongoose.Schema({
+const userSchema = new Schema<UserDocument, UserModel>({
   points: {
     type: Number,
     require: true,
@@ -99,14 +99,16 @@ const userSchema = new mongoose.Schema({
 // fire a function before doc saved to db
 userSchema.pre('save', async function (next) {
   const salt = await bcrypt.genSalt();
-  if (this.isModified('password')) {
-    this.password = await bcrypt.hash(this.password, salt);
-  }
+  this.password = await bcrypt.hash(this.password, salt);
   next();
 });
 
 // static method to login user
-userSchema.statics.login = async (username, password) => {
+userSchema.statics.login = async function (
+  this: Model<UserDocument>,
+  username,
+  password,
+) {
   const user = await this.findOne({ username: username });
   if (user) {
     const auth = await bcrypt.compare(password, user.password);
@@ -119,4 +121,4 @@ userSchema.statics.login = async (username, password) => {
 };
 const User = mongoose.model('User', userSchema);
 
-module.exports = User;
+export default model<UserDocument, UserModel>('User', userSchema);
