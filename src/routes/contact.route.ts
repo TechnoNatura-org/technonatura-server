@@ -16,13 +16,14 @@ ContactRouter.post('/', async (req, res) => {
   try {
     await contact.save();
 
-    res.status(500).json({ message: 'sent!' });
+    res.status(200).json({ message: 'sent!' });
   } catch (err) {
     const errors = await handleErrors(err, {
       email,
       message,
       name,
     });
+    console.log(errors);
 
     res.status(500).json({ errors });
   }

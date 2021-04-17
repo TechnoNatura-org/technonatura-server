@@ -25,7 +25,6 @@ const contactSchema = new Schema<ContactDocument, contactModel>({
     type: String,
     required: [true, 'Please enter an email'],
     lowercase: true,
-    unique: true,
     validate: [isEmail, 'Please enter a valid email'],
   },
   name: {
