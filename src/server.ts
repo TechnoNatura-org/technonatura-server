@@ -23,6 +23,6 @@ app.use('/', AuthRouter);
 app.get('/', (req, res) => {
   res.json({ message: 'hey' });
 });
-app.listen(process.env.PORT || 3000, () => {
+app.listen(process.env.PORT || 3030, () => {
   console.log(`server started on port ${process.env.PORT}`);
 });

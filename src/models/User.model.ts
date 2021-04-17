@@ -49,6 +49,7 @@ const userSchema = new Schema<UserDocument, UserModel>({
     type: String,
     required: [true, 'Please enter an email'],
     lowercase: true,
+    unique: true,
     validate: [isEmail, 'Please enter a valid email'],
   },
   isAccountVerified: {
@@ -71,6 +72,7 @@ const userSchema = new Schema<UserDocument, UserModel>({
     lowercase: true,
     unique: true,
     required: [true, 'username cannot be blank'],
+    validate: [validateUsername, 'Only Letters and Numbers are allowed'],
   },
   accountCreated: {
     type: Date,
@@ -96,10 +98,22 @@ const userSchema = new Schema<UserDocument, UserModel>({
   ],
 });
 
+function validateUsername(str: string) {
+  if (!str.match(/^[a-zA-Z0-9]+$/)) {
+    return false;
+  }
+
+  return true;
+}
+
 // fire a function before doc saved to db
 userSchema.pre('save', async function (next) {
   const salt = await bcrypt.genSalt();
   this.password = await bcrypt.hash(this.password, salt);
+
+  // if (!this.email.match(/^[a-zA-Z0-9]+$/)) {
+
+  // }
   next();
 });
 
@@ -117,7 +131,6 @@ userSchema.statics.login = async function (
     }
     throw Error('incorrect password');
   }
-  console.log(user);
   throw Error('incorrect username');
 };
 
