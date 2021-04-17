@@ -6,24 +6,19 @@ const {
   default: { isEmail, isURL },
 } = Validator;
 
-interface SocialMedia {
-  name: string;
-  url: string;
-}
-
 export interface contactInterface {
   email: string;
   name: string;
   message: string;
 }
 
-export interface UserBaseDocument extends contactInterface, Document {}
+export interface ContactBaseDocument extends contactInterface, Document {}
 
 // Export this for strong typing
-export interface ContactDocument extends UserBaseDocument {}
+export interface ContactDocument extends ContactBaseDocument {}
 
 // For model
-export interface contactModel extends Model<UserBaseDocument> {}
+export interface contactModel extends Model<ContactBaseDocument> {}
 
 const contactSchema = new Schema<ContactDocument, contactModel>({
   email: {

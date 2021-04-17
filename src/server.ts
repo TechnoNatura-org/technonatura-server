@@ -4,6 +4,8 @@ import { corsOptions } from './controllers/cors';
 
 // import * as PostRouter from './routes/post';
 import AuthRouter from './routes/auth';
+import ContactRouter from './routes/contact.route';
+
 import * as mongoose from 'mongoose';
 const db = mongoose.connection;
 const app = express();
@@ -21,7 +23,9 @@ db.on('error', (err) => console.error('error when connecting to db'));
 db.once('open', () => console.log('connected to mongoose'));
 
 // app.use('/', PostRouter);
-app.use('/', cors(corsOptions), AuthRouter);
+app.use('/auth', cors(corsOptions), AuthRouter);
+// app.use('/contact', cors(corsOptions), ContactRouter);
+app.use('/contact', ContactRouter);
 
 app.get('/', (req, res) => {
   res.json({ message: 'hey' });
