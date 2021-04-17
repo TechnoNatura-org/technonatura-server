@@ -5,7 +5,7 @@ if (process.env.NODE_ENV !== 'production') {
 import * as cors from 'cors';
 
 // cors.
-var whitelist = ['http://localhost:3000/', 'http://example2.com'];
+var whitelist = ['http://localhost:3000'];
 var corsOptions: cors.CorsOptions = {
   origin: function (origin, callback) {
     if (origin && whitelist.indexOf(origin) !== -1) {

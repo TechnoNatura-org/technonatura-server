@@ -25,7 +25,7 @@ db.once('open', () => console.log('connected to mongoose'));
 // app.use('/', PostRouter);
 app.use('/auth', cors(corsOptions), AuthRouter);
 // app.use('/contact', cors(corsOptions), ContactRouter);
-app.use('/contact', ContactRouter);
+app.use('/contact', cors(corsOptions), ContactRouter);
 
 app.get('/', (req, res) => {
   res.json({ message: 'hey' });
