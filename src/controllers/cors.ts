@@ -5,7 +5,7 @@ if (process.env.NODE_ENV !== 'production') {
 import * as cors from 'cors';
 
 // cors.
-var whitelist = ['http://localhost:3000'];
+var whitelist = ['http://localhost:3000', 'https://mts-tn.vercel.app'];
 var corsOptions: cors.CorsOptions = {
   origin: function (origin, callback) {
     if (origin && whitelist.indexOf(origin) !== -1) {
