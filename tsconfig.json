@@ -1,12 +1,19 @@
 {
   "compilerOptions": {
+    "baseUrl": ".", // This must be specified if "paths" is.
     "target": "es5",
     "module": "commonjs",
     "outDir": "dist",
+    "allowJs": true,
     "sourceMap": false,
     "allowSyntheticDefaultImports": true,
-    "baseUrl": ".",
-    "strict": true
+    "strict": true,
+    "paths": {
+      "@/components/*": ["components/*"],
+      "@/ts/*": ["ts/*"],
+      "@/models/*": ["src/models/*"],
+      "@/controllers/*": ["src/controllers/*"]
+    }
   },
   "include": ["src/**/*.ts"]
 }

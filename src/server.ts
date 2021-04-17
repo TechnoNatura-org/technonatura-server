@@ -1,4 +1,7 @@
 import * as express from 'express';
+import * as cors from 'cors';
+import { corsOptions } from './controllers/cors';
+
 // import * as PostRouter from './routes/post';
 import AuthRouter from './routes/auth';
 import * as mongoose from 'mongoose';
@@ -18,7 +21,7 @@ db.on('error', (err) => console.error('error when connecting to db'));
 db.once('open', () => console.log('connected to mongoose'));
 
 // app.use('/', PostRouter);
-app.use('/', AuthRouter);
+app.use('/', cors(corsOptions), AuthRouter);
 
 app.get('/', (req, res) => {
   res.json({ message: 'hey' });
