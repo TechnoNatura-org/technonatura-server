@@ -5,6 +5,7 @@ import { corsOptions } from './controllers/cors';
 // import * as PostRouter from './routes/post';
 import AuthRouter from './routes/auth';
 import ContactRouter from './routes/contact.route';
+import ArduinoRouter from './routes/arduino.route';
 
 import * as mongoose from 'mongoose';
 const db = mongoose.connection;
@@ -26,6 +27,7 @@ db.once('open', () => console.log('connected to mongoose'));
 app.use('/auth', cors(corsOptions), AuthRouter);
 // app.use('/contact', cors(corsOptions), ContactRouter);
 app.use('/contact', cors(corsOptions), ContactRouter);
+app.use('/arduino/', ArduinoRouter);
 
 app.get('/', (req, res) => {
   res.json({ message: 'hey' });

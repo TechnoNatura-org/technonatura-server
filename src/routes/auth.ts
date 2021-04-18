@@ -81,6 +81,14 @@ AuthRouter.post('/checkJWT', async (req, res) => {
         // @ts-ignore
         const user = await User.findById(verifyToken._id);
 
+        // // @ts-ignore
+        // console.log(
+        //   verifyToken, // @ts-ignore
+        //   verifyToken._id,
+        //   // @ts-ignore
+        //   user,
+        // );
+
         // @ts-ignore
         if (verifyToken.password != user?.password) {
           res

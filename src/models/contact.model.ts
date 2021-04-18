@@ -1,6 +1,5 @@
 import { Schema, Model, Document, model, Types, Query } from 'mongoose';
 import * as Validator from 'validator';
-import * as bcrypt from 'bcrypt';
 
 const {
   default: { isEmail, isURL },
