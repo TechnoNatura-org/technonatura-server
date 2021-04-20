@@ -1,10 +1,37 @@
 import * as express from 'express';
-import SensorData from '../models/Sensors/SensorsData.model';
-import Sensor, { sensorsInterface } from '../models/Sensors/Sensors.model';
-import User, { UserBaseDocument, UserInterface } from '../models/User.model';
+import { Request } from 'express';
+import Sensor, {
+  sensorsInterface,
+} from '../models/Arduino/Sensors/Sensors.model';
+import SensorData from '../models/Arduino/Sensors/SensorsData.model';
+import User from '../models/User.model';
+import VerifyJWT from '../controllers/checkToken';
+
 import * as jwt from 'jsonwebtoken';
 
+declare module 'express-serve-static-core' {
+  interface Request {
+    id: number;
+  }
+}
+
 const ArduinoRouter = express.Router();
+
+interface COOL {
+  ownerID: number;
+  sensorID: number;
+}
+// max age
+const maxAge = 3 * 24 * 60 * 60 * 60;
+const createToken = (sensor: COOL) => {
+  return jwt.sign(
+    { ...sensor },
+    'arduinoToken230489udwjfioj38924ur89uedfiwjnsfnweiuhriuh23',
+    {
+      expiresIn: '100y',
+    },
+  );
+};
 
 ArduinoRouter.post(
   '/add/',
@@ -62,6 +89,7 @@ ArduinoRouter.post(
   async (req, res) => {
     //@ts-ignore
     const { name, desc } = req.body;
+    // const {id}: {id:number} = req
 
     try {
       // @ts-ignore
@@ -69,7 +97,6 @@ ArduinoRouter.post(
       const sensor = new Sensor({
         name: name,
         desc: desc,
-        // @ts-ignore
         own: req.id,
       });
       // @ts-ignore
@@ -81,10 +108,18 @@ ArduinoRouter.post(
       //@ts-ignore
       //   console.log('isThere', sensorsByUserId, isThere, name);
 
+      req.isPaused;
+
       // if there is same sensor name
       if (isThere == -1) {
         await sensor.save();
-        res.status(200).send({ message: 'success' });
+        const token = createToken({
+          // @ts-ignore
+          ownerID: req.id,
+          sensorID: sensor.id,
+        });
+
+        res.status(200).send({ message: 'success', token: token });
         return;
       } else {
         res.status(500).send({ message: 'this name is already registered' });
@@ -98,6 +133,49 @@ ArduinoRouter.post(
     }
   },
 );
+
+ArduinoRouter.post('/add/sensorData', VerifyJWT, async (req, res) => {
+  if (req.body.name) {
+    const sensorData = new SensorData({
+      date: Date.now(),
+      data: req.body.data,
+    });
+
+    const findUser = await User.findById(req.id);
+    const sensor = await Sensor.findOne({
+      own: findUser?._id,
+      name: req.body.name,
+    });
+
+    console.log(sensor, findUser?._id);
+
+    await findUser?.updateOne(
+      { $push: { log: sensorData } },
+      { new: true },
+      (error, updatedUser) => {
+        console.log('hey');
+        if (error) {
+          res
+            .status(500)
+            .send(
+              'Make sure you fill out all of the input, and a valid userId',
+            );
+          return;
+        }
+        res.status(200).send('sent');
+        return;
+      },
+    );
+  }
+  res.status(200).send({ message: 'success' });
+  return;
+});
+
+ArduinoRouter.post('/add/sensor', VerifyJWT, async (req, res) => {
+  const sensor = new Sensor({
+    name: req.body.name,
+  });
+});
 
 ArduinoRouter.post('/update/:id', (req, res) => {});
 

@@ -1,7 +1,7 @@
 import { Schema, Model, Document, model, Types, Query } from 'mongoose';
 import * as Validator from 'validator';
 import { sensorsDataSchema, sensorsDataInterface } from './SensorsData.model';
-import { UserInterface } from '../User.model';
+import { UserInterface } from '../../User.model';
 
 const {
   default: { isEmail, isURL },

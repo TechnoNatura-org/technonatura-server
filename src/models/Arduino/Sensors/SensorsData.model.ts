@@ -6,7 +6,7 @@ const {
 } = Validator;
 
 export interface sensorsDataInterface {
-  date: Date;
+  date: number;
   data: number;
 }
 
@@ -25,7 +25,7 @@ export const sensorsDataSchema = new Schema<
   sensorsDataModel
 >({
   date: {
-    type: Date,
+    type: Number,
     required: true,
     validate: [isNumeric, 'Please enter a valid email'],
     default: Date.now,

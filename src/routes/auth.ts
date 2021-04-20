@@ -3,26 +3,8 @@ import * as bcrypt from 'bcrypt';
 import * as mongoose from 'mongoose';
 import * as jwt from 'jsonwebtoken';
 import User, { UserBaseDocument, UserInterface } from '../models/User.model';
-
+import createToken from '../controllers/createToken';
 const AuthRouter = express.Router();
-
-interface COOL {
-  points: number;
-  email: string;
-  name: string;
-  username: string;
-  isAccountVerified: boolean;
-  password: string;
-  roles: Array<string>;
-  _id: string;
-}
-// max age
-const maxAge = 3 * 24 * 60 * 60 * 60;
-const createToken = (user: COOL) => {
-  return jwt.sign({ ...user }, 'asodjijiej3q9iej93qjeiqwijdnasdini', {
-    expiresIn: '1y',
-  });
-};
 
 AuthRouter.post('/login', async (req, res) => {
   const { username, password } = req.body;
