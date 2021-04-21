@@ -1,7 +1,6 @@
 import { Schema, Model, Document, model, Types, Query } from 'mongoose';
 import * as Validator from 'validator';
 import { sensorsDataSchema, sensorsDataInterface } from './SensorsData.model';
-import { UserInterface } from '../../User.model';
 
 const {
   default: { isEmail, isURL },
@@ -9,13 +8,13 @@ const {
 
 export interface sensorsInterface {
   name: string;
-  sensors?: Array<sensorsDataInterface>;
+  sensors?: Array<string>;
   desc: string;
   own?: string;
 }
 
 export interface sensorsBaseDocument extends sensorsInterface, Document {
-  data: Types.Array<sensorsDataInterface>;
+  data: Types.Array<string>;
 }
 
 // Export this for strong typing
@@ -42,7 +41,7 @@ const sensorsSchema = new Schema<sensorsDocument, sensorsModel>({
     type: String,
     required: [true, 'Please enter desc'],
   },
-  sensors: [sensorsDataSchema],
+  sensors: [String],
 });
 
 function validateUsername(str: string) {
@@ -53,4 +52,7 @@ function validateUsername(str: string) {
   return true;
 }
 
-export default model<sensorsDocument, sensorsModel>('sensors', sensorsSchema);
+export default model<sensorsDocument, sensorsModel>(
+  'ArduinoApp',
+  sensorsSchema,
+);

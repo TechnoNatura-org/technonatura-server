@@ -10,10 +10,10 @@ declare module 'express-serve-static-core' {
 }
 
 const VerifyToken = async (req: Request, res: Response, next: NextFunction) => {
-  if (req.body.token) {
+  if (req.body.authToken) {
     try {
       const verifyToken = await jwt.verify(
-        req.body.token,
+        req.body.authToken,
         'asodjijiej3q9iej93qjeiqwijdnasdini',
       );
 
@@ -31,6 +31,7 @@ const VerifyToken = async (req: Request, res: Response, next: NextFunction) => {
         // );
         // @ts-ignore
         req.id = verifyToken._id;
+        // req._id =
         return next();
       }
     } catch (err) {

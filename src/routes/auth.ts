@@ -102,6 +102,8 @@ AuthRouter.post('/signup', async (req, res) => {
     const user = new User({ email, password, username, name });
     await user.save();
 
+    console.log(user);
+
     const token = createToken({
       username: user.username,
       password: user.password,
