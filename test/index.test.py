@@ -4,7 +4,7 @@ import platform
 _file = open('variables.js', "w")
 
 # s = 'e'
-username = str(input("Enter username:"))
+username = str(input("Enter username: "))
 
 
 _file.write("""
@@ -17,3 +17,5 @@ const env = {
 
 export { env };
 """.strip())
+
+_file.close()
