@@ -49,6 +49,7 @@ const unsubscribe = async (req: Request, res: Response) => {
     // res.cookie('jwt', token, { httpOnly: true, maxAge: maxAge * 1000 });
     res.status(201).json({ message: 'success' });
   } catch (err) {
+    console.log(err);
     res.status(400).json({ message: 'error occured on server' });
   }
 };
