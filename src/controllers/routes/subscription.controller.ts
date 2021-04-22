@@ -90,7 +90,7 @@ async function handleErrors(
   }
 
   // validation errors
-  if (err._message && err._message.includes('User validation failed')) {
+  if (err._message && err._message.includes('Subscription validation failed')) {
     // console.log(err);
 
     // @ts-ignore

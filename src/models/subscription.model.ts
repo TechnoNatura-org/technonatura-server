@@ -32,7 +32,7 @@ const SubscriptionSchema = new Schema<SubscriptionDocument, SubscriptionModel>({
   name: {
     type: String,
     lowercase: true,
-    required: [true, 'Subscriptionname cannot be blank'],
+    required: [true, 'Subscription name cannot be blank'],
     validate: [validateUsername, 'Only Letters and Numbers are allowed'],
   },
 });
