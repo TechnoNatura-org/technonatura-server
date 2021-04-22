@@ -95,14 +95,14 @@ AuthRouter.post('/checkJWT', async (req, res) => {
 });
 
 AuthRouter.post('/signup', async (req, res) => {
-  console.log(req.body);
+  // console.log(req.body);
   const { email, password, username, name } = req.body;
 
   try {
     const user = new User({ email, password, username, name });
     await user.save();
 
-    console.log(user);
+    // console.log(user);
 
     const token = createToken({
       username: user.username,
@@ -114,26 +114,6 @@ AuthRouter.post('/signup', async (req, res) => {
       email: user.email,
       roles: user.roles,
     });
-    // const p = jwt.verify(token, 'asodjijiej3q9iej93qjeiqwijdnasdini');
-    // console.log(p._doc);
-
-    /*
-      {
-        meta: { follows: [], accountCreated: '2021-04-11T15:02:40.836Z' },
-        points: 0,
-        isAccountVerified: false,
-        role: [],
-        _id: '60730f900a6ecb2a4ccbe984',
-        email: 'sad@gmail.com',
-        password: oops,
-        username: 'aldhanekaa',
-        name: 'Aldhaneka',
-        socialMedias: [],
-        __v: 0
-      }
-    */
-
-    // res.cookie('jwt', token, { httpOnly: true, maxAge: maxAge * 1000 });
     res.status(201).json({ message: 'success', token: token });
   } catch (err) {
     const errors = await handleErrors(err, { email, password, username, name });
