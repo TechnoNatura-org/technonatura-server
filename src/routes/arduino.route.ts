@@ -26,7 +26,7 @@ const ArduinoRouter = express.Router();
 
 interface COOL {
   ownerID: number;
-  sensorID: number;
+  appID: number;
 }
 // max age
 const maxAge = 3 * 24 * 60 * 60 * 60;
@@ -105,7 +105,7 @@ ArduinoRouter.post(
     try {
       // @ts-ignore
       const sensorsByUserId = await ArduinoApp.find({ own: req.id });
-      const sensor = new ArduinoApp({
+      const App = new ArduinoApp({
         name: arduinoAppName,
         desc: desc,
         own: req.id,
@@ -121,13 +121,13 @@ ArduinoRouter.post(
 
       // if there is same sensor name
       if (isThere == -1) {
-        await sensor.save();
+        await App.save();
         const token = createToken({
           // @ts-ignore
           ownerID: req.id,
-          sensorID: sensor.id,
+          appID: App.id,
         });
-        await req.user?.update({ $inc: { points: 50 } });
+        await req.user?.updateOne({ $inc: { points: 50 } });
         // user
 
         res.status(200).send({ message: 'success', arduinoAppToken: token });
@@ -138,7 +138,6 @@ ArduinoRouter.post(
       }
     } catch (err) {
       const errors = await handleErrors(err);
-      console.log(errors);
       res.status(500).send({ message: 'error', errors });
       return;
     }
@@ -146,40 +145,54 @@ ArduinoRouter.post(
 );
 
 ArduinoRouter.post('/add/sensor', VerifyJWT, async (req, res) => {
-  const sensor = new Sensor({
-    name: req.body.sensorName,
-    own: req.id,
-  });
-
   const findUser = await User.findById(req.id);
   const arduinoApp = await ArduinoApp.findOne({
     own: findUser?._id,
   }).findOne({
     name: req.body.arduinoAppName,
   });
-  // console.log(arduinoApp);
+  const isThereSensorNameLikeThis = await Sensor.findOne({
+    own: findUser?.id,
+  }).findOne({
+    name: req.body.sensorName,
+  });
+  const sensor = new Sensor({
+    name: req.body.sensorName,
+    own: findUser?.id,
+  });
 
+  // console.log(isThereSensorNameLikeThis);
   if (arduinoApp) {
-    console.log(sensor, findUser?._id);
-    try {
-      // push sensor id
-      await arduinoApp?.updateOne({
-        $push: {
-          sensors: sensor.id,
-        },
-      });
-      // increments user point
-      findUser?.update({ $inc: { points: 10 } });
+    // if there is not sensor name
+    if (!isThereSensorNameLikeThis) {
+      console.log(sensor, findUser?._id);
+      try {
+        // push sensor id
+        await arduinoApp?.updateOne({
+          $push: {
+            sensors: sensor.id,
+          },
+        });
+        // increments user point
+        await findUser?.updateOne({ $inc: { points: 10 } });
 
-      // save sensor
-      await sensor.save();
-      res.status(200).send({ message: 'success saved to db' });
-    } catch (err) {
-      console.log('ERROR WHEN ADD SENSOR', err);
-      res.status(200).send({
-        message:
-          'enter sensor name, and make sure sensor name only contains letters and numbers.',
-      });
+        // save sensor
+        await sensor.save();
+        res.status(200).send({ message: 'success saved to db' });
+      } catch (err) {
+        console.log('ERROR WHEN ADD SENSOR', err);
+        const errors = await handleErrors(err);
+
+        res.status(200).send({
+          message:
+            'enter sensor name, and make sure sensor name only contains letters and numbers.',
+          errors: errors,
+        });
+        return;
+      }
+    } else {
+      res.status(200).send({ message: 'this sensor name already taken' });
+      return;
     }
   } else {
     res.status(200).send({ message: 'app is not registered' });
@@ -240,7 +253,11 @@ async function handleErrors(
 
   console.log(err);
   // validation errors
-  if (err._message && err._message.includes('sensors validation failed')) {
+  if (
+    err._message &&
+    (err._message.includes('ArduinoApp validation failed') ||
+      err._message.includes('sensor validation failed'))
+  ) {
     // console.log(err);
 
     // @ts-ignore

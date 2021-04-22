@@ -15,7 +15,7 @@ const subscribe = async (req: Request, res: Response) => {
     console.log(subscriptionUser);
     res.status(201).json({ message: 'success' });
   } catch (err) {
-    const errors = await handleErrors(err, { email, name });
+    const errors = await handleErrors(err);
     console.log(errors);
     res.status(400).json({ errors });
   }
@@ -26,27 +26,6 @@ const unsubscribe = async (req: Request, res: Response) => {
 
   try {
     await Subscription.findOneAndDelete({ email: email });
-
-    // const p = jwt.verify(token, 'asodjijiej3q9iej93qjeiqwijdnasdini');
-    // console.log(p._doc);
-
-    /*
-      {
-        meta: { follows: [], accountCreated: '2021-04-11T15:02:40.836Z' },
-        points: 0,
-        isAccountVerified: false,
-        role: [],
-        _id: '60730f900a6ecb2a4ccbe984',
-        email: 'sad@gmail.com',
-        password: oops,
-        username: 'aldhanekaa',
-        name: 'Aldhaneka',
-        socialMedias: [],
-        __v: 0
-      }
-    */
-
-    // res.cookie('jwt', token, { httpOnly: true, maxAge: maxAge * 1000 });
     res.status(201).json({ message: 'success' });
   } catch (err) {
     console.log(err);
@@ -54,29 +33,21 @@ const unsubscribe = async (req: Request, res: Response) => {
   }
 };
 
-interface SignupBody {
-  email: string;
-  name: string;
-}
-
 interface Errors {
   email: string;
   name: string;
 }
 
 // handle errors
-async function handleErrors(
-  err: {
-    message: string;
-    code: number;
-    _message: string;
-    keyValue: {
-      username?: string;
-      email?: string;
-    };
-  },
-  SignupBody?: SignupBody,
-) {
+async function handleErrors(err: {
+  message: string;
+  code: number;
+  _message: string;
+  keyValue: {
+    username?: string;
+    email?: string;
+  };
+}) {
   console.log('ERRRRORORR', err.message);
   // @ts-ignore
   let errors: Errors = {};
