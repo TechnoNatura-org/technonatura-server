@@ -1,6 +1,6 @@
-read -p 'commit message: ' uservar
-echo $uservar
+read -p 'commit message: ' commitMessage
+echo $commitMessage
 
 git add .
-git commit -m "$uservar"
+git commit -m "$commitMessage"
 git push
