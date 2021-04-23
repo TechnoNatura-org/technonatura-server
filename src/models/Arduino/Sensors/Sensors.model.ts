@@ -1,6 +1,8 @@
 import { Schema, Model, Document, model, Types, Query } from 'mongoose';
 import * as Validator from 'validator';
+import { Response } from 'express';
 import { sensorsDataSchema, sensorsDataInterface } from './SensorsData.model';
+import Sensor, { sensorInterface } from './Sensor';
 
 const {
   default: { isEmail, isURL },
@@ -21,7 +23,9 @@ export interface sensorsBaseDocument extends sensorsInterface, Document {
 export interface sensorsDocument extends sensorsBaseDocument {}
 
 // For model
-export interface sensorsModel extends Model<sensorsBaseDocument> {}
+export interface sensorsModel extends Model<sensorsBaseDocument> {
+  getAllSensors(appID: string): Promise<sensorInterface[] | undefined>;
+}
 
 const sensorsSchema = new Schema<sensorsDocument, sensorsModel>({
   name: {
@@ -52,7 +56,23 @@ function validateUsername(str: string) {
   return true;
 }
 
-export default model<sensorsDocument, sensorsModel>(
+// ArduinoAppModel.methods.getAllSensors = async function (appID: string) {
+//   console.log('WOYYWY', appID);
+//   const sensors = await Sensor.find({ appID: appID });
+
+//   return;
+// };
+
+const ArduinoAppModel = model<sensorsDocument, sensorsModel>(
   'ArduinoApp',
   sensorsSchema,
 );
+ArduinoAppModel.getAllSensors = async function (
+  appID: string,
+): Promise<sensorInterface[] | undefined> {
+  // console.log('WOYYWY', appID);
+  const sensors = await Sensor.find({ appID: appID });
+
+  return sensors;
+};
+export default ArduinoAppModel;

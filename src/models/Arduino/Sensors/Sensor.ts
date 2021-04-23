@@ -9,7 +9,8 @@ const {
 export interface sensorInterface {
   name: string;
   data?: Array<sensorsDataInterface>;
-  own?: string;
+  appID: string;
+  own: string;
 }
 
 export interface sensorBaseDocument extends sensorInterface, Document {
@@ -28,6 +29,11 @@ const sensorSchema = new Schema<sensorDocument, sensorModel>({
     required: [true, 'Please enter your name'],
     validate: [validateUsername, 'Only characters and numbers are allowed'],
     minlength: [4, 'Minimum name length is 4 characters'],
+  },
+
+  appID: {
+    type: String,
+    required: true,
   },
   own: {
     type: String,

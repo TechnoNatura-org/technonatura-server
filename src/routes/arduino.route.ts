@@ -14,7 +14,7 @@ import * as jwt from 'jsonwebtoken';
 
 declare module 'express-serve-static-core' {
   interface Request {
-    id: number;
+    id: string;
   }
 }
 
@@ -40,109 +40,60 @@ const createToken = (sensor: COOL) => {
   );
 };
 
-ArduinoRouter.post(
-  '/add/',
-  async (req: UserInRequest, res, next) => {
-    //@ts-ignore
-    if (req.body.authToken) {
-      try {
-        // convert jwt
-        const verifyToken = await jwt.verify(
-          req.body.authToken,
-          'asodjijiej3q9iej93qjeiqwijdnasdini',
-        );
+ArduinoRouter.get('/apps', VerifyJWT, async (req, res) => {
+  try {
+    const apps = await ArduinoApp.find({ own: req.id });
+    res.status(200).send({ apps: apps });
+  } catch (err) {
+    res.status(500).send({ message: 'error when fetching apps' });
+  }
+});
 
+ArduinoRouter.post('/add/', VerifyJWT, async (req: UserInRequest, res) => {
+  //@ts-ignore
+  const { arduinoAppName, desc } = req.body;
+  // const {id}: {id:number} = req
+
+  try {
+    // @ts-ignore
+    const sensorsByUserId = await ArduinoApp.find({ own: req.id });
+    const App = new ArduinoApp({
+      name: arduinoAppName,
+      desc: desc,
+      own: req.id,
+    });
+    // @ts-ignore
+    const isThere: number = sensorsByUserId.findIndex(
+      (element: sensorsInterface) =>
         // @ts-ignore
-        if (typeof verifyToken != 'string' && verifyToken.password) {
-          // @ts-ignore
-          const user = await User.findById(verifyToken._id);
-          //   console.log('hgsufgusy');
-          // // @ts-ignore
-          // console.log(
-          //   verifyToken, // @ts-ignore
-          //   verifyToken._id,
-          //   // @ts-ignore
-          //   user,
-          // );
-          // console.log('verifyToken', verifyToken, '\nuser', user); // for debuging
-
-          // verify token
-          // @ts-ignore
-          if (verifyToken.password != user?.password) {
-            // console.log('pass');
-
-            res.status(500).send({
-              message: 'password has changed',
-            });
-            return;
-          } else {
-            // console.log('neSTx');
-            // @ts-ignore
-            req.id = user._id;
-            req.user = user;
-
-            return next();
-          }
-        }
-      } catch (err) {
-        // console.log('ero');
-
-        res.status(500).send({ message: 'error occured' });
-        return;
-      }
-
-      // console.log(token.split(' '));
-    }
-
-    res.status(500).send({ message: 'token undefined' });
-    return;
-  },
-  async (req: UserInRequest, res) => {
+        element.name == arduinoAppName,
+    );
     //@ts-ignore
-    const { arduinoAppName, desc } = req.body;
-    // const {id}: {id:number} = req
+    //   console.log('isThere', sensorsByUserId, isThere, name);
 
-    try {
-      // @ts-ignore
-      const sensorsByUserId = await ArduinoApp.find({ own: req.id });
-      const App = new ArduinoApp({
-        name: arduinoAppName,
-        desc: desc,
-        own: req.id,
+    // if there is same sensor name
+    if (isThere == -1) {
+      await App.save();
+      const token = createToken({
+        // @ts-ignore
+        ownerID: req.id,
+        appID: App.id,
       });
-      // @ts-ignore
-      const isThere: number = sensorsByUserId.findIndex(
-        (element: sensorsInterface) =>
-          // @ts-ignore
-          element.name == arduinoAppName,
-      );
-      //@ts-ignore
-      //   console.log('isThere', sensorsByUserId, isThere, name);
+      await req.user?.updateOne({ $inc: { points: 50 } });
+      // user
 
-      // if there is same sensor name
-      if (isThere == -1) {
-        await App.save();
-        const token = createToken({
-          // @ts-ignore
-          ownerID: req.id,
-          appID: App.id,
-        });
-        await req.user?.updateOne({ $inc: { points: 50 } });
-        // user
-
-        res.status(200).send({ message: 'success', arduinoAppToken: token });
-        return;
-      } else {
-        res.status(500).send({ message: 'this name is already registered' });
-        return;
-      }
-    } catch (err) {
-      const errors = await handleErrors(err);
-      res.status(500).send({ message: 'error', errors });
+      res.status(200).send({ message: 'success', arduinoAppToken: token });
+      return;
+    } else {
+      res.status(500).send({ message: 'this name is already registered' });
       return;
     }
-  },
-);
+  } catch (err) {
+    const errors = await handleErrors(err);
+    res.status(500).send({ message: 'error', errors });
+    return;
+  }
+});
 
 ArduinoRouter.post('/add/sensor', VerifyJWT, async (req, res) => {
   const findUser = await User.findById(req.id);
@@ -152,13 +103,16 @@ ArduinoRouter.post('/add/sensor', VerifyJWT, async (req, res) => {
     name: req.body.arduinoAppName,
   });
   const isThereSensorNameLikeThis = await Sensor.findOne({
-    own: findUser?.id,
-  }).findOne({
-    name: req.body.sensorName,
-  });
+    appID: arduinoApp?.id,
+  })
+    .findOne({ own: findUser?._id })
+    .findOne({
+      name: req.body.sensorName,
+    });
   const sensor = new Sensor({
     name: req.body.sensorName,
     own: findUser?.id,
+    appID: arduinoApp?.id,
   });
 
   // console.log(isThereSensorNameLikeThis);
@@ -199,11 +153,76 @@ ArduinoRouter.post('/add/sensor', VerifyJWT, async (req, res) => {
   }
 });
 
-// ArduinoRouter.post('/add/sensor', VerifyJWT, async (req, res) => {
-//   const sensor = new ArduinoApp({
-//     name: req.body.name,
-//   });
-// });
+ArduinoRouter.post('/sensors/', VerifyJWT, async (req: UserInRequest, res) => {
+  const { arduinoAppName } = req.body;
+  const isThereArduinoApp = await ArduinoApp.find({
+    own: req.id,
+  }).findOne({ name: arduinoAppName });
+
+  if (isThereArduinoApp) {
+    try {
+      // @ts-ignore
+      const sensors = await ArduinoApp.getAllSensors(isThereArduinoApp.id);
+
+      // arduinoApp?.sensors
+      // arduinoApp?.getAllSensors()
+
+      res.status(200).send({ sensors: sensors });
+    } catch (err) {
+      res.status(500).send({ message: 'error when fetching sensors' });
+    }
+  } else {
+    res.status(500).send({ message: 'app not found' });
+  }
+});
+
+ArduinoRouter.post('/del/:appID', VerifyJWT, async (req, res) => {
+  const { appID } = req.params;
+  const app = await ArduinoApp.findById(appID);
+
+  // console.log(sensor, req.id);
+  if (app && app.own == req.id) {
+    try {
+      await app.remove();
+      await Sensor.find({ appID: appID }).remove();
+      res.status(200).send({ message: 'success' });
+      return;
+    } catch (err) {
+      res.status(500).send({ message: 'error when remove app from database' });
+      return;
+    }
+  } else {
+    res.status(200).send({ message: 'app not found' });
+    return;
+  }
+});
+ArduinoRouter.post('/del/sensor/:sensorID', VerifyJWT, async (req, res) => {
+  const { sensorID } = req.params;
+  const sensor = await Sensor.findById(sensorID);
+  const app = await ArduinoApp.findById(sensor?.appID);
+
+  // console.log(sensor, req.id);
+  if (sensor && sensor.own == req.id) {
+    try {
+      await sensor.remove();
+      await app?.updateOne({
+        $pull: {
+          sensors: sensor.id,
+        },
+      });
+      res.status(200).send({ message: 'success' });
+      return;
+    } catch (err) {
+      res
+        .status(500)
+        .send({ message: 'error when remove sensor from database' });
+      return;
+    }
+  } else {
+    res.status(200).send({ message: 'sensor not found' });
+    return;
+  }
+});
 
 ArduinoRouter.post('/update/:id', (req, res) => {});
 
@@ -251,7 +270,7 @@ async function handleErrors(
     errors.name = 'that username is already registered';
   }
 
-  console.log(err);
+  // console.log(err);
   // validation errors
   if (
     err._message &&
