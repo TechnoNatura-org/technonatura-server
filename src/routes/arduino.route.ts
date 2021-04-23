@@ -29,7 +29,6 @@ interface COOL {
   appID: number;
 }
 // max age
-const maxAge = 3 * 24 * 60 * 60 * 60;
 const createToken = (sensor: COOL) => {
   return jwt.sign(
     { ...sensor },
@@ -226,16 +225,7 @@ ArduinoRouter.post('/del/sensor/:sensorID', VerifyJWT, async (req, res) => {
 
 ArduinoRouter.post('/update/:id', (req, res) => {});
 
-ArduinoRouter.post('/updateSensor/:id', (req, res) => {});
-
-ArduinoRouter.post('/delete/:id', (req, res) => {});
-
-interface SignupBody {
-  email: string;
-  password: string;
-  username: string;
-  name: string;
-}
+ArduinoRouter.post('/update/sensor/', (req, res) => {});
 
 interface Errors {
   desc: string;
@@ -243,18 +233,15 @@ interface Errors {
 }
 
 // handle errors
-async function handleErrors(
-  err: {
-    message: string;
-    code: number;
-    _message: string;
-    keyValue: {
-      name?: string;
-      email?: string;
-    };
-  },
-  SignupBody?: SignupBody,
-) {
+async function handleErrors(err: {
+  message: string;
+  code: number;
+  _message: string;
+  keyValue: {
+    name?: string;
+    email?: string;
+  };
+}) {
   // @ts-ignore
   let errors: Errors = {};
 
