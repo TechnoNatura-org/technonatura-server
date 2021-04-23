@@ -1,4 +1,5 @@
-read -p 'commit message: ' commitMessage
+echo "git commit -m "
+read -p '> ' commitMessage
 echo $commitMessage
 
 git add .
