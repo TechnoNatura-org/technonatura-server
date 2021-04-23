@@ -5,3 +5,5 @@ echo $commitMessage
 git add .
 git commit -m "$commitMessage"
 git push
+
+echo "would you like to push? \n>"
