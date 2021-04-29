@@ -4,8 +4,7 @@ import * as cors from 'cors';
 import * as methodOverride from 'method-override';
 
 import { ApolloServer, gql } from 'apollo-server-express';
-import { makeExecutableSchema } from 'graphql-tools';
-import typeDefs from '../graphql/schemas';
+import typeDefs from '../graphql/typeDefs';
 import resolvers from '../graphql/resolvers';
 
 import AuthRouter from './routes/auth';
@@ -44,7 +43,18 @@ app.get('/', (req, res) => {
 });
 
 async function startApolloServer() {
-  const server = new ApolloServer({ typeDefs, resolvers });
+  const server = new ApolloServer({
+    typeDefs: gql`
+      type Query {
+        hello: String
+      }
+    `,
+    resolvers: {
+      Query: {
+        hello: () => 'Hello world!',
+      },
+    },
+  });
   server.start();
 
   const path = '/graphql';
