@@ -55,7 +55,13 @@ async function startApolloServer() {
 
   server.applyMiddleware({ app });
 
-  await new Promise((resolve) => app.listen({ port: 4000 }));
+  await new Promise((resolve) => app.listen({ port: process.env.PORT || 3030 }))
+    .then(() => {
+      return { server, app };
+    })
+    .catch(() => {
+      return { server, app };
+    });
 
   // app.listen(process.env.PORT || 3030, () => {
   //   console.log(`server started on port ${process.env.PORT}`);
