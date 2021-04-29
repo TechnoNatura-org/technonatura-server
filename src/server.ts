@@ -57,6 +57,8 @@ async function startApolloServer() {
       `🚀 Server ready at http://localhost:3030${server.graphqlPath}`,
     );
   });
+
+  return { server, app };
 }
 
 startApolloServer();
