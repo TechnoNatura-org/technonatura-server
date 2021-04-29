@@ -47,7 +47,7 @@ async function startApolloServer() {
     typeDefs,
     resolvers,
   });
-  server.start();
+  await server.start();
 
   const path = '/graphql';
 
