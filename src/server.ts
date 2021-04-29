@@ -1,10 +1,10 @@
 import * as express from 'express';
 import * as cors from 'cors';
 import * as methodOverride from 'method-override';
+import { ApolloServer, gql } from 'apollo-server-express';
 // methodOverride.
 import { corsOptions } from './controllers/cors';
 
-// import * as PostRouter from './routes/post';
 import AuthRouter from './routes/auth';
 import ContactRouter from './routes/contact.route';
 import ArduinoRouter from './routes/arduino.route';
@@ -37,6 +37,32 @@ app.use('/', SubscriptionRouter);
 app.get('/', (req, res) => {
   res.json({ message: 'hey' });
 });
-app.listen(process.env.PORT || 3030, () => {
-  console.log(`server started on port ${process.env.PORT}`);
-});
+
+async function startApolloServer() {
+  // Construct a schema, using GraphQL schema language
+  const typeDefs = gql`
+    type Query {
+      hello: String
+    }
+  `;
+
+  // Provide resolver functions for your schema fields
+  const resolvers = {
+    Query: {
+      hello: () => 'Hello world!',
+    },
+  };
+
+  const server = new ApolloServer({ typeDefs, resolvers });
+  await server.start();
+
+  const path = '/graphql';
+
+  server.applyMiddleware({ app, path });
+
+  await new Promise((resolve) => app.listen({ port: 3030 }));
+  console.log(`🚀 Server ready at http://localhost:3030${server.graphqlPath}`);
+  return { server, app };
+}
+
+startApolloServer();

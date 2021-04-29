@@ -2,7 +2,7 @@ import * as express from 'express';
 import { Request } from 'express';
 import ArduinoApp, {
   sensorsInterface,
-} from '../models/Arduino/Sensors/Sensors.model';
+} from '../models/Arduino/Sensors/arduinoApp.model';
 import SensorData from '../models/Arduino/Sensors/SensorsData.model';
 import Sensor from '../models/Arduino/Sensors/Sensor';
 import { UserBaseDocument } from '../models/User.model';
