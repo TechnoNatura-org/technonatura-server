@@ -4,8 +4,8 @@ import * as cors from 'cors';
 import * as methodOverride from 'method-override';
 
 import { ApolloServer, gql } from 'apollo-server-express';
-import typeDefs from '../graphql/typeDefs';
-import resolvers from '../graphql/resolvers';
+import typeDefs from './graphql/typeDefs';
+import resolvers from './graphql/resolvers';
 
 import AuthRouter from './routes/auth';
 import ContactRouter from './routes/contact.route';
