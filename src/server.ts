@@ -45,6 +45,7 @@ app.get('/', (req, res) => {
 
 async function startApolloServer() {
   const server = new ApolloServer({ typeDefs, resolvers });
+  server.start();
 
   const path = '/graphql';
 
