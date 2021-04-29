@@ -54,17 +54,19 @@ async function startApolloServer() {
   };
 
   const server = new ApolloServer({ typeDefs, resolvers });
-  await server.start();
+  server.start();
 
   const path = '/graphql';
 
   server.applyMiddleware({ app, path });
 
   // await new Promise((resolve) => app.listen({ port: 3030 }));
-  // console.log(`🚀 Server ready at http://localhost:3030${server.graphqlPath}`);
 
   app.listen(process.env.PORT || 3030, () => {
     console.log(`server started on port ${process.env.PORT}`);
+    console.log(
+      `🚀 Server ready at http://localhost:3030${server.graphqlPath}`,
+    );
   });
   return { server, app };
 }
