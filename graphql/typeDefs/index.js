@@ -4,8 +4,4 @@ export default gql`
   type Query {
     hello: String
   }
-
-  type User {
-    users: String
-  }
 `;
