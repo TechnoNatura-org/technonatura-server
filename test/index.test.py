@@ -11,7 +11,7 @@ _file.write("""
 const env = {
   name: 'Aldhanekaa',
   username: 'aldhan',
-  email: 'aldhaneka@gmail.com',
+  email: 'aa@gmail.com',
   password: 'aldhan',
 };
 

@@ -1,9 +1,7 @@
 import * as express from 'express';
-import * as bcrypt from 'bcrypt';
-import * as mongoose from 'mongoose';
 import * as jwt from 'jsonwebtoken';
 import User, { UserBaseDocument, UserInterface } from '../models/User.model';
-import createToken from '../controllers/createToken';
+import createToken, { tokenForTypes } from '../controllers/createToken';
 const AuthRouter = express.Router();
 
 AuthRouter.post('/login', async (req, res) => {
@@ -13,30 +11,16 @@ AuthRouter.post('/login', async (req, res) => {
 
   try {
     const user = await User.login(username, password);
-    const token = createToken({
-      username: user.username,
-      password: user.password,
-      _id: user._id,
-      points: user.points,
-      name: user.name,
-      isAccountVerified: user.isAccountVerified,
-      email: user.email,
-      roles: user.roles,
-    });
+    const token = createToken(
+      {
+        username: user.username,
+        password: user.password,
+        _id: user._id,
+        email: user.email,
+      },
+      tokenForTypes.auth,
+    );
 
-    // try {
-    //   // if (token && !Array.isArray(token)) {
-    //     // const verifyToken = jwt.verify(
-    //     //   token,
-    //     //   'asodjijiej3q9iej93qjeiqwijdnasdini',
-    //     // );
-    //     res.status(200).json({ message: 'success' });
-    //   // } else {
-    //   //   throw Error('authorization undefined');
-    //   // }
-    // } catch (err) {
-    //   res.status(400).json({ message: 'token might expired' });
-    // }
     res.status(200).json({ message: 'success', token: token });
   } catch (err) {
     console.log('ERR! ', err);
@@ -62,14 +46,6 @@ AuthRouter.post('/checkJWT', async (req, res) => {
       if (typeof verifyToken != 'string' && verifyToken.password) {
         // @ts-ignore
         const user = await User.findById(verifyToken._id);
-
-        // // @ts-ignore
-        // console.log(
-        //   verifyToken, // @ts-ignore
-        //   verifyToken._id,
-        //   // @ts-ignore
-        //   user,
-        // );
 
         // @ts-ignore
         if (verifyToken.password != user?.password) {
@@ -104,21 +80,34 @@ AuthRouter.post('/signup', async (req, res) => {
 
     // console.log(user);
 
-    const token = createToken({
-      username: user.username,
-      password: user.password,
-      _id: user._id,
-      points: user.points,
-      name: user.name,
-      isAccountVerified: user.isAccountVerified,
-      email: user.email,
-      roles: user.roles,
+    const token = createToken(
+      {
+        username: user.username,
+        password: user.password,
+        _id: user._id,
+        email: user.email,
+      },
+      tokenForTypes.auth,
+    );
+    res.status(200).json({
+      message: 'success',
+      token: token,
+      user: {
+        name: user.name,
+        username: user.username,
+        password: user.password,
+        email: user.email,
+        _id: user._id,
+        follows: user.follows,
+        roles: user.roles,
+        isAccountVerified: user.isAccountVerified,
+        socialMedias: user.socialMedias,
+      },
     });
-    res.status(201).json({ message: 'success', token: token });
   } catch (err) {
     const errors = await handleErrors(err, { email, password, username, name });
     console.log(errors);
-    res.status(400).json({ errors });
+    res.status(200).json({ errors });
   }
 });
 

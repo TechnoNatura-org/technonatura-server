@@ -13,7 +13,7 @@ interface UserInRequest extends Request {
   user?: UserBaseDocument | null;
 }
 
-const VerifyToken = async (
+const VerifyAuthToken = async (
   req: UserInRequest,
   res: Response,
   next: NextFunction,
@@ -31,15 +31,6 @@ const VerifyToken = async (
       if (typeof verifyToken != 'string' && verifyToken.password) {
         // @ts-ignore
         const user = await User.findById(verifyToken._id);
-        //   console.log('hgsufgusy');
-        // // @ts-ignore
-        // console.log(
-        //   verifyToken, // @ts-ignore
-        //   verifyToken._id,
-        //   // @ts-ignore
-        //   user,
-        // );
-        // console.log('verifyToken', verifyToken, '\nuser', user); // for debuging
 
         if (user) {
           // verify token
@@ -77,4 +68,4 @@ const VerifyToken = async (
   res.status(500).send({ message: 'token undefined' });
   return;
 };
-export default VerifyToken;
+export { VerifyAuthToken };

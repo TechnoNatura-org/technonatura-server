@@ -1,6 +1,14 @@
+/*
+ * =================== MTS TECHNONATURA SERVER =================
+ *
+ * This API Script under MIT LICENSE
+ * What is this for ? This is REST API to contact MTS Technonatura Admin, send message from [paste link here] and send it to [api link], we saved the message to database
+ *
+ * (c) 2021 by MTS-Technonatura, made with 💖 by Aldhan
+ * =============================================================
+ */
+
 import * as express from 'express';
-import * as bcrypt from 'bcrypt';
-import * as mongoose from 'mongoose';
 import Contact from '../models/contact.model';
 
 const ContactRouter = express.Router();

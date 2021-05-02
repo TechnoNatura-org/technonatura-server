@@ -51,8 +51,6 @@ async function startApolloServer() {
   });
   await server.start();
 
-  // const path = '/graphql';
-
   server.applyMiddleware({ app });
 
   await new Promise((resolve) => app.listen({ port: process.env.PORT || 3030 }))
@@ -62,13 +60,6 @@ async function startApolloServer() {
     .catch(() => {
       return { server, app };
     });
-
-  // app.listen(process.env.PORT || 3030, () => {
-  //   console.log(`server started on port ${process.env.PORT}`);
-  //   console.log(
-  //     `🚀 Server ready at http://localhost:3030${server.graphqlPath}`,
-  //   );
-  // });
 }
 
 startApolloServer();

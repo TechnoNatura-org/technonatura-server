@@ -82,7 +82,7 @@ const userSchema = new Schema<UserDocument, UserModel>({
   birthDate: {
     type: Date,
   },
-  roles: [String], // the Object Id of the role
+  roles: [String], // the role name, the role name must be unique
   socialMedias: [
     {
       name: {
@@ -107,7 +107,7 @@ function validateUsername(str: string) {
 }
 
 // fire a function before doc saved to db
-userSchema.pre('save', async function (next) {
+userSchema.pre('save', async function(next) {
   const salt = await bcrypt.genSalt();
   this.password = await bcrypt.hash(this.password, salt);
 
@@ -118,7 +118,7 @@ userSchema.pre('save', async function (next) {
 });
 
 // static method to login user
-userSchema.statics.login = async function (
+userSchema.statics.login = async function(
   this: Model<UserDocument>,
   username,
   password,
