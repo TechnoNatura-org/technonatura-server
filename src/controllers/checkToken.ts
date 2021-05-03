@@ -24,7 +24,7 @@ const VerifyAuthToken = async (
       // convert jwt
       const verifyToken = await jwt.verify(
         req.body.authToken,
-        'asodjijiej3q9iej93qjeiqwijdnasdini',
+        process.env.AUTH_SECRET_TOKEN || 'authSecret',
       );
 
       // @ts-ignore

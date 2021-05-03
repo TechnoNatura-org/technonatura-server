@@ -1,6 +1,6 @@
 import * as jwt from 'jsonwebtoken';
 
-interface COOL {
+interface UserTypes {
   email: string;
   username: string;
   password: string;
@@ -9,16 +9,45 @@ interface COOL {
 
 export enum tokenForTypes {
   auth,
-  arduino,
-  APIApp,
+  ApiApp,
+  arduinoApp,
+}
+
+interface ArduinoAppTypes {
+  ownerID: number;
+  appID: number;
 }
 
 // max age
 const maxAge = 3 * 24 * 60 * 60 * 60;
-const createToken = (user: COOL, tokenFor: tokenForTypes) => {
-  return jwt.sign({ ...user }, 'asodjijiej3q9iej93qjeiqwijdnasdini', {
-    expiresIn: '5y',
-  });
+const createToken = (
+  n: Partial<ArduinoAppTypes> | Partial<UserTypes>,
+  tokenFor: tokenForTypes,
+) => {
+  switch (tokenFor) {
+    case tokenForTypes.auth:
+      return jwt.sign({ ...n }, process.env.AUTH_SECRET_TOKEN || 'authSecret', {
+        expiresIn: '1y',
+      });
+
+      break;
+
+    case tokenForTypes.arduinoApp:
+      return jwt.sign(
+        { ...n },
+        process.env.ArduinoApp_SECRET_TOKEN || 'authSecret',
+        {
+          expiresIn: '1y',
+        },
+      );
+      break;
+
+    case tokenForTypes.ApiApp:
+      break;
+
+    default:
+      break;
+  }
 };
 
 export default createToken;

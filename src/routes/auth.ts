@@ -1,3 +1,7 @@
+if (process.env.NODE_ENV !== 'production') {
+  require('dotenv').config();
+}
+
 import * as express from 'express';
 import * as jwt from 'jsonwebtoken';
 import User, { UserBaseDocument, UserInterface } from '../models/User.model';
@@ -21,25 +25,37 @@ AuthRouter.post('/login', async (req, res) => {
       tokenForTypes.auth,
     );
 
-    res.status(200).json({ message: 'success', token: token });
+    res.status(200).json({
+      message: 'success',
+      token: token,
+      user: {
+        name: user.name,
+        username: user.username,
+        password: user.password,
+        email: user.email,
+        _id: user._id,
+        follows: user.follows,
+        roles: user.roles,
+        isAccountVerified: user.isAccountVerified,
+        socialMedias: user.socialMedias,
+      },
+    });
   } catch (err) {
     console.log('ERR! ', err);
 
-    const errors = handleErrors(err);
-    res.status(400).json({ errors });
+    const errors = await handleErrors(err);
+    console.log(errors);
+    res.status(200).json({ errors });
   }
 });
 
 AuthRouter.post('/checkJWT', async (req, res) => {
   // const token = req.headers.authorizations;
-  interface B {
-    password: string;
-  }
   if (req.body.token) {
     try {
       const verifyToken = await jwt.verify(
         req.body.token,
-        'asodjijiej3q9iej93qjeiqwijdnasdini',
+        process.env.AUTH_SECRET_TOKEN || 'authSecret',
       );
 
       // @ts-ignore
@@ -54,7 +70,19 @@ AuthRouter.post('/checkJWT', async (req, res) => {
             .json({ message: 'invalid password, password might has changed' });
           return;
         } else {
-          res.status(200).json({ message: 'success' });
+          res.status(200).json({
+            message: 'success',
+            user: {
+              follows: user?.follows,
+              name: user?.name,
+              username: user?.username,
+              email: user?.email,
+              accountCreated: user?.accountCreated,
+              isAccountVerified: user?.isAccountVerified,
+              roles: user?.roles,
+              socialMedias: user?.socialMedias,
+            },
+          });
           return;
         }
       }
@@ -106,7 +134,6 @@ AuthRouter.post('/signup', async (req, res) => {
     });
   } catch (err) {
     const errors = await handleErrors(err, { email, password, username, name });
-    console.log(errors);
     res.status(200).json({ errors });
   }
 });
@@ -137,7 +164,7 @@ async function handleErrors(
   },
   SignupBody?: SignupBody,
 ) {
-  console.log('ERRRRORORR', err.message);
+  // console.log('ERRRRORORR', err.message);
   // @ts-ignore
   let errors: Errors = {};
 
@@ -146,7 +173,7 @@ async function handleErrors(
   }
   if (err.message === 'incorrect username') {
     // incorrect email
-    errors.email = 'That username is not registered';
+    errors.username = 'That username is not registered';
   }
 
   // incorrect password

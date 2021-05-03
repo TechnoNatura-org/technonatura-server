@@ -15,16 +15,17 @@ import ArduinoApp, {
 } from '../models/Arduino/Sensors/arduinoApp.model';
 import SensorData from '../models/Arduino/Sensors/SensorsData.model';
 import Sensor from '../models/Arduino/Sensors/Sensor';
-import { UserBaseDocument } from '../models/User.model';
 
-import User from '../models/User.model';
+import User, { UserBaseDocument } from '../models/User.model';
 import { VerifyAuthToken } from '../controllers/checkToken';
+import createToken, { tokenForTypes } from '../controllers/createToken';
 
 import * as jwt from 'jsonwebtoken';
 
 declare module 'express-serve-static-core' {
   interface Request {
     id: string;
+    user?: UserBaseDocument | null;
   }
 }
 
@@ -34,27 +35,12 @@ interface UserInRequest extends Request {
 
 const ArduinoRouter = express.Router();
 
-interface COOL {
-  ownerID: number;
-  appID: number;
-}
-// max age
-const createToken = (sensor: COOL) => {
-  return jwt.sign(
-    { ...sensor },
-    'arduinoToken230489udwjfioj38924ur89uedfiwjnsfnweiuhriuh23',
-    {
-      expiresIn: '100y',
-    },
-  );
-};
-
 ArduinoRouter.get('/apps', VerifyAuthToken, async (req, res) => {
   try {
     const apps = await ArduinoApp.find({ own: req.id });
     res.status(200).send({ apps: apps });
   } catch (err) {
-    res.status(500).send({ message: 'error when fetching apps' });
+    res.status(200).send({ message: 'error when fetching apps' });
   }
 });
 
@@ -97,11 +83,14 @@ ArduinoRouter.post(
       // if there is same sensor name
       if (isThere == -1) {
         await App.save();
-        const token = createToken({
-          // @ts-ignore
-          ownerID: req.id,
-          appID: App.id,
-        });
+        const token = createToken(
+          {
+            // @ts-ignore
+            ownerID: req.id,
+            appID: App.id,
+          },
+          tokenForTypes.arduinoApp,
+        );
         await req.user?.updateOne({
           $inc: {
             points: 50,
@@ -132,22 +121,21 @@ ArduinoRouter.post(
 );
 
 ArduinoRouter.post('/add/sensor', VerifyAuthToken, async (req, res) => {
-  const findUser = await User.findById(req.id);
   const arduinoApp = await ArduinoApp.findOne({
-    own: findUser?._id,
+    own: req?.id,
   }).findOne({
     name: req.body.arduinoAppName,
   });
   const isThereSensorNameLikeThis = await Sensor.findOne({
     appID: arduinoApp?.id,
   })
-    .findOne({ own: findUser?._id })
+    .findOne({ own: req.id })
     .findOne({
       name: req.body.sensorName,
     });
   const sensor = new Sensor({
     name: req.body.sensorName,
-    own: findUser?.id,
+    own: req.id,
     appID: arduinoApp?.id,
   });
 
@@ -155,7 +143,7 @@ ArduinoRouter.post('/add/sensor', VerifyAuthToken, async (req, res) => {
   if (arduinoApp) {
     // if there is not sensor name
     if (!isThereSensorNameLikeThis) {
-      console.log(sensor, findUser?._id);
+      console.log(sensor, req.id);
       try {
         // push sensor id
         await arduinoApp?.updateOne({
@@ -164,7 +152,7 @@ ArduinoRouter.post('/add/sensor', VerifyAuthToken, async (req, res) => {
           },
         });
         // increments user point
-        await findUser?.updateOne({ $inc: { points: 10 } });
+        await req.user?.updateOne({ $inc: { points: 10 } });
 
         // save sensor
         await sensor.save();
