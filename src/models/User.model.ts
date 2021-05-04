@@ -23,6 +23,8 @@ export interface UserInterface {
   birthDate: Date;
   roles: Array<string>;
   socialMedias?: Array<SocialMedia>;
+  avatar: string;
+  banner: string;
 }
 
 export interface UserBaseDocument extends UserInterface, Document {
@@ -40,6 +42,8 @@ export interface UserModel extends Model<UserBaseDocument> {
 }
 
 const userSchema = new Schema<UserDocument, UserModel>({
+  avatar: String,
+  banner: String,
   points: {
     type: Number,
     require: true,
