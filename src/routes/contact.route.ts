@@ -4,7 +4,7 @@
  * This API Script under MIT LICENSE
  * What is this for ? This is REST API to contact MTS Technonatura Admin, send message from [paste link here] and send it to [api link], we saved the message to database
  *
- * (c) 2021 by MTS-Technonatura, made with 💖 by Aldhan
+ * (c) 2021 by MTS-Technonatura, made with 💖 by Aldhanekaa (https://github.com/aldhanekaa)
  * =============================================================
  */
 
