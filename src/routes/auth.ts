@@ -98,6 +98,55 @@ AuthRouter.post('/checkJWT', async (req, res) => {
   return;
 });
 
+AuthRouter.get('/checkJWT/:token', async (req, res) => {
+  const token = req.params.token;
+  if (token) {
+    try {
+      const verifyToken = await jwt.verify(
+        token,
+        process.env.AUTH_SECRET_TOKEN || 'authSecret',
+      );
+
+      // @ts-ignore
+      if (typeof verifyToken != 'string' && verifyToken.password) {
+        // @ts-ignore
+        const user = await User.findById(verifyToken._id);
+
+        // @ts-ignore
+        if (verifyToken.password != user?.password) {
+          res
+            .status(200)
+            .json({ message: 'invalid password, password might has changed' });
+          return;
+        } else {
+          res.status(200).json({
+            message: 'success',
+            user: {
+              follows: user?.follows,
+              name: user?.name,
+              username: user?.username,
+              email: user?.email,
+              accountCreated: user?.accountCreated,
+              isAccountVerified: user?.isAccountVerified,
+              roles: user?.roles,
+              socialMedias: user?.socialMedias,
+            },
+          });
+          return;
+        }
+      }
+    } catch (err) {
+      res.status(200).json({ message: 'invalid token' });
+      return;
+    }
+
+    // console.log(token.split(' '));
+  }
+
+  res.json({ message: 'token undefined' });
+  return;
+});
+
 AuthRouter.post('/signup', async (req, res) => {
   // console.log(req.body);
   const { email, password, username, name } = req.body;
