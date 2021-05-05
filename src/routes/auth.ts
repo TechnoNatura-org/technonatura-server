@@ -5,8 +5,37 @@ if (process.env.NODE_ENV !== 'production') {
 import * as express from 'express';
 import * as jwt from 'jsonwebtoken';
 import User, { UserBaseDocument, UserInterface } from '../models/User.model';
+import Role from '../models/Role.model';
+import { VerifyAuthToken } from '../controllers/checkToken';
+
 import createToken, { tokenForTypes } from '../controllers/createToken';
 const AuthRouter = express.Router();
+
+AuthRouter.post('/new/role', VerifyAuthToken, async (req, res) => {
+  const { rolename } = req.body;
+  // const { token } = req.headers;
+  // console.log(req.headers);
+
+  try {
+    const isThereThisRole = await Role.findOne({ name: rolename });
+    if (isThereThisRole) {
+      res.status(200).json({ message: 'role already registered' });
+      return;
+    } else {
+      const role = new Role({
+        name: rolename,
+      });
+      await role.save();
+      res.status(200).json({ message: 'success' });
+    }
+  } catch (err) {
+    console.log('ERR! ', err);
+
+    const errors = await handleErrors(err);
+    console.log(errors);
+    res.status(200).json({ errors });
+  }
+});
 
 AuthRouter.post('/login', async (req, res) => {
   const { username, password } = req.body;
