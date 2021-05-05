@@ -42,8 +42,14 @@ export interface UserModel extends Model<UserBaseDocument> {
 }
 
 const userSchema = new Schema<UserDocument, UserModel>({
-  avatar: String,
-  banner: String,
+  avatar: {
+    type: String,
+    default: '',
+  },
+  banner: {
+    type: String,
+    default: '',
+  },
   points: {
     type: Number,
     require: true,
