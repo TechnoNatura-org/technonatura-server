@@ -9,7 +9,74 @@ import Role from '../models/Role.model';
 import { VerifyAuthToken } from '../controllers/checkToken';
 
 import createToken, { tokenForTypes } from '../controllers/createToken';
+import { checkRoles } from '../controllers/checkRoles';
+
 const AuthRouter = express.Router();
+
+declare module 'express-serve-static-core' {
+  interface Request {
+    id: string;
+    user?: UserBaseDocument | null;
+  }
+}
+
+AuthRouter.get('/unverifiedusers', async (req, res) => {
+  try {
+    const unverifiedusers = User.find({ isAccountVerified: false });
+    res
+      .status(200)
+      .json({ message: 'success', unverified_users: unverifiedusers });
+  } catch (err) {
+    // console.log("err when fetching unverified users", err)
+    res.status(200).json({ message: 'error in server' });
+  }
+});
+
+AuthRouter.post('/acceptuser', VerifyAuthToken, async (req, res) => {
+  const { userID } = req.body;
+  if (userID) {
+    try {
+      if (
+        req.user &&
+        checkRoles(req.user.roles, ['Owner', 'Developer', 'Admin'])
+      ) {
+        const unverifiedusers = User.findByIdAndUpdate(userID, {
+          isAccountVerified: true,
+        });
+        res.status(200).json({ message: 'success' });
+      } else {
+        res.status(200).json({ message: 'access denied for this user' });
+      }
+    } catch (err) {
+      // console.log("err when fetching unverified users", err)
+      res.status(200).json({ message: 'error in server' });
+    }
+  } else {
+    res.status(200).json({ message: 'userID not provided' });
+  }
+});
+
+AuthRouter.post('/deleteuser', VerifyAuthToken, async (req, res) => {
+  const { userID } = req.body;
+  if (userID) {
+    try {
+      if (
+        req.user &&
+        checkRoles(req.user.roles, ['Owner', 'Developer', 'Admin'])
+      ) {
+        const unverifiedusers = User.findByIdAndDelete(userID);
+        res.status(200).json({ message: 'success' });
+      } else {
+        res.status(200).json({ message: 'access denied for this user' });
+      }
+    } catch (err) {
+      // console.log("err when fetching unverified users", err)
+      res.status(200).json({ message: 'error in server' });
+    }
+  } else {
+    res.status(200).json({ message: 'userID not provided' });
+  }
+});
 
 AuthRouter.post('/new/role', VerifyAuthToken, async (req, res) => {
   const { rolename } = req.body;
@@ -17,16 +84,18 @@ AuthRouter.post('/new/role', VerifyAuthToken, async (req, res) => {
   // console.log(req.headers);
 
   try {
-    const isThereThisRole = await Role.findOne({ name: rolename });
-    if (isThereThisRole) {
-      res.status(200).json({ message: 'role already registered' });
-      return;
-    } else {
+    if (
+      req.user &&
+      checkRoles(req.user.roles, ['Owner', 'Developer', 'Admin'])
+    ) {
       const role = new Role({
         name: rolename,
       });
       await role.save();
       res.status(200).json({ message: 'success' });
+    } else {
+      res.status(200).json({ message: 'access denied for this user' });
+      return;
     }
   } catch (err) {
     console.log('ERR! ', err);
@@ -242,7 +311,7 @@ async function handleErrors(
   },
   SignupBody?: SignupBody,
 ) {
-  // console.log('ERRRRORORR', err.message);
+  console.log('ERRRRORORR', err.message);
   // @ts-ignore
   let errors: Errors = {};
 
@@ -288,7 +357,11 @@ async function handleErrors(
   }
 
   // validation errors
-  if (err._message && err._message.includes('User validation failed')) {
+  if (
+    err._message &&
+    (err._message.includes('User validation failed') ||
+      err._message.includes('Role validation failed'))
+  ) {
     // console.log(err);
 
     // @ts-ignore

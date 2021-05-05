@@ -15,6 +15,7 @@ export interface RoleModel extends Model<RoleBaseDocument> {}
 const roleModel = new Schema<RoleDocument, RoleModel>({
   name: {
     type: String,
+    unique: true,
     required: [true, 'Please enter role name'],
     minlength: [4, 'Minimum length of role name is 4 characters'],
   },
