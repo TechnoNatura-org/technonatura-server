@@ -40,7 +40,7 @@ db.once('open', () => console.log('connected to mongoose'));
 app.use('/auth', cors(corsOptions), AuthRouter);
 // app.use('/contact', cors(corsOptions), ContactRouter);
 app.use('/contact', cors(corsOptions), ContactRouter);
-app.use('/arduino', ArduinoRouter);
+app.use('/arduino', cors(corsOptions), ArduinoRouter);
 app.use('/', SubscriptionRouter);
 app.use('/', AnythingRouter);
 

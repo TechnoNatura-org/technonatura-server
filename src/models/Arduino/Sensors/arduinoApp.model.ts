@@ -13,6 +13,7 @@ export interface sensorsInterface {
   sensors?: Array<string>;
   desc: string;
   own?: string;
+  token?: string;
 }
 
 export interface sensorsBaseDocument extends sensorsInterface, Document {
@@ -37,15 +38,15 @@ const sensorsSchema = new Schema<sensorsDocument, sensorsModel>({
   desc: {
     type: String,
     required: [true, 'Please enter desc'],
-    validate: [validateUsername, 'Only characters and numbers are allowed'],
-    minlength: [4, 'Minimum name length is 4 characters'],
-    maxLength: [100, 'too long'],
+    minlength: [4, 'Minimum desc length is 4 characters'],
+    maxLength: [20, 'too long'],
   },
   own: {
     type: String,
     required: [true, 'Please enter desc'],
   },
   sensors: [String],
+  token: String,
 });
 
 function validateUsername(str: string) {
@@ -67,7 +68,7 @@ const ArduinoAppModel = model<sensorsDocument, sensorsModel>(
   'ArduinoApp',
   sensorsSchema,
 );
-ArduinoAppModel.getAllSensors = async function (
+ArduinoAppModel.getAllSensors = async function(
   appID: string,
 ): Promise<sensorInterface[] | undefined> {
   // console.log('WOYYWY', appID);

@@ -20,8 +20,6 @@ import User, { UserBaseDocument } from '../models/User.model';
 import { VerifyAuthToken } from '../controllers/checkToken';
 import createToken, { tokenForTypes } from '../controllers/createToken';
 
-import * as jwt from 'jsonwebtoken';
-
 declare module 'express-serve-static-core' {
   interface Request {
     id: string;
@@ -35,7 +33,7 @@ interface UserInRequest extends Request {
 
 const ArduinoRouter = express.Router();
 
-ArduinoRouter.get('/apps', VerifyAuthToken, async (req, res) => {
+ArduinoRouter.post('/apps', VerifyAuthToken, async (req, res) => {
   try {
     const apps = await ArduinoApp.find({ own: req.id });
     res.status(200).send({ apps: apps });
@@ -61,27 +59,26 @@ ArduinoRouter.post(
     const { arduinoAppName, desc } = req.body;
     // const {id}: {id:number} = req
 
-    try {
-      // @ts-ignore
-      const sensorsByUserId = await ArduinoApp.find({
-        own: req.id,
-      });
+    // @ts-ignore
+    const isThere = await ArduinoApp.find({
+      own: req.id,
+    }).findOne({
+      name: arduinoAppName,
+    });
+    //@ts-ignore
+    //   console.log('isThere', sensorsByUserId, isThere, name);
+
+    console.log(isThere);
+
+    // if there is same sensor name
+    if (!isThere) {
       const App = new ArduinoApp({
         name: arduinoAppName,
         desc: desc,
         own: req.id,
       });
-      // @ts-ignore
-      const isThere: number = sensorsByUserId.findIndex(
-        (element: sensorsInterface) =>
-          // @ts-ignore
-          element.name == arduinoAppName,
-      );
-      //@ts-ignore
-      //   console.log('isThere', sensorsByUserId, isThere, name);
 
-      // if there is same sensor name
-      if (isThere == -1) {
+      try {
         await App.save();
         const token = createToken(
           {
@@ -91,6 +88,7 @@ ArduinoRouter.post(
           },
           tokenForTypes.arduinoApp,
         );
+        await App.updateOne({ token: token });
         await req.user?.updateOne({
           $inc: {
             points: 50,
@@ -99,21 +97,25 @@ ArduinoRouter.post(
         // user
 
         res.status(200).send({
-          message: 'success',
+          message: 'App Created',
           arduinoAppToken: token,
+          status: 'success',
+          arduinoAppID: App._id,
         });
         return;
-      } else {
-        res.status(500).send({
-          message: 'this name is already registered',
+      } catch (err) {
+        const errors = await handleErrors(err);
+        res.status(200).send({
+          message: 'error',
+          errors,
+          status: 'error',
         });
         return;
       }
-    } catch (err) {
-      const errors = await handleErrors(err);
-      res.status(500).send({
-        message: 'error',
-        errors,
+    } else {
+      res.status(200).send({
+        message: 'this name is already registered',
+        status: 'warning',
       });
       return;
     }
