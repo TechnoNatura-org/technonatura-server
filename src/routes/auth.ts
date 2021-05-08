@@ -43,7 +43,7 @@ AuthRouter.post('/acceptuser', VerifyAuthToken, async (req, res) => {
         req.user &&
         checkRoles(req.user.roles, ['Owner', 'Developer', 'Admin'])
       ) {
-        const unverifiedusers = User.findByIdAndUpdate(userID, {
+        const verifiedUser = await User.findByIdAndUpdate(userID, {
           isAccountVerified: true,
           roles: ['member'],
         });
