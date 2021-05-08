@@ -22,13 +22,16 @@ declare module 'express-serve-static-core' {
 
 AuthRouter.get('/unverifiedusers', async (req, res) => {
   try {
-    const unverifiedusers = User.find({ isAccountVerified: false });
-    res
-      .status(200)
-      .json({ message: 'success', unverified_users: unverifiedusers });
+    const unverifiedusers = await User.find({ isAccountVerified: false });
+    res.status(200).json({
+      message: 'success',
+      unverified_users: unverifiedusers,
+      status: 'sucess',
+    });
   } catch (err) {
+    console.log(err);
     // console.log("err when fetching unverified users", err)
-    res.status(200).json({ message: 'error in server' });
+    res.status(200).json({ message: 'error in server', status: 'error' });
   }
 });
 
@@ -42,17 +45,20 @@ AuthRouter.post('/acceptuser', VerifyAuthToken, async (req, res) => {
       ) {
         const unverifiedusers = User.findByIdAndUpdate(userID, {
           isAccountVerified: true,
+          roles: ['member'],
         });
-        res.status(200).json({ message: 'success' });
+        res.status(200).json({ message: 'success', status: 'success' });
       } else {
-        res.status(200).json({ message: 'access denied for this user' });
+        res
+          .status(200)
+          .json({ message: 'access denied for this user', status: 'error' });
       }
     } catch (err) {
       // console.log("err when fetching unverified users", err)
-      res.status(200).json({ message: 'error in server' });
+      res.status(200).json({ message: 'error in server', status: 'error' });
     }
   } else {
-    res.status(200).json({ message: 'userID not provided' });
+    res.status(200).json({ message: 'userID not provided', status: 'warning' });
   }
 });
 
@@ -64,17 +70,19 @@ AuthRouter.post('/deleteuser', VerifyAuthToken, async (req, res) => {
         req.user &&
         checkRoles(req.user.roles, ['Owner', 'Developer', 'Admin'])
       ) {
-        const unverifiedusers = User.findByIdAndDelete(userID);
-        res.status(200).json({ message: 'success' });
+        const unverifiedusers = await User.findByIdAndDelete(userID);
+        res.status(200).json({ message: 'User Deleted', status: 'success' });
       } else {
-        res.status(200).json({ message: 'access denied for this user' });
+        res
+          .status(200)
+          .json({ message: 'access denied for this user', status: 'error' });
       }
     } catch (err) {
       // console.log("err when fetching unverified users", err)
-      res.status(200).json({ message: 'error in server' });
+      res.status(200).json({ message: 'error in server', status: 'error' });
     }
   } else {
-    res.status(200).json({ message: 'userID not provided' });
+    res.status(200).json({ message: 'userID not provided', status: 'warning' });
   }
 });
 
@@ -234,6 +242,7 @@ AuthRouter.get('/checkJWT/:token', async (req, res) => {
         }
       }
     } catch (err) {
+      console.log(err);
       res.status(200).json({ message: 'invalid token' });
       return;
     }

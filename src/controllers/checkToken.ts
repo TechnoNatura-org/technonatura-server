@@ -38,7 +38,7 @@ const VerifyAuthToken = async (
           if (verifyToken.password != user?.password) {
             // console.log('pass');
 
-            res.status(500).send({
+            res.status(200).send({
               message: 'password has changed',
             });
             return;
@@ -51,21 +51,21 @@ const VerifyAuthToken = async (
             return next();
           }
         } else {
-          res.status(500).send({ message: 'user not found!' });
+          res.status(200).send({ message: 'user not found!' });
           return;
         }
       }
     } catch (err) {
       // console.log('ero');
 
-      res.status(500).send({ message: 'error occured' });
+      res.status(200).send({ message: 'error occured' });
       return;
     }
 
     // console.log(token.split(' '));
   }
 
-  res.status(500).send({ message: 'token undefined' });
+  res.status(200).send({ message: 'token undefined' });
   return;
 };
 export { VerifyAuthToken };

@@ -11,7 +11,7 @@ interface blogTag {
   blogTagID: String;
 }
 
-export interface blogTagInterface {
+export interface blogPostInterface {
   title: string;
   tags?: Array<blogTag>;
   content: string;
@@ -20,17 +20,17 @@ export interface blogTagInterface {
   thumbnail: string;
 }
 
-export interface blogTagBaseDocument extends blogTagInterface, Document {
+export interface blogPostBaseDocument extends blogPostInterface, Document {
   tags: Types.Array<blogTag>;
 }
 
 // Export this for strong typing
-export interface blogTagDocument extends blogTagBaseDocument {}
+export interface blogPostDocument extends blogPostBaseDocument {}
 
 // For model
-export interface blogTagModel extends Model<blogTagBaseDocument> {}
+export interface blogPostModel extends Model<blogPostBaseDocument> {}
 
-const blogTagSchema = new Schema<blogTagDocument, blogTagModel>({
+const blogPostSchema = new Schema<blogPostDocument, blogPostModel>({
   title: {
     type: String,
     required: [true, 'Please enter blog title'],
@@ -66,9 +66,9 @@ function validateUsername(str: string) {
   return true;
 }
 
-const blogTagModel = model<blogTagDocument, blogTagModel>(
-  'blogTag',
-  blogTagSchema,
+const blogTagModel = model<blogPostDocument, blogPostModel>(
+  'blogPost',
+  blogPostSchema,
 );
 
 export default blogTagModel;
