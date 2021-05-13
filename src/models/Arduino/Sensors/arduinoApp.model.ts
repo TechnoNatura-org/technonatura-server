@@ -10,7 +10,6 @@ const {
 
 export interface sensorsInterface {
   name: string;
-  sensors?: Array<string>;
   desc: string;
   own?: string;
   token?: string;

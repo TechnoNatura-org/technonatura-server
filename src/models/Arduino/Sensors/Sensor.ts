@@ -8,7 +8,6 @@ const {
 
 export interface sensorInterface {
   name: string;
-  data?: Array<sensorsDataInterface>;
   appID: string;
   own: string;
 }
