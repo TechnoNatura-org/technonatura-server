@@ -33,6 +33,15 @@ interface UserInRequest extends Request {
 
 const ArduinoRouter = express.Router();
 
+ArduinoRouter.use((req, res, next) => {
+  res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+  res.header(
+    'Access-Control-Allow-Headers',
+    'Origin, X-Requested-With, Content-Type, Accept',
+  );
+  next();
+});
+
 ArduinoRouter.post('/apps', VerifyAuthToken, async (req, res) => {
   try {
     const apps = await ArduinoApp.find({ own: req.id });
