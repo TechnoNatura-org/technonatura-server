@@ -224,10 +224,8 @@ ArduinoRouter.post(
    */
 
   async (req: UserInRequest, res) => {
-    const { arduinoAppName } = req.body;
-    const isThereArduinoApp = await ArduinoApp.find({
-      own: req.id,
-    }).findOne({ name: arduinoAppName });
+    const { arduinoAppId } = req.body;
+    const isThereArduinoApp = await ArduinoApp.findById(arduinoAppId);
 
     if (isThereArduinoApp) {
       try {
