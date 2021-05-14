@@ -10,6 +10,7 @@ export interface sensorInterface {
   name: string;
   appID: string;
   own: string;
+  data?: Array<sensorsDataInterface>;
 }
 
 export interface sensorBaseDocument extends sensorInterface, Document {

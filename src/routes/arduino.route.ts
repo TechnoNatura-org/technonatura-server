@@ -13,7 +13,6 @@ import { Request } from 'express';
 import ArduinoApp, {
   sensorsInterface,
 } from '../models/Arduino/Sensors/arduinoApp.model';
-import SensorData from '../models/Arduino/Sensors/SensorsData.model';
 import Sensor from '../models/Arduino/Sensors/Sensor';
 
 import User, { UserBaseDocument } from '../models/User.model';
@@ -60,6 +59,25 @@ ArduinoRouter.post('/app', VerifyAuthToken, async (req, res) => {
   } catch (err) {
     res.status(200).send({ message: 'error when fetching apps' });
   }
+});
+ArduinoRouter.post('/sensor', VerifyAuthToken, async (req, res) => {
+  const { sensorId, appId } = req.body;
+
+  if (sensorId) {
+    try {
+      const sensor = await Sensor.findById(sensorId).findOne({ appID: appId });
+
+      res.status(200).send({ sensor: sensor });
+      return;
+    } catch (err) {
+      res
+        .status(200)
+        .send({ message: 'error when fetching apps', status: 'error' });
+      return;
+    }
+  }
+  res.status(200).send({ message: 'no sensor id provided', status: 'error' });
+  return;
 });
 
 ArduinoRouter.post(
@@ -251,7 +269,7 @@ ArduinoRouter.post('/del/:appID', VerifyAuthToken, async (req, res) => {
   if (app && app.own == req.id) {
     try {
       await app.remove();
-      Sensor.find({ appID: appID }).remove();
+      await Sensor.find({ appID: appID }).remove();
       res
         .status(200)
         .send({ message: 'arduino app deleted', status: 'success' });
@@ -275,22 +293,22 @@ ArduinoRouter.post(
   async (req, res) => {
     const { sensorID } = req.params;
     const sensor = await Sensor.findById(sensorID);
-    const app = await ArduinoApp.findById(sensor?.appID);
 
     // console.log(sensor, req.id);
     if (sensor && sensor.own == req.id) {
       try {
         await sensor.remove();
-        res.status(200).send({ message: 'success' });
+        res.status(200).send({ message: 'success', status: 'success' });
         return;
       } catch (err) {
-        res
-          .status(500)
-          .send({ message: 'error when remove sensor from database' });
+        res.status(500).send({
+          message: 'error when remove sensor from database',
+          status: 'success',
+        });
         return;
       }
     } else {
-      res.status(200).send({ message: 'sensor not found' });
+      res.status(200).send({ message: 'sensor not found', status: 'warning' });
       return;
     }
   },
@@ -302,9 +320,16 @@ ArduinoRouter.post(
 // ===========================================================
 // UPDATE APP AND SENSORS
 // ===========================================================
-ArduinoRouter.post('/update/:id', (req, res) => {});
+ArduinoRouter.post('/update/:id', VerifyAuthToken, (req, res) => {});
 
-ArduinoRouter.post('/update/sensor/:sensorID', (req, res) => {});
+ArduinoRouter.post(
+  '/update/sensor/:sensorID',
+  VerifyAuthToken,
+  (req, res) => {},
+);
+ArduinoRouter.post('/add/data/', VerifyAuthToken, (req, res) => {
+  const { sensorId, arduinoAppToken, data } = req.body;
+});
 
 // ===========================================================
 // UPDATE APP AND SENSORS
