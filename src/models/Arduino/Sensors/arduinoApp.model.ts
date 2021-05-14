@@ -49,7 +49,7 @@ const sensorsSchema = new Schema<sensorsDocument, sensorsModel>({
 });
 
 function validateUsername(str: string) {
-  if (!str.match(/^[a-zA-Z0-9]+$/)) {
+  if (!str.match(/^[A-Za-z0-9_-]*$/)) {
     return false;
   }
 
