@@ -143,11 +143,7 @@ ArduinoRouter.post('/add/sensor', VerifyAuthToken, async (req, res) => {
    * - arduinoAppName
    * - sensorName
    */
-  const arduinoApp = await ArduinoApp.findOne({
-    own: req?.id,
-  }).findOne({
-    name: req.body.arduinoAppName,
-  });
+  const arduinoApp = await ArduinoApp.findById(req.body.arduinoAppId);
   const isThereSensorNameLikeThis = await Sensor.findOne({
     appID: arduinoApp?.id,
   })
@@ -169,13 +165,6 @@ ArduinoRouter.post('/add/sensor', VerifyAuthToken, async (req, res) => {
     if (!isThereSensorNameLikeThis) {
       console.log(sensor, req.id);
       try {
-        // push sensor id
-        await arduinoApp?.updateOne({
-          $push: {
-            sensors: sensor.id,
-          },
-        });
-
         // increments user point
         await req.user?.updateOne({
           $inc: {
@@ -188,10 +177,11 @@ ArduinoRouter.post('/add/sensor', VerifyAuthToken, async (req, res) => {
 
         res.status(200).send({
           message: 'success saved to db',
+          sensorId: sensor._id,
           status: 'success',
         });
       } catch (err) {
-        console.log('ERROR WHEN ADD SENSOR', err);
+        // console.log('ERROR WHEN ADD SENSOR', err);
         const errors = await handleErrors(err);
 
         res.status(200).send({
@@ -204,12 +194,14 @@ ArduinoRouter.post('/add/sensor', VerifyAuthToken, async (req, res) => {
     } else {
       res.status(200).send({
         message: 'this sensor name already taken',
+        status: 'error',
       });
       return;
     }
   } else {
     res.status(200).send({
       message: 'app is not registered',
+      status: 'error',
     });
   }
 });
