@@ -81,7 +81,9 @@ ArduinoRouter.post(
     const isThere = await ArduinoApp.find({
       own: req.id,
     }).findOne({
-      name: arduinoAppName,
+      name: {
+        $regex: new RegExp('^' + arduinoAppName.toLowerCase(), 'i'),
+      },
     });
 
     // if there is same sensor name
@@ -151,7 +153,9 @@ ArduinoRouter.post('/add/sensor', VerifyAuthToken, async (req, res) => {
       own: req.id,
     })
     .findOne({
-      name: req.body.sensorName,
+      name: {
+        $regex: new RegExp('^' + req.body.sensorName.toLowerCase(), 'i'),
+      },
     });
   const sensor = new Sensor({
     name: req.body.sensorName,
