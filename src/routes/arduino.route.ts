@@ -247,15 +247,20 @@ ArduinoRouter.post('/del/:appID', VerifyAuthToken, async (req, res) => {
   if (app && app.own == req.id) {
     try {
       await app.remove();
-      await Sensor.find({ appID: appID }).remove();
-      res.status(200).send({ message: 'success' });
+      Sensor.find({ appID: appID }).remove();
+      res
+        .status(200)
+        .send({ message: 'arduino app deleted', status: 'success' });
       return;
     } catch (err) {
-      res.status(500).send({ message: 'error when remove app from database' });
+      res.status(200).send({
+        message: 'error when remove app from database',
+        status: 'error',
+      });
       return;
     }
   } else {
-    res.status(200).send({ message: 'app not found' });
+    res.status(200).send({ message: 'app not found', status: 'error' });
     return;
   }
 });
