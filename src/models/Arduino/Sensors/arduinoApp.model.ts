@@ -1,7 +1,6 @@
 import { Schema, Model, Document, model, Types, Query } from 'mongoose';
 import * as Validator from 'validator';
 import { Response } from 'express';
-import { sensorsDataSchema, sensorsDataInterface } from './SensorsData.model';
 import Sensor, { sensorInterface } from './Sensor';
 
 const {

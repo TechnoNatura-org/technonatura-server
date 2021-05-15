@@ -1,6 +1,6 @@
 import { Schema, Model, Document, model, Types, Query } from 'mongoose';
 import * as Validator from 'validator';
-import { sensorsDataSchema, sensorsDataInterface } from './SensorsData.model';
+import { sensorDataSchema, sensorDataInterface } from './SensorsData.model';
 
 const {
   default: { isEmail, isURL },
@@ -10,11 +10,11 @@ export interface sensorInterface {
   name: string;
   appID: string;
   own: string;
-  data?: Array<sensorsDataInterface>;
+  data?: Array<sensorDataInterface>;
 }
 
 export interface sensorBaseDocument extends sensorInterface, Document {
-  data: Types.Array<sensorsDataInterface>;
+  data: Types.Array<sensorDataInterface>;
 }
 
 // Export this for strong typing
@@ -39,7 +39,7 @@ const sensorSchema = new Schema<sensorDocument, sensorModel>({
     type: String,
     required: true,
   },
-  data: [sensorsDataSchema],
+  data: [sensorDataSchema],
 });
 
 function validateUsername(str: string) {

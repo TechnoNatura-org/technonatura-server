@@ -1,4 +1,4 @@
-import { Schema, Model, Document, model, Types, Query } from 'mongoose';
+import { Schema, Model, Document, model } from 'mongoose';
 
 export interface RoleInterface {
   name: string;

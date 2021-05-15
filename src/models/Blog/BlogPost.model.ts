@@ -1,6 +1,5 @@
 import { Schema, Model, Document, model, Types, Query } from 'mongoose';
 import * as Validator from 'validator';
-import { Response } from 'express';
 
 const {
   default: { isEmail, isURL },

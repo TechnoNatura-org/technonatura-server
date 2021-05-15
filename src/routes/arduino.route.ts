@@ -18,6 +18,8 @@ import Sensor from '../models/Arduino/Sensors/Sensor';
 import User, { UserBaseDocument } from '../models/User.model';
 import { VerifyAuthToken } from '../controllers/checkToken';
 import createToken, { tokenForTypes } from '../controllers/createToken';
+import * as jwt from 'jsonwebtoken';
+import SensorsData from '../models/Arduino/Sensors/SensorsData.model';
 
 declare module 'express-serve-static-core' {
   interface Request {
@@ -327,8 +329,80 @@ ArduinoRouter.post(
   VerifyAuthToken,
   (req, res) => {},
 );
-ArduinoRouter.post('/add/data/', VerifyAuthToken, (req, res) => {
-  const { sensorId, arduinoAppToken, data } = req.body;
+ArduinoRouter.post('/add/data/', async (req, res) => {
+  const { arduinoAppToken, sensors } = req.body;
+
+  if (!arduinoAppToken) {
+    res.status(200).json({ message: 'token not provided', status: 'error' });
+    return;
+  }
+
+  try {
+    // convert jwt
+    const verifyToken = await jwt.verify(
+      arduinoAppToken,
+      process.env.ArduinoApp_SECRET_TOKEN || 'authSecret',
+    );
+
+    const arduinoApp = await ArduinoApp.findById(
+      // @ts-ignore
+      verifyToken.appID,
+    );
+
+    if (!arduinoApp) {
+      res
+        .status(200)
+        .json({ message: 'Arduino App Not Found', status: 'error' });
+      return;
+    }
+
+    if (typeof sensors == 'object') {
+      try {
+        for (const sensor in sensors) {
+          const TypeOfSensorData = Number(sensors[sensor]);
+
+          // console.log(isNaN(TypeOfSensorData));
+          if (!isNaN(TypeOfSensorData)) {
+            const foundSensor = await Sensor.find({
+              appID: arduinoApp._id,
+            }).findOne({
+              name: sensor,
+            });
+            // console.log(foundSensor, arduinoApp._id, sensor);
+
+            if (foundSensor) {
+              const sensorData = new SensorsData({ data: TypeOfSensorData });
+
+              await foundSensor.updateOne({
+                $push: {
+                  data: sensorData,
+                },
+              });
+              // console.log('foundSensor', foundSensor);
+            }
+          }
+        }
+
+        // console.log(arduinoApp);
+        // console.log(sensors);
+
+        // console.log(verifyToken);
+        res
+          .status(200)
+          .json({ message: 'Success Added Data', status: 'success' });
+        return;
+      } catch (err) {
+        console.log(err);
+        res
+          .status(200)
+          .json({ message: "sensors isn't object", status: 'error' });
+        return;
+      }
+    }
+  } catch (err) {
+    res.status(200).json({ message: 'token might expired', status: 'error' });
+    return;
+  }
 });
 
 // ===========================================================

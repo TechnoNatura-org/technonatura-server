@@ -5,39 +5,36 @@ const {
   default: { isNumeric },
 } = Validator;
 
-export interface sensorsDataInterface {
+export interface sensorDataInterface {
   date: number;
   data: number;
 }
 
-export interface sensorsDataBaseDocument
-  extends sensorsDataInterface,
-    Document {}
+export interface sensorDataBaseDocument extends sensorDataInterface, Document {}
 
 // Export this for strong typing
-export interface sensorsDataDocument extends sensorsDataBaseDocument {}
+export interface sensorDataDocument extends sensorDataBaseDocument {}
 
 // For model
-export interface sensorsDataModel extends Model<sensorsDataBaseDocument> {}
+export interface sensorDataModel extends Model<sensorDataBaseDocument> {}
 
-export const sensorsDataSchema = new Schema<
-  sensorsDataDocument,
-  sensorsDataModel
->({
-  date: {
-    type: Number,
-    required: true,
-    validate: [isNumeric, 'Please enter a valid email'],
-    default: Date.now,
+export const sensorDataSchema = new Schema<sensorDataDocument, sensorDataModel>(
+  {
+    date: {
+      type: Number,
+      required: true,
+      validate: [isNumeric, 'Please enter a valid email'],
+      default: Date.now,
+    },
+    data: {
+      type: Number,
+      required: [true, 'Please enter the data'],
+      validate: [isNumeric, 'Please enter a valid email'],
+    },
   },
-  data: {
-    type: Number,
-    required: [true, 'Please enter the data'],
-    validate: [isNumeric, 'Please enter a valid email'],
-  },
-});
+);
 
-export default model<sensorsDataDocument, sensorsDataModel>(
-  'sensorsData',
-  sensorsDataSchema,
+export default model<sensorDataDocument, sensorDataModel>(
+  'sensorData',
+  sensorDataSchema,
 );
