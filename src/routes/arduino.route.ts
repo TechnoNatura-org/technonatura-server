@@ -102,7 +102,7 @@ ArduinoRouter.post(
       own: req.id,
     }).findOne({
       name: {
-        $regex: new RegExp('^'+ arduinoAppName.toLowerCase() + '$', "i"),
+        $regex: new RegExp('^' + arduinoAppName.toLowerCase() + '$', 'i'),
       },
     });
 
@@ -174,7 +174,7 @@ ArduinoRouter.post('/add/sensor', VerifyAuthToken, async (req, res) => {
     })
     .findOne({
       name: {
-        $regex: new RegExp('^'+ req.body.sensorName.toLowerCase() + '$', "i"),
+        $regex: new RegExp('^' + req.body.sensorName.toLowerCase() + '$', 'i'),
       },
     });
   const sensor = new Sensor({
