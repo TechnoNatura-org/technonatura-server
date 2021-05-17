@@ -331,6 +331,7 @@ ArduinoRouter.post(
 );
 ArduinoRouter.post('/add/data/', async (req, res) => {
   const { arduinoAppToken, sensors } = req.body;
+  console.log(req.body);
 
   if (!arduinoAppToken) {
     res.status(200).json({ message: 'token not provided', status: 'error' });
