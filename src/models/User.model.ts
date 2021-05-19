@@ -25,12 +25,14 @@ export interface UserInterface {
   socialMedias?: Array<SocialMedia>;
   avatar: string;
   banner: string;
+  bio: string;
 }
 
 export interface UserBaseDocument extends UserInterface, Document {
   roles: Types.Array<string>;
   socialMedias?: Types.Array<SocialMedia>;
   follows?: Types.Array<string>;
+  changePassword(password: string): Promise<string>;
 }
 
 // Export this for strong typing
@@ -42,6 +44,10 @@ export interface UserModel extends Model<UserBaseDocument> {
 }
 
 const userSchema = new Schema<UserDocument, UserModel>({
+  bio: {
+    type: String,
+    default: '',
+  },
   avatar: {
     type: String,
     default: '',
@@ -116,8 +122,21 @@ function validateUsername(str: string) {
   return true;
 }
 
+userSchema.methods.changePassword = async function(
+  this: UserBaseDocument,
+  password: string,
+) {
+  // console.log(this.password);
+  const salt = await bcrypt.genSalt();
+  const hashedPassword = await bcrypt.hash(password, salt);
+  await this.updateOne({ password: hashedPassword });
+  // console.log(this.password);
+
+  return hashedPassword;
+};
 // fire a function before doc saved to db
 userSchema.pre('save', async function(next) {
+  // console.log('hello');
   const salt = await bcrypt.genSalt();
   this.password = await bcrypt.hash(this.password, salt);
 

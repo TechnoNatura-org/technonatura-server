@@ -155,6 +155,65 @@ AuthRouter.post('/login', async (req, res) => {
   }
 });
 
+AuthRouter.post('/changePassword', VerifyAuthToken, async (req, res) => {
+  const { newPassword, currentPassword } = req.body;
+  // const { token } = req.headers;
+  // console.log(req.headers);
+
+  try {
+    // @ts-ignore
+    const user = await User.login(req.user.username, currentPassword);
+
+    if (user) {
+      // console.log('user', user);
+      try {
+        // console.log(user.password);
+        const hashedPassword = await user.changePassword(newPassword);
+        const token = createToken(
+          {
+            username: user.username,
+            password: hashedPassword,
+            _id: user._id,
+            email: user.email,
+          },
+          tokenForTypes.auth,
+        );
+        // console.log(
+        //   hashedPassword,
+        //   user.username,
+        //   user.password,
+        //   user._id,
+        //   user.email,
+        // );
+        res.status(200).json({
+          message: 'password changed',
+          status: 'success',
+          token: token,
+        });
+        return;
+      } catch (err) {
+        res.status(200).json({
+          message:
+            'error when change user password, please checkout our status API',
+          status: 'error',
+        });
+        return;
+      }
+    }
+
+    res.status(200).json({
+      message: 'user not found',
+      status: 'error',
+    });
+    return;
+  } catch (err) {
+    console.log('ERR! ', err);
+
+    const errors = await handleErrors(err);
+    res.status(200).json({ errors, status: 'error', message: 'error occured' });
+  }
+});
+
 AuthRouter.post('/checkJWT', async (req, res) => {
   // const token = req.headers.authorizations;
   if (req.body.token) {
