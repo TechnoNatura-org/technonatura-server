@@ -11,6 +11,8 @@ import { VerifyAuthToken } from '../controllers/checkToken';
 import createToken, { tokenForTypes } from '../controllers/createToken';
 import { checkRoles } from '../controllers/checkRoles';
 
+import lodash from 'lodash';
+
 const AuthRouter = express.Router();
 
 declare module 'express-serve-static-core' {
@@ -35,6 +37,7 @@ AuthRouter.get('/unverifiedusers', async (req, res) => {
   }
 });
 
+// API for Admin
 AuthRouter.post('/acceptuser', VerifyAuthToken, async (req, res) => {
   const { userID } = req.body;
   if (userID) {
@@ -114,6 +117,8 @@ AuthRouter.post('/new/role', VerifyAuthToken, async (req, res) => {
   }
 });
 
+// end of API for Admin
+
 AuthRouter.post('/login', async (req, res) => {
   const { username, password } = req.body;
   // const { token } = req.headers;
@@ -155,6 +160,46 @@ AuthRouter.post('/login', async (req, res) => {
   }
 });
 
+AuthRouter.post('/signup', async (req, res) => {
+  // console.log(req.body);
+  const { email, password, username, name } = req.body;
+
+  try {
+    const user = new User({ email, password, username, name });
+    await user.save();
+
+    // console.log(user);
+
+    const token = createToken(
+      {
+        username: user.username,
+        password: user.password,
+        _id: user._id,
+        email: user.email,
+      },
+      tokenForTypes.auth,
+    );
+    res.status(200).json({
+      message: 'success',
+      token: token,
+      user: {
+        name: user.name,
+        username: user.username,
+        password: user.password,
+        email: user.email,
+        _id: user._id,
+        follows: user.follows,
+        roles: user.roles,
+        isAccountVerified: user.isAccountVerified,
+        socialMedias: user.socialMedias,
+      },
+    });
+  } catch (err) {
+    const errors = await handleErrors(err, { email, password, username, name });
+    res.status(200).json({ errors });
+  }
+});
+
 AuthRouter.post('/changePassword', VerifyAuthToken, async (req, res) => {
   const { newPassword, currentPassword } = req.body;
   // const { token } = req.headers;
@@ -162,13 +207,13 @@ AuthRouter.post('/changePassword', VerifyAuthToken, async (req, res) => {
 
   try {
     // @ts-ignore
-    const user = await User.login(req.user.username, currentPassword);
+    const user = await User.login(req.user.username, currentPassword); // try to login using the given password
 
     if (user) {
-      // console.log('user', user);
       try {
-        // console.log(user.password);
-        const hashedPassword = await user.changePassword(newPassword);
+        //
+        const hashedPassword = await user.changePassword(newPassword); // changePassword returns new hashed password
+
         const token = createToken(
           {
             username: user.username,
@@ -178,13 +223,7 @@ AuthRouter.post('/changePassword', VerifyAuthToken, async (req, res) => {
           },
           tokenForTypes.auth,
         );
-        // console.log(
-        //   hashedPassword,
-        //   user.username,
-        //   user.password,
-        //   user._id,
-        //   user.email,
-        // );
+
         res.status(200).json({
           message: 'password changed',
           status: 'success',
@@ -246,6 +285,9 @@ AuthRouter.post('/checkJWT', async (req, res) => {
               isAccountVerified: user?.isAccountVerified,
               roles: user?.roles,
               socialMedias: user?.socialMedias,
+              bio: user?.bio,
+              avatar: user?.avatar,
+              banner: user?.banner,
             },
           });
           return;
@@ -261,6 +303,44 @@ AuthRouter.post('/checkJWT', async (req, res) => {
 
   res.json({ message: 'token undefined' });
   return;
+});
+
+AuthRouter.post('/deleteAccount', VerifyAuthToken, async (req, res) => {
+  const { currentPasswordDeleteAccount } = req.body;
+  if (currentPasswordDeleteAccount && req.user) {
+    try {
+      const user = await User.login(
+        req.user.username,
+        currentPasswordDeleteAccount,
+      );
+      try {
+        await req.user?.delete();
+        res.status(200).json({
+          message: 'account deleted!',
+          status: 'success',
+        });
+      } catch (err) {
+        // console.log("err when fetching unverified users", err)
+        res
+          .status(200)
+          .json({ message: 'error when deleting account', status: 'error' });
+        return;
+      }
+    } catch (err) {
+      console.log('ERR! ', err);
+
+      const errors = await handleErrors(err);
+      let message = 'error occured';
+
+      // if (!lodash.isEmpty(errors)) {
+      //   message = 'password incorrect';
+      // }
+
+      res.status(200).json({ errors, status: 'error', message: message });
+      return;
+    }
+  }
+  res.status(200).json({ message: 'password not provided', status: 'warning' });
 });
 
 AuthRouter.get('/checkJWT/:token', async (req, res) => {
@@ -311,46 +391,6 @@ AuthRouter.get('/checkJWT/:token', async (req, res) => {
 
   res.json({ message: 'token undefined' });
   return;
-});
-
-AuthRouter.post('/signup', async (req, res) => {
-  // console.log(req.body);
-  const { email, password, username, name } = req.body;
-
-  try {
-    const user = new User({ email, password, username, name });
-    await user.save();
-
-    // console.log(user);
-
-    const token = createToken(
-      {
-        username: user.username,
-        password: user.password,
-        _id: user._id,
-        email: user.email,
-      },
-      tokenForTypes.auth,
-    );
-    res.status(200).json({
-      message: 'success',
-      token: token,
-      user: {
-        name: user.name,
-        username: user.username,
-        password: user.password,
-        email: user.email,
-        _id: user._id,
-        follows: user.follows,
-        roles: user.roles,
-        isAccountVerified: user.isAccountVerified,
-        socialMedias: user.socialMedias,
-      },
-    });
-  } catch (err) {
-    const errors = await handleErrors(err, { email, password, username, name });
-    res.status(200).json({ errors });
-  }
 });
 
 interface SignupBody {
