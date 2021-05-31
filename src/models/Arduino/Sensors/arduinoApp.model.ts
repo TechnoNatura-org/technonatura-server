@@ -11,7 +11,10 @@ export interface sensorsInterface {
   name: string;
   desc: string;
   own?: string;
-  token?: string;
+  token: {
+    token: string;
+    tokenCreated: number;
+  };
 }
 
 export interface sensorsBaseDocument extends sensorsInterface, Document {
@@ -44,7 +47,10 @@ const sensorsSchema = new Schema<sensorsDocument, sensorsModel>({
     required: [true, 'Please enter desc'],
   },
   sensors: [String],
-  token: String,
+  token: {
+    token: String,
+    tokenCreated: Number,
+  },
 });
 
 function validateUsername(str: string) {

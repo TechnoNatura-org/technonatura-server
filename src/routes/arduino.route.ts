@@ -123,7 +123,10 @@ ArduinoRouter.post(
           },
           tokenForTypes.arduinoApp,
         );
-        App.token = token;
+        // @ts-ignore
+        App.token.token = token;
+        App.token.tokenCreated = Date.now();
+
         await App.save();
 
         await req.user?.updateOne({
@@ -270,8 +273,8 @@ ArduinoRouter.post('/del/:appID', VerifyAuthToken, async (req, res) => {
   // console.log(sensor, req.id);
   if (app && app.own == req.id) {
     try {
-      await app.remove();
-      await Sensor.find({ appID: appID }).remove();
+      await app.deleteOne();
+      await Sensor.find({ appID: appID }).deleteOne();
       res
         .status(200)
         .send({ message: 'arduino app deleted', status: 'success' });
@@ -299,7 +302,7 @@ ArduinoRouter.post(
     // console.log(sensor, req.id);
     if (sensor && sensor.own == req.id) {
       try {
-        await sensor.remove();
+        await sensor.deleteOne();
         res.status(200).send({ message: 'success', status: 'success' });
         return;
       } catch (err) {
@@ -342,8 +345,9 @@ ArduinoRouter.post('/add/data/', async (req, res) => {
     // convert jwt
     const verifyToken = await jwt.verify(
       arduinoAppToken,
-      process.env.ArduinoApp_SECRET_TOKEN || 'authSecret',
+      process.env.ArduinoApp_SECRET_TOKEN || 'arduinoSecret',
     );
+    console.log(verifyToken);
 
     const arduinoApp = await ArduinoApp.findById(
       // @ts-ignore
