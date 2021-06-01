@@ -334,7 +334,7 @@ ArduinoRouter.post(
 );
 ArduinoRouter.post('/add/data/', async (req, res) => {
   const { arduinoAppToken, sensors } = req.body;
-  console.log(req.body);
+//   console.log(req.body);
 
   if (!arduinoAppToken) {
     res.status(200).json({ message: 'token not provided', status: 'error' });
@@ -347,7 +347,7 @@ ArduinoRouter.post('/add/data/', async (req, res) => {
       arduinoAppToken,
       process.env.ArduinoApp_SECRET_TOKEN || 'arduinoSecret',
     );
-    console.log(verifyToken);
+//     console.log(verifyToken);
 
     const arduinoApp = await ArduinoApp.findById(
       // @ts-ignore
@@ -404,6 +404,10 @@ ArduinoRouter.post('/add/data/', async (req, res) => {
         return;
       }
     }
+    res
+      .status(200)
+      .json({ message: "Please give an sensors input", status: 'error' });
+        return;
   } catch (err) {
     res.status(200).json({ message: 'token might expired', status: 'error' });
     return;
