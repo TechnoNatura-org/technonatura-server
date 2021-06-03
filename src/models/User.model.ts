@@ -26,12 +26,17 @@ export interface UserInterface {
   avatar: string;
   banner: string;
   bio: string;
+  status: {
+    emoji: string;
+    text: string;
+  };
 }
 
 export interface UserBaseDocument extends UserInterface, Document {
   roles: Types.Array<string>;
   socialMedias?: Types.Array<SocialMedia>;
   follows?: Types.Array<string>;
+
   changePassword(password: string): Promise<string>;
 }
 
@@ -44,6 +49,16 @@ export interface UserModel extends Model<UserBaseDocument> {
 }
 
 const userSchema = new Schema<UserDocument, UserModel>({
+  status: new Schema({
+    emoji: {
+      type: String,
+      default: '',
+    },
+    text: {
+      type: String,
+      default: '',
+    },
+  }),
   bio: {
     type: String,
     default: '',
