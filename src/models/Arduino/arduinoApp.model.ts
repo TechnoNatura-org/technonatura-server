@@ -1,4 +1,4 @@
-import { Schema, Model, Document, model, Types, Query } from 'mongoose';
+import { Schema, Model, Document, model, Types, Query, Error } from 'mongoose';
 import * as Validator from 'validator';
 import Sensor, { sensorInterface } from './Sensors/Sensor';
 
@@ -21,10 +21,11 @@ export interface sensorsDocument extends sensorsBaseDocument {}
 
 // For model
 export interface sensorsModel extends Model<sensorsBaseDocument> {
+  deleteApp(userId: string): Promise<void | Error> | void;
   getAllSensors(appID: string): Promise<sensorInterface[] | undefined>;
 }
 
-const sensorsSchema = new Schema<sensorsDocument, sensorsModel>({
+const ArduinoAppSchema = new Schema<sensorsDocument, sensorsModel>({
   name: {
     type: String,
     required: [true, 'Please enter your name'],
@@ -58,7 +59,7 @@ function validateUsername(str: string) {
 
 const ArduinoAppModel = model<sensorsDocument, sensorsModel>(
   'ArduinoApp',
-  sensorsSchema,
+  ArduinoAppSchema,
 );
 ArduinoAppModel.getAllSensors = async function(
   appID: string,
@@ -66,5 +67,12 @@ ArduinoAppModel.getAllSensors = async function(
   const sensors = await Sensor.find({ appID: appID });
 
   return sensors;
+};
+ArduinoAppModel.deleteApp = async function(userId: string) {
+  try {
+    await ArduinoAppModel.find({ own: userId }).deleteMany();
+  } catch (err) {
+    throw new Error('There was en error');
+  }
 };
 export default ArduinoAppModel;

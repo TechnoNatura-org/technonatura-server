@@ -1,6 +1,8 @@
-import { Schema, Model, Document, model, Types, Query } from 'mongoose';
+import { Schema, Model, Document, model, Types, Query, Error } from 'mongoose';
 import * as Validator from 'validator';
 import * as bcrypt from 'bcrypt';
+
+import ArduinoApp from '../models/Arduino/arduinoApp.model';
 
 const {
   default: { isEmail, isURL },
@@ -38,6 +40,7 @@ export interface UserBaseDocument extends UserInterface, Document {
   follows?: Types.Array<string>;
 
   changePassword(password: string): Promise<string>;
+  deleteAccount(): Promise<void>;
 }
 
 // Export this for strong typing
@@ -149,6 +152,18 @@ userSchema.methods.changePassword = async function(
 
   return hashedPassword;
 };
+
+userSchema.methods.deleteAccount = async function(
+  this: UserBaseDocument,
+  password: string,
+) {
+  try {
+    await ArduinoApp.deleteApp(this.id);
+    await this.delete();
+  } catch (err) {
+    throw new Error(err);
+  }
+};
 // fire a function before doc saved to db
 userSchema.pre('save', async function(next) {
   // console.log('hello');
@@ -173,9 +188,9 @@ userSchema.statics.login = async function(
     if (auth) {
       return user;
     }
-    throw Error('incorrect password');
+    throw new Error('incorrect password');
   }
-  throw Error('incorrect username');
+  throw new Error('incorrect username');
 };
 
 export default model<UserDocument, UserModel>('User', userSchema);

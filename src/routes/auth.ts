@@ -314,7 +314,7 @@ AuthRouter.post('/deleteAccount', VerifyAuthToken, async (req, res) => {
         currentPasswordDeleteAccount,
       );
       try {
-        await req.user?.delete();
+        await req.user.deleteAccount();
         res.status(200).json({
           message: 'account deleted!',
           status: 'success',
@@ -323,7 +323,11 @@ AuthRouter.post('/deleteAccount', VerifyAuthToken, async (req, res) => {
         // console.log("err when fetching unverified users", err)
         res
           .status(200)
-          .json({ message: 'error when deleting account', status: 'error' });
+          .json({
+            message: 'error when deleting account',
+            status: 'error',
+            errorMessage: JSON.stringify(err),
+          });
         return;
       }
     } catch (err) {
