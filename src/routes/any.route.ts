@@ -10,7 +10,7 @@
 
 import * as express from 'express';
 import { Request } from 'express';
-import ArduinoApp from '../models/Arduino/Sensors/arduinoApp.model';
+import ArduinoApp from '../models/Arduino/arduinoApp.model';
 import Sensor from '../models/Arduino/Sensors/Sensor';
 
 import BlogPost from '../models/Blog/BlogPost.model';

@@ -44,7 +44,7 @@ async function handleErrors(err: {
     email?: string;
   };
 }) {
-  console.log('ERRRRORORR', err.message);
+  // console.log('ERRRRORORR', err.message);
   // @ts-ignore
   let errors: Errors = {};
 

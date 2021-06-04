@@ -1,11 +1,6 @@
 import { Schema, Model, Document, model, Types, Query } from 'mongoose';
 import * as Validator from 'validator';
-import { Response } from 'express';
-import Sensor, { sensorInterface } from './Sensor';
-
-const {
-  default: { isEmail, isURL },
-} = Validator;
+import Sensor, { sensorInterface } from './Sensors/Sensor';
 
 export interface sensorsInterface {
   name: string;
@@ -68,7 +63,6 @@ const ArduinoAppModel = model<sensorsDocument, sensorsModel>(
 ArduinoAppModel.getAllSensors = async function(
   appID: string,
 ): Promise<sensorInterface[] | undefined> {
-  // console.log('WOYYWY', appID);
   const sensors = await Sensor.find({ appID: appID });
 
   return sensors;

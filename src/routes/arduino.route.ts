@@ -10,16 +10,17 @@
 
 import * as express from 'express';
 import { Request } from 'express';
-import ArduinoApp, {
-  sensorsInterface,
-} from '../models/Arduino/Sensors/arduinoApp.model';
-import Sensor from '../models/Arduino/Sensors/Sensor';
-
-import User, { UserBaseDocument } from '../models/User.model';
-import { VerifyAuthToken } from '../controllers/checkToken';
-import createToken, { tokenForTypes } from '../controllers/createToken';
 import * as jwt from 'jsonwebtoken';
+
+import ArduinoApp from '../models/Arduino/arduinoApp.model';
+import Sensor from '../models/Arduino/Sensors/Sensor';
+import { UserBaseDocument } from '../models/User.model';
 import SensorsData from '../models/Arduino/Sensors/SensorsData.model';
+
+import { VerifyAuthToken } from '../controllers/checkToken';
+
+import AddArduinoAppRoute from '../controllers/Arduino/app/addApp';
+import AddSensorRoute from '../controllers/Arduino/sensor/addSensor';
 
 declare module 'express-serve-static-core' {
   interface Request {
@@ -82,156 +83,9 @@ ArduinoRouter.post('/sensor', VerifyAuthToken, async (req, res) => {
   return;
 });
 
-ArduinoRouter.post(
-  '/add/',
-  VerifyAuthToken,
-  async (req: UserInRequest, res) => {
-    /*
-     *
-     * 1. Verify JWT
-     * 2. Check if the arduino app name already exist or not
-     * 3. Create Token For Arduino App
-     * 4. Save Arduino App to Database
-     * 5. Send response
-     */
+ArduinoRouter.use('/add/', AddArduinoAppRoute);
 
-    //@ts-ignore
-    const { arduinoAppName, desc } = req.body;
-
-    const isThere = await ArduinoApp.find({
-      own: req.id,
-    }).findOne({
-      name: {
-        $regex: new RegExp('^' + arduinoAppName.toLowerCase() + '$', 'i'),
-      },
-    });
-
-    // if there is same sensor name
-    if (!isThere) {
-      const App = new ArduinoApp({
-        name: arduinoAppName,
-        desc: desc,
-        own: req.id,
-      });
-
-      try {
-        const token = createToken(
-          {
-            // @ts-ignore
-            ownerID: req.id,
-            appID: App.id,
-          },
-          tokenForTypes.arduinoApp,
-        );
-        // @ts-ignore
-        App.token.token = token;
-        App.token.tokenCreated = Date.now();
-
-        await App.save();
-
-        await req.user?.updateOne({
-          $inc: {
-            points: 50,
-          },
-        });
-        // user
-
-        res.status(200).send({
-          message: 'App Created',
-          arduinoAppToken: token,
-          status: 'success',
-          arduinoAppID: App._id,
-        });
-        return;
-      } catch (err) {
-        const errors = await handleErrors(err);
-        res.status(200).send({
-          message: 'error',
-          errors,
-          status: 'error',
-        });
-        return;
-      }
-    } else {
-      res.status(200).send({
-        message: 'this name is already registered',
-        status: 'warning',
-      });
-      return;
-    }
-  },
-);
-
-ArduinoRouter.post('/add/sensor', VerifyAuthToken, async (req, res) => {
-  /*
-   * requires these datas on body:
-   * - arduinoAppName
-   * - sensorName
-   */
-  const arduinoApp = await ArduinoApp.findById(req.body.arduinoAppId);
-  const isThereSensorNameLikeThis = await Sensor.findOne({
-    appID: arduinoApp?.id,
-  })
-    .findOne({
-      own: req.id,
-    })
-    .findOne({
-      name: {
-        $regex: new RegExp('^' + req.body.sensorName.toLowerCase() + '$', 'i'),
-      },
-    });
-  const sensor = new Sensor({
-    name: req.body.sensorName,
-    own: req.id,
-    appID: arduinoApp?.id,
-  });
-
-  // console.log(isThereSensorNameLikeThis);
-  if (arduinoApp) {
-    // if there is not sensor name
-    if (!isThereSensorNameLikeThis) {
-      console.log(sensor, req.id);
-      try {
-        // increments user point
-        await req.user?.updateOne({
-          $inc: {
-            points: 10,
-          },
-        });
-
-        // save sensor
-        await sensor.save();
-
-        res.status(200).send({
-          message: 'success saved to db',
-          sensorId: sensor._id,
-          status: 'success',
-        });
-      } catch (err) {
-        // console.log('ERROR WHEN ADD SENSOR', err);
-        const errors = await handleErrors(err);
-
-        res.status(200).send({
-          message:
-            'enter sensor name, and make sure sensor name only contains letters and numbers.',
-          errors: errors,
-        });
-        return;
-      }
-    } else {
-      res.status(200).send({
-        message: 'this sensor name already taken',
-        status: 'error',
-      });
-      return;
-    }
-  } else {
-    res.status(200).send({
-      message: 'app is not registered',
-      status: 'error',
-    });
-  }
-});
+ArduinoRouter.use('/add/sensor', AddSensorRoute);
 
 ArduinoRouter.post(
   '/sensors/',
@@ -334,7 +188,7 @@ ArduinoRouter.post(
 );
 ArduinoRouter.post('/add/data/', async (req, res) => {
   const { arduinoAppToken, sensors } = req.body;
-//   console.log(req.body);
+  //   console.log(req.body);
 
   if (!arduinoAppToken) {
     res.status(200).json({ message: 'token not provided', status: 'error' });
@@ -347,7 +201,6 @@ ArduinoRouter.post('/add/data/', async (req, res) => {
       arduinoAppToken,
       process.env.ArduinoApp_SECRET_TOKEN || 'arduinoSecret',
     );
-//     console.log(verifyToken);
 
     const arduinoApp = await ArduinoApp.findById(
       // @ts-ignore
@@ -383,15 +236,10 @@ ArduinoRouter.post('/add/data/', async (req, res) => {
                   data: sensorData,
                 },
               });
-              // console.log('foundSensor', foundSensor);
             }
           }
         }
 
-        // console.log(arduinoApp);
-        // console.log(sensors);
-
-        // console.log(verifyToken);
         res
           .status(200)
           .json({ message: 'Success Added Data', status: 'success' });
@@ -406,8 +254,8 @@ ArduinoRouter.post('/add/data/', async (req, res) => {
     }
     res
       .status(200)
-      .json({ message: "Please give an sensors input", status: 'error' });
-        return;
+      .json({ message: 'Please give an sensors input', status: 'error' });
+    return;
   } catch (err) {
     res.status(200).json({ message: 'token might expired', status: 'error' });
     return;
@@ -417,54 +265,5 @@ ArduinoRouter.post('/add/data/', async (req, res) => {
 // ===========================================================
 // UPDATE APP AND SENSORS
 // ===========================================================
-
-// ====================================================
-
-interface Errors {
-  desc: string;
-  name: string;
-}
-
-// handle errors
-async function handleErrors(err: {
-  message: string;
-  code: number;
-  _message: string;
-  keyValue: {
-    name?: string;
-    email?: string;
-  };
-}) {
-  // @ts-ignore
-  let errors: Errors = {};
-
-  if (err.message == 'Only Letters and Numbers are allowed') {
-    errors.name = err.message;
-  }
-
-  // duplicate username error
-  if (err.code === 11000 && err.keyValue.name) {
-    errors.name = 'that username is already registered';
-  }
-
-  // validation errors
-  if (
-    err._message &&
-    (err._message.includes('ArduinoApp validation failed') ||
-      err._message.includes('sensor validation failed'))
-  ) {
-    // @ts-ignore
-    Object.values(err.errors).forEach(({ properties }) => {
-      // console.log(val);
-      // console.log(properties);
-      if (properties.message) {
-        // @ts-ignore
-        errors[properties.path] = properties.message;
-      }
-    });
-  }
-
-  return errors;
-}
 
 export default ArduinoRouter;

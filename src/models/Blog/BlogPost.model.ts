@@ -1,26 +1,17 @@
 import { Schema, Model, Document, model, Types, Query } from 'mongoose';
-import * as Validator from 'validator';
-
-const {
-  default: { isEmail, isURL },
-} = Validator;
-
-interface blogTag {
-  name: String;
-  blogTagID: String;
-}
 
 export interface blogPostInterface {
   title: string;
-  tags?: Array<blogTag>;
+  tags?: Array<string>;
   content: string;
   author: string;
   publishDate: string;
   thumbnail: string;
+  published: boolean;
 }
 
 export interface blogPostBaseDocument extends blogPostInterface, Document {
-  tags: Types.Array<blogTag>;
+  tags: Types.Array<string>;
 }
 
 // Export this for strong typing
@@ -55,6 +46,10 @@ const blogPostSchema = new Schema<blogPostDocument, blogPostModel>({
     required: true,
   },
   tags: [{ name: String, blogTagID: String }],
+  published: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 function validateUsername(str: string) {

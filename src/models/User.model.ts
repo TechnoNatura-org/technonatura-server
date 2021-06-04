@@ -12,17 +12,11 @@ interface SocialMedia {
 }
 
 export interface UserInterface {
-  points: number;
-  email: string;
+  isAccountVerified: boolean;
   name: string;
   username: string;
-  isAccountVerified: boolean;
+  email: string;
   password: string;
-  accountCreated: Date;
-  follows?: Array<string>;
-  birthDate: Date;
-  roles: Array<string>;
-  socialMedias?: Array<SocialMedia>;
   avatar: string;
   banner: string;
   bio: string;
@@ -30,6 +24,12 @@ export interface UserInterface {
     emoji: string;
     text: string;
   };
+  follows?: Array<string>;
+  roles: Array<string>;
+  socialMedias?: Array<SocialMedia>;
+  points: number;
+  accountCreated: Date;
+  birthDate: Date;
 }
 
 export interface UserBaseDocument extends UserInterface, Document {
