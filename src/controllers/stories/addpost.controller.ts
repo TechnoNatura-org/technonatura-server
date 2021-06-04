@@ -8,7 +8,7 @@
  * =============================================================
  */
 
-import express from 'express';
+import * as express from 'express';
 
 import Blog, { blogPostBaseDocument } from '../../models/Blog/BlogPost.model';
 import BlogTag, { blogTagBaseDocument } from '../../models/Blog/blogTag.model';

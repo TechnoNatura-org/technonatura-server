@@ -8,7 +8,7 @@
  * =============================================================
  */
 
-import express from 'express';
+import * as express from 'express';
 
 import User, { UserBaseDocument } from '../models/User.model';
 import { VerifyAuthToken } from '../controllers/checkToken';
