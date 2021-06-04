@@ -6,6 +6,7 @@ export interface blogPostInterface {
   content: string;
   author: string;
   publishDate: string;
+  lastEdit: string;
   thumbnail: string;
   published: boolean;
 }
@@ -36,6 +37,12 @@ const blogPostSchema = new Schema<blogPostDocument, blogPostModel>({
   publishDate: {
     type: String,
     required: true,
+    default: Date.now,
+  },
+  lastEdit: {
+    type: String,
+    required: true,
+    default: Date.now,
   },
   thumbnail: {
     type: String,

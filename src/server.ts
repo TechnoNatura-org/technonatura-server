@@ -10,7 +10,7 @@ import resolvers from './graphql/resolvers';
 import AuthRouter from './routes/auth';
 import ContactRouter from './routes/contact.route';
 import ArduinoRouter from './routes/arduino.route';
-import StoryRouter from './routes/stories.route';
+import StoryRouter from './routes/blog.route';
 import SubscriptionRouter from './routes/subsciption.router';
 import AnythingRouter from './routes/any.route';
 import { corsOptions } from './controllers/cors';
