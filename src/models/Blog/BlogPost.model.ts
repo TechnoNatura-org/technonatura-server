@@ -27,6 +27,7 @@ const blogPostSchema = new Schema<blogPostDocument, blogPostModel>({
     required: [true, 'Please enter blog title'],
     validate: [validateUsername, 'Only characters and numbers are allowed'],
     minlength: [4, 'Minimum title length is 4 characters'],
+    maxLength: [20, 'Story content should be of maxinum 40 letter length'],
   },
   content: {
     type: String,
