@@ -36,6 +36,7 @@ app.use(
     crossOriginEmbedderPolicy: false,
     noSniff: true,
     xssFilter: true,
+    hidePoweredBy: true,
   }),
 );
 app.use(methodOverride('_method'));
