@@ -1,9 +1,12 @@
 import * as express from 'express';
 import * as cors from 'cors';
+import * as helmet from 'helmet';
 // methodOverride.
-import * as methodOverride from 'method-override';
 
+import * as methodOverride from 'method-override';
+import * as mongoose from 'mongoose';
 import { ApolloServer, gql } from 'apollo-server-express';
+
 import typeDefs from './graphql/typeDefs';
 import resolvers from './graphql/resolvers';
 
@@ -15,8 +18,6 @@ import SubscriptionRouter from './routes/subsciption.router';
 import AnythingRouter from './routes/any.route';
 import { corsOptions } from './controllers/cors';
 
-import * as mongoose from 'mongoose';
-
 const db = mongoose.connection;
 const app = express();
 
@@ -27,6 +28,8 @@ mongoose.connect(MongoDB_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
+
+app.use(helmet);
 app.use(methodOverride('_method'));
 app.use(express.json());
 
