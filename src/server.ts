@@ -1,6 +1,6 @@
 import * as express from 'express';
 import * as cors from 'cors';
-import * as helmet from 'helmet';
+// import * as helmet from 'helmet';
 // methodOverride.
 
 import * as methodOverride from 'method-override';
@@ -29,7 +29,7 @@ mongoose.connect(MongoDB_URI, {
   useUnifiedTopology: true,
 });
 
-app.use(helmet);
+// app.use(helmet);
 app.use(methodOverride('_method'));
 app.use(express.json());
 
