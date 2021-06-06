@@ -41,7 +41,7 @@ ArduinoAppAddRouter.use((req, res, next) => {
 });
 
 ArduinoAppAddRouter.post(
-  '/add/',
+  '/',
   VerifyAuthToken,
   async (req: UserInRequest, res) => {
     /*

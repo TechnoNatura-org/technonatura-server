@@ -164,6 +164,7 @@ userSchema.methods.deleteAccount = async function(
     throw new Error(err);
   }
 };
+
 // fire a function before doc saved to db
 userSchema.pre('save', async function(next) {
   // console.log('hello');
