@@ -41,7 +41,7 @@ ArduinoAppAddSensorRouter.use((req, res, next) => {
 });
 
 ArduinoAppAddSensorRouter.post(
-  '/add/sensor',
+  '/',
   VerifyAuthToken,
   async (req, res) => {
     /*
