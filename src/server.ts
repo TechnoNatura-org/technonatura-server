@@ -29,7 +29,15 @@ mongoose.connect(MongoDB_URI, {
   useUnifiedTopology: true,
 });
 
-app.use(helmet());
+app.use(
+  helmet({
+    contentSecurityPolicy: false,
+    crossOriginResourcePolicy: { policy: 'cross-origin' },
+    crossOriginEmbedderPolicy: false,
+    noSniff: true,
+    xssFilter: true,
+  }),
+);
 app.use(methodOverride('_method'));
 app.use(express.json());
 
@@ -45,10 +53,18 @@ db.once('open', () => console.log('connected to mongoose'));
 app.use('/auth', cors(corsOptions), AuthRouter);
 // app.use('/contact', cors(corsOptions), ContactRouter);
 app.use('/contact', cors(corsOptions), ContactRouter);
-app.use('/arduino', ArduinoRouter);
+app.use(
+  '/arduino',
+
+  ArduinoRouter,
+);
 app.use('/', StoryRouter);
 app.use('/', SubscriptionRouter);
-app.use('/', AnythingRouter);
+app.use(
+  '/',
+
+  AnythingRouter,
+);
 
 app.get('/', (req, res) => {
   res.json({ message: 'hey' });
