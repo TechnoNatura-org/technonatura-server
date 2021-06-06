@@ -71,6 +71,7 @@ ArduinoAppModel.getAllSensors = async function(
 ArduinoAppModel.deleteApp = async function(userId: string) {
   try {
     await ArduinoAppModel.find({ own: userId }).deleteMany();
+    await Sensor.find({ own: userId }).deleteMany();
   } catch (err) {
     throw new Error('There was en error');
   }
