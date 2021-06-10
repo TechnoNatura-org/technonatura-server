@@ -1,0 +1,3 @@
+function checkRoles() {
+  return true;
+}

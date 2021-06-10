@@ -47,7 +47,6 @@ const blogPostSchema = new Schema<blogPostDocument, blogPostModel>({
   },
   thumbnail: {
     type: String,
-    required: true,
   },
   author: {
     type: String,

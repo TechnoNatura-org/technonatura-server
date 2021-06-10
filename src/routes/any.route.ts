@@ -9,7 +9,9 @@
  */
 
 import * as express from 'express';
-import { Request } from 'express';
+
+import { checkRoles } from '../controllers/checkRoles';
+
 import ArduinoApp from '../models/Arduino/arduinoApp.model';
 import Sensor from '../models/Arduino/Sensors/Sensor';
 
@@ -64,6 +66,22 @@ AnyRouter.get('/allData', async (req, res) => {
   ];
 
   res.send({ data: WOOF });
+});
+
+AnyRouter.post('/checkRoles', (req, res) => {
+  const {
+    roles,
+    permission,
+  }: { roles?: Array<string>; permission?: string | Array<string> } = req.body;
+
+  if (roles && permission) {
+    res.send(checkRoles(roles, permission));
+    return;
+  }
+
+  res.send(false);
+
+  return;
 });
 
 export default AnyRouter;

@@ -16,3 +16,5 @@ export const checkRoles: checkRolesT = (roles, permission) => {
 
   return false;
 };
+
+export default checkRoles;

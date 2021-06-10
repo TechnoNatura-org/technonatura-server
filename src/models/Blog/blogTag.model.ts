@@ -23,8 +23,6 @@ const blogTagSchema = new Schema<blogTagDocument, blogTagModel>({
   },
   desc: {
     type: String,
-    required: [true, 'Please enter desc'],
-    validate: [validateUsername, 'Only characters and numbers are allowed'],
     minlength: [4, 'Minimum name length is 4 characters'],
     maxLength: [100, 'too long'],
   },

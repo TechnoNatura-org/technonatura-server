@@ -1,1 +1,0 @@
-import { env } from './variables';
