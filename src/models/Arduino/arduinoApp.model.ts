@@ -1,6 +1,7 @@
 import { Schema, Model, Document, model, Types, Query, Error } from 'mongoose';
 import * as Validator from 'validator';
 import Sensor, { sensorInterface } from './Sensors/Sensor';
+import { ArduinoDB } from '../../db/arduinoDB';
 
 export interface sensorsInterface {
   name: string;
@@ -57,7 +58,7 @@ function validateUsername(str: string) {
   return true;
 }
 
-const ArduinoAppModel = model<sensorsDocument, sensorsModel>(
+const ArduinoAppModel = ArduinoDB.model<sensorsDocument, sensorsModel>(
   'ArduinoApp',
   ArduinoAppSchema,
 );

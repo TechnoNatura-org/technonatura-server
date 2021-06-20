@@ -1,6 +1,7 @@
-import { Schema, Model, Document, model, Types, Query } from 'mongoose';
+import { Schema, Model, Document, Types, Query } from 'mongoose';
 import * as Validator from 'validator';
 import { sensorDataSchema, sensorDataInterface } from './SensorsData.model';
+import { ArduinoDB } from '../../../db/arduinoDB';
 
 const {
   default: { isEmail, isURL },
@@ -19,7 +20,6 @@ export interface sensorBaseDocument extends sensorInterface, Document {
 
 // Export this for strong typing
 export interface sensorDocument extends sensorBaseDocument {}
-
 // For model
 export interface sensorModel extends Model<sensorBaseDocument> {}
 
@@ -50,4 +50,7 @@ function validateUsername(str: string) {
   return true;
 }
 
-export default model<sensorDocument, sensorModel>('sensor', sensorSchema);
+export default ArduinoDB.model<sensorDocument, sensorModel>(
+  'sensor',
+  sensorSchema,
+);
