@@ -179,10 +179,7 @@ userSchema.methods.changePassword = async function(
   return hashedPassword;
 };
 
-userSchema.methods.deleteAccount = async function(
-  this: UserBaseDocument,
-  password: string,
-) {
+userSchema.methods.deleteAccount = async function(this: UserBaseDocument) {
   try {
     await ArduinoApp.deleteApp(this.id);
     await this.delete();

@@ -3,7 +3,7 @@ import * as Validator from 'validator';
 import Sensor, { sensorInterface } from './Sensors/Sensor';
 import { ArduinoDB } from '../../db/arduinoDB';
 
-export interface sensorsInterface {
+export interface arduinoAppInterface {
   name: string;
   desc: string;
   own?: string;
@@ -11,17 +11,20 @@ export interface sensorsInterface {
     token: string;
     tokenCreated: number;
   };
+  sensors: Array<string>;
+  subscribe: boolean;
 }
 
-export interface sensorsBaseDocument extends sensorsInterface, Document {
+export interface arduinoAppBaseDocument extends arduinoAppInterface, Document {
   data: Types.Array<string>;
+  // getApp(): Promise<string>;
 }
 
 // Export this for strong typing
-export interface sensorsDocument extends sensorsBaseDocument {}
+export interface sensorsDocument extends arduinoAppBaseDocument {}
 
 // For model
-export interface sensorsModel extends Model<sensorsBaseDocument> {
+export interface sensorsModel extends Model<arduinoAppBaseDocument> {
   deleteApp(userId: string): Promise<void | Error> | void;
   getAllSensors(appID: string): Promise<sensorInterface[] | undefined>;
 }
@@ -48,6 +51,10 @@ const ArduinoAppSchema = new Schema<sensorsDocument, sensorsModel>({
     token: String,
     tokenCreated: Number,
   },
+  subscribe: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 function validateUsername(str: string) {
@@ -57,6 +64,10 @@ function validateUsername(str: string) {
 
   return true;
 }
+
+// ArduinoAppSchema.methods.getApp = async function(this: arduinoAppBaseDocument) {
+//   return this;
+// };
 
 const ArduinoAppModel = ArduinoDB.model<sensorsDocument, sensorsModel>(
   'ArduinoApp',
