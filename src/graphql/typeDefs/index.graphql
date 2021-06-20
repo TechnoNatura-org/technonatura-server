@@ -1,0 +1,8 @@
+type Query {
+  hello: String
+}
+
+type SensorData {
+  date: Float!
+  data: Float!
+}
