@@ -13,6 +13,7 @@ interface SocialMedia {
   url: string;
 }
 
+export type Grades = 7 | 8 | 9;
 export interface UserInterface {
   isAccountVerified: boolean;
   name: string;
@@ -32,6 +33,13 @@ export interface UserInterface {
   points: number;
   accountCreated: Date;
   birthDate: Date;
+
+  statusInMTsTechnoNatura: {
+    techer: boolean;
+    student: boolean;
+    alumni: boolean;
+    period: string; // only for student and alumni
+  };
 }
 
 export interface UserBaseDocument extends UserInterface, Document {
@@ -116,11 +124,22 @@ const userSchema = new Schema<UserDocument, UserModel>({
   birthDate: {
     type: Date,
   },
+
   roles: [String], // the role name, the role name must be unique
+
   socialMedias: [
     {
       name: {
         type: String,
+        enum: [
+          'github',
+          'gitlab',
+          'instagram',
+          'facebook',
+          'website',
+          'youtube',
+          'discord',
+        ],
         required: [true, 'Please enter social media'],
       },
       url: {
@@ -130,6 +149,13 @@ const userSchema = new Schema<UserDocument, UserModel>({
       },
     },
   ],
+
+  statusInMTsTechnoNatura: {
+    techer: Boolean,
+    student: Boolean,
+    alumni: Boolean,
+    period: String, // only for student and alumni
+  },
 });
 
 function validateUsername(str: string) {

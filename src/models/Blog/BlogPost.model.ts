@@ -4,11 +4,24 @@ export interface blogPostInterface {
   title: string;
   tags?: Array<string>;
   content: string;
+  desc: string;
   author: string;
   publishDate: string;
   lastEdit: string;
-  thumbnail: string;
+  thumbnail: {
+    src: string;
+    alt: string;
+    option: 'unsplash' | 'local';
+    unsplash: {
+      author: string;
+      src: string;
+    };
+  };
   published: boolean;
+  category: string;
+  views: number;
+
+  likes: Array<string>; //list of users ID
 }
 
 export interface blogPostBaseDocument extends blogPostInterface, Document {
@@ -29,10 +42,16 @@ const blogPostSchema = new Schema<blogPostDocument, blogPostModel>({
     minlength: [4, 'Minimum title length is 4 characters'],
     maxLength: [20, 'Story content should be of maxinum 40 letter length'],
   },
+  desc: {
+    type: String,
+    required: [true, 'Please enter post content'],
+    minlength: [10, 'Minimum name length is 10 characters'],
+    maxLength: [100, 'too long'],
+  },
   content: {
     type: String,
     required: [true, 'Please enter post content'],
-    minlength: [4, 'Minimum name length is 4 characters'],
+    minlength: [30, 'Minimum name length is 4 characters'],
     maxLength: [5000, 'too long'],
   },
   publishDate: {
@@ -46,17 +65,32 @@ const blogPostSchema = new Schema<blogPostDocument, blogPostModel>({
     default: Date.now,
   },
   thumbnail: {
-    type: String,
+    src: String,
+    alt: String,
+    option: {
+      type: String,
+      enum: ['unsplash', 'local'],
+    },
+    unsplash: {
+      author: String,
+      src: String,
+    },
   },
   author: {
     type: String,
     required: true,
   },
-  tags: [{ name: String, blogTagID: String }],
+  tags: [String],
+  likes: [String],
   published: {
     type: Boolean,
     default: false,
   },
+  category: {
+    type: String,
+    required: true,
+  },
+  views: Number,
 });
 
 function validateUsername(str: string) {

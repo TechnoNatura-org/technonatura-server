@@ -11,7 +11,6 @@
 import * as express from 'express';
 
 import Blog, { blogPostBaseDocument } from '../../models/Blog/BlogPost.model';
-import BlogTag, { blogTagBaseDocument } from '../../models/Blog/blogTag.model';
 
 import User, { UserBaseDocument } from '../../models/User.model';
 import { VerifyAuthToken } from '../checkToken';
@@ -30,7 +29,14 @@ storyRouter.post('/', VerifyAuthToken, (req, res) => {
     title,
     tags,
     content,
-  }: { title: string; tags: Array<string>; content: string } = req.body;
+  }: {
+    title: string;
+    tags: Array<string>;
+    content: string;
+    publish: boolean;
+  } = req.body;
+
+  // const tags = Blog.distinct('tags', )
 
   res.json({ m: 'je' });
 });

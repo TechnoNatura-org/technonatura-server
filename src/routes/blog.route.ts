@@ -12,6 +12,7 @@ import * as express from 'express';
 
 import User, { UserBaseDocument } from '../models/User.model';
 import { VerifyAuthToken } from '../controllers/checkToken';
+import addPostController from '../controllers/stories/addpost.controller';
 
 declare module 'express-serve-static-core' {
   interface Request {
@@ -26,10 +27,6 @@ storyRouter.get('/post/:id', (req, res) => {});
 storyRouter.get('/posts', (req, res) => {
   res.json({ m: 'je' });
 });
-storyRouter.post('/post', VerifyAuthToken, (req, res) => {
-  const { title: string, tags, content } = req.body;
-
-  res.json({ m: 'je' });
-});
+storyRouter.use('/post', addPostController);
 
 export default storyRouter;
