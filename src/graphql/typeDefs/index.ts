@@ -34,7 +34,7 @@ export default gql`
   type ArduinoSensorData {
     _id: ID!
     data: Int
-    date: Int
+    date: String
   }
 
   type ArduinoSensor {
