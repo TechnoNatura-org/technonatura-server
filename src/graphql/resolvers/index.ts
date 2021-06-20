@@ -8,6 +8,10 @@ export default {
         return 'GetArduinoAppResponse';
       }
 
+      if (model.data) {
+        return 'GetArduinoAppSensorResponse';
+      }
+
       return null; // GraphQLError is thrown
     },
   },
@@ -47,6 +51,30 @@ export default {
             // @ts-ignore
             { sensors: App.sensors },
           ),
+        };
+      } catch (err) {
+        return { message: 'app not found', status: 'warning' };
+      }
+
+      return { message: 'app not found', status: 'warning' };
+    },
+
+    getArduinoAppSensor: async (
+      parent: string,
+      query: { sensorId: string },
+      context: any,
+      info: any,
+    ) => {
+      // console.log(appId, p, o);
+      const { sensorId } = query;
+
+      try {
+        const sensor = await Sensor.findById(sensorId);
+
+        return {
+          message: 'app found!',
+          status: 'success',
+          sensor: sensor,
         };
       } catch (err) {
         return { message: 'app not found', status: 'warning' };
