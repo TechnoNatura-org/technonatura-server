@@ -72,34 +72,41 @@ AnyRouter.get('/allData', async (req, res) => {
 AnyRouter.get('/api/getArduinoApp', async (req, res) => {
   const { appId } = req.query;
 
-  const App = await ArduinoApp.findById(appId);
-  // const App = await AppDoc?.getApp();
+  try {
+    const App = await ArduinoApp.findById(appId);
+    // const App = await AppDoc?.getApp();
 
-  if (App) {
-    const AppSensors = await Sensor.find({ appID: App?._id });
+    if (App) {
+      const AppSensors = await Sensor.find({ appID: App?._id });
 
-    // @ts-ignore
-    App.token = '';
+      // @ts-ignore
+      App.token = '';
 
-    AppSensors.forEach((sensor) => {
-      App.sensors.push(sensor._id);
-    });
+      AppSensors.forEach((sensor) => {
+        App.sensors.push(sensor._id);
+      });
 
-    res.send({
-      message: 'app found!',
-      status: 'success',
-      app: Object.assign(
-        {},
-        // @ts-ignore
-        App._doc,
-        // @ts-ignore
-        { sensors: App.sensors },
-      ),
-    });
+      res.send({
+        message: 'app found!',
+        status: 'success',
+        app: Object.assign(
+          {},
+          // @ts-ignore
+          App._doc,
+          // @ts-ignore
+          { sensors: App.sensors },
+        ),
+      });
+      return;
+  }
+  }catch(err) {
+    res.send({ message: 'app not found', status: 'warning' });
     return;
   }
+  
 
   res.send({ message: 'app not found', status: 'warning' });
+  return;
 });
 
 AnyRouter.get('/api/getSensor', async (req, res) => {
@@ -110,7 +117,7 @@ AnyRouter.get('/api/getSensor', async (req, res) => {
 
   if (sensor) {
     res.send({
-      message: 'app found!',
+      message: 'sensor found!',
       status: 'success',
       sensor: sensor,
     });
