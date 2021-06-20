@@ -19,6 +19,7 @@ import BlogPost from '../models/Blog/BlogPost.model';
 import SensorData from '../models/Arduino/Sensors/SensorsData.model';
 
 import User from '../models/User.model';
+
 const AnyRouter = express.Router();
 
 AnyRouter.get('/allData', async (req, res) => {
@@ -66,6 +67,57 @@ AnyRouter.get('/allData', async (req, res) => {
   ];
 
   res.send({ data: WOOF });
+});
+
+AnyRouter.get('/arduino/getApp', async (req, res) => {
+  const { appId } = req.query;
+
+  const App = await ArduinoApp.findById(appId);
+  // const App = await AppDoc?.getApp();
+
+  if (App) {
+    const AppSensors = await Sensor.find({ appID: App?._id });
+
+    // @ts-ignore
+    App.token = '';
+
+    AppSensors.forEach((sensor) => {
+      App.sensors.push(sensor._id);
+    });
+
+    res.send({
+      message: 'app found!',
+      status: 'success',
+      app: Object.assign(
+        {},
+        // @ts-ignore
+        App._doc,
+        // @ts-ignore
+        { sensors: App.sensors },
+      ),
+    });
+    return;
+  }
+
+  res.send({ message: 'app not found', status: 'warning' });
+});
+
+AnyRouter.get('/arduino/getSensor', async (req, res) => {
+  const { sensorId } = req.query;
+
+  const sensor = await Sensor.findById(sensorId);
+  // const App = await AppDoc?.getApp();
+
+  if (sensor) {
+    res.send({
+      message: 'app found!',
+      status: 'success',
+      sensor: sensor,
+    });
+    return;
+  }
+
+  res.send({ message: 'sensor not found', status: 'warning' });
 });
 
 AnyRouter.post('/checkRoles', (req, res) => {

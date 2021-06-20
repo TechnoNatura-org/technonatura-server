@@ -210,10 +210,6 @@ AuthRouter.post('/deleteAccount', VerifyAuthToken, async (req, res) => {
   const { currentPasswordDeleteAccount } = req.body;
   if (currentPasswordDeleteAccount && req.user) {
     try {
-      const user = await User.login(
-        req.user.username,
-        currentPasswordDeleteAccount,
-      );
       try {
         await req.user.deleteAccount();
         res.status(200).json({
