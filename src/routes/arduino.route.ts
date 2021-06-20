@@ -48,6 +48,7 @@ ArduinoRouter.post('/apps', VerifyAuthToken, async (req, res) => {
   try {
     const apps = await ArduinoApp.find({ own: req.id });
     res.status(200).send({ apps: apps });
+    return;
   } catch (err) {
     res
       .status(200)
