@@ -1,5 +1,6 @@
 import { Schema, Model, Document, model, Types, Query } from 'mongoose';
 import * as Validator from 'validator';
+import { ArduinoDB } from '../../../db/arduinoDB';
 
 const {
   default: { isNumeric },
@@ -34,7 +35,7 @@ export const sensorDataSchema = new Schema<sensorDataDocument, sensorDataModel>(
   },
 );
 
-export default model<sensorDataDocument, sensorDataModel>(
+export default ArduinoDB.model<sensorDataDocument, sensorDataModel>(
   'sensorData',
   sensorDataSchema,
 );
