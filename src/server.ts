@@ -77,6 +77,7 @@ async function startApolloServer() {
     resolvers,
     introspection: true,
     playground: true,
+    tracing: true,
   });
   await server.start();
 
