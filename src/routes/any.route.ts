@@ -69,7 +69,7 @@ AnyRouter.get('/allData', async (req, res) => {
   res.send({ data: WOOF });
 });
 
-AnyRouter.get('/arduino/getApp', async (req, res) => {
+AnyRouter.get('/api/getArduinoApp', async (req, res) => {
   const { appId } = req.query;
 
   const App = await ArduinoApp.findById(appId);
@@ -102,7 +102,7 @@ AnyRouter.get('/arduino/getApp', async (req, res) => {
   res.send({ message: 'app not found', status: 'warning' });
 });
 
-AnyRouter.get('/arduino/getSensor', async (req, res) => {
+AnyRouter.get('/api/getSensor', async (req, res) => {
   const { sensorId } = req.query;
 
   const sensor = await Sensor.findById(sensorId);
