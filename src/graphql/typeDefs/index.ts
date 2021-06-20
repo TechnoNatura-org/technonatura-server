@@ -42,6 +42,7 @@ export default gql`
     name: String!
     own: String!
     appID: String!
+    data: [ArduinoSensorData]
   }
   # arduino app
 
