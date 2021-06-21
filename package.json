@@ -5,7 +5,7 @@
   "main": "server.js",
   "scripts": {
     "test": "nodemon --exec mocha ",
-    "start": "tsc && nodemon dist/server.js",
+    "start": "tsc -w --copy-files && nodemon dist/server.js",
     "dev": "nodemon --exec ts-node src/server.ts",
     "build": "tsc"
   },

@@ -15,5 +15,5 @@
       "@/controllers/*": ["src/controllers/*"]
     }
   },
-  "include": ["src/**/*.ts"]
+  "include": ["src/**/*.ts", "src/**/*.graphql"]
 }
