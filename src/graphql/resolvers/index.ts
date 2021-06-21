@@ -8,7 +8,7 @@ export default {
         return 'GetArduinoAppResponse';
       }
 
-      if (model.data) {
+      if (model.sensor) {
         return 'GetArduinoAppSensorResponse';
       }
 
