@@ -1,0 +1,12 @@
+type ArduinoSensorData {
+  _id: ID!
+  data: Int
+  date: Int
+}
+
+type ArduinoSensor {
+  _id: ID!
+  name: String!
+  own: String!
+  appID: String!
+}

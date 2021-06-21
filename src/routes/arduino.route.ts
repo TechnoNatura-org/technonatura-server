@@ -190,7 +190,7 @@ ArduinoRouter.post(
   (req, res) => {},
 );
 ArduinoRouter.post('/add/data/', async (req, res) => {
-  const { arduinoAppToken, sensors } = req.body;
+  const { arduinoAppToken, sensors, realtimeData } = req.body;
   //   console.log(req.body);
 
   if (!arduinoAppToken) {
@@ -217,28 +217,57 @@ ArduinoRouter.post('/add/data/', async (req, res) => {
       return;
     }
 
-    if (typeof sensors == 'object') {
+    if (typeof sensors == 'object' || typeof realtimeData == 'object') {
       try {
-        for (const sensor in sensors) {
-          const TypeOfSensorData = Number(sensors[sensor]);
+        if (sensors) {
+          for (const sensor in sensors) {
+            const TypeOfSensorData = Number(sensors[sensor]);
 
-          // console.log(isNaN(TypeOfSensorData));
-          if (!isNaN(TypeOfSensorData)) {
-            const foundSensor = await Sensor.find({
-              appID: arduinoApp._id,
-            }).findOne({
-              name: sensor,
-            });
-            // console.log(foundSensor, arduinoApp._id, sensor);
-
-            if (foundSensor) {
-              const sensorData = new SensorsData({ data: TypeOfSensorData });
-
-              await foundSensor.updateOne({
-                $push: {
-                  data: sensorData,
-                },
+            // console.log(isNaN(TypeOfSensorData));
+            if (!isNaN(TypeOfSensorData)) {
+              const foundSensor = await Sensor.find({
+                appID: arduinoApp._id,
+              }).findOne({
+                name: sensor,
               });
+              // console.log(foundSensor, arduinoApp._id, sensor);
+
+              if (foundSensor) {
+                const sensorData = new SensorsData({ data: TypeOfSensorData });
+
+                await foundSensor.updateOne({
+                  $push: {
+                    data: sensorData,
+                  },
+                });
+              }
+            }
+          }
+        }
+
+        if (realtimeData) {
+          for (const sensor in realtimeData) {
+            const SensorRealtimeData = Number(realtimeData[sensor]);
+
+            // console.log(isNaN(SensorData));
+            if (!isNaN(SensorRealtimeData)) {
+              const foundSensor = await Sensor.find({
+                appID: arduinoApp._id,
+              }).findOne({
+                name: sensor,
+              });
+              // console.log(foundSensor, arduinoApp._id, sensor);
+
+              if (foundSensor) {
+                const now = Date.now();
+
+                await foundSensor.updateOne({
+                  realtimeData: {
+                    data: SensorRealtimeData,
+                    dateAdded: now,
+                  },
+                });
+              }
             }
           }
         }

@@ -12,6 +12,10 @@ export interface sensorInterface {
   appID: string;
   own: string;
   data?: Array<sensorDataInterface>;
+  realtimeData: {
+    data: number;
+    dateAdded: number;
+  };
 }
 
 export interface sensorBaseDocument extends sensorInterface, Document {
@@ -40,6 +44,10 @@ const sensorSchema = new Schema<sensorDocument, sensorModel>({
     required: true,
   },
   data: [sensorDataSchema],
+  realtimeData: {
+    data: Number,
+    dateAdded: Number,
+  },
 });
 
 function validateUsername(str: string) {
