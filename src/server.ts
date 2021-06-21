@@ -56,7 +56,6 @@ app.use('/auth', cors(corsOptions), AuthRouter);
 app.use('/contact', cors(corsOptions), ContactRouter);
 app.use(
   '/arduino',
-  cors(corsOptions),
   ArduinoRouter,
 );
 app.use('/', StoryRouter);
