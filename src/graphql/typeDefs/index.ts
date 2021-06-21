@@ -38,8 +38,8 @@ export default gql`
   }
   
   type ArduinoSensorRealtimeData {
-    data: Int!
-    dateAdded: String!
+    data: Int
+    dateAdded: String
   }
 
   type ArduinoSensor {
