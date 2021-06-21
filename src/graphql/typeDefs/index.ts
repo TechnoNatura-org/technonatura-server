@@ -36,6 +36,11 @@ export default gql`
     data: Int
     date: String
   }
+  
+  type ArduinoSensorRealtimeData {
+    data: Int!
+    dateAdded: String!
+  }
 
   type ArduinoSensor {
     _id: ID!
@@ -43,6 +48,7 @@ export default gql`
     own: String!
     appID: String!
     data: [ArduinoSensorData]
+    realtimeData: ArduinoSensorRealtimeData 
   }
   # arduino app
 
