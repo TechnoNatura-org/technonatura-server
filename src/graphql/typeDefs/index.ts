@@ -28,7 +28,6 @@ export default gql`
     own: String!
     token: ArduinoAppToken
     sensors: [String]
-    subscribe: Boolean!
   }
 
   type ArduinoSensorData {
