@@ -12,7 +12,6 @@ export interface arduinoAppInterface {
     tokenCreated: number;
   };
   sensors: Array<string>;
-  subscribe: boolean;
 }
 
 export interface arduinoAppBaseDocument extends arduinoAppInterface, Document {
@@ -50,10 +49,6 @@ const ArduinoAppSchema = new Schema<sensorsDocument, sensorsModel>({
   token: {
     token: String,
     tokenCreated: Number,
-  },
-  subscribe: {
-    type: Boolean,
-    default: false,
   },
 });
 
