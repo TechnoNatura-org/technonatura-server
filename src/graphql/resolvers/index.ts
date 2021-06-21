@@ -72,15 +72,15 @@ export default {
         const sensor = await Sensor.findById(sensorId);
 
         return {
-          message: 'app found!',
+          message: 'sensor found!',
           status: 'success',
           sensor: sensor,
         };
       } catch (err) {
-        return { message: 'app not found', status: 'warning' };
+        return { message: 'sensor not found', status: 'warning' };
       }
 
-      return { message: 'app not found', status: 'warning' };
+      return { message: 'sensor not found', status: 'warning' };
     },
   },
 };
