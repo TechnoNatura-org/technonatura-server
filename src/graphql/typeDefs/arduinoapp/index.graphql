@@ -1,0 +1,17 @@
+# arduino app
+type ArduinoAppToken {
+  token: String!
+  tokenCreated: Int!
+}
+
+type GetArduinoAppResponse implements APIResponse {
+  message: String
+  status: String
+  app: ArduinoApp
+}
+
+type GetArduinoAppSensorResponse implements APIResponse {
+  message: String
+  status: String
+  sensor: ArduinoSensor
+}

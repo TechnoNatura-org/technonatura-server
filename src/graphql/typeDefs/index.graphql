@@ -1,8 +1,4 @@
-type Query {
-  hello: String
-}
-
-type SensorData {
-  date: Float!
-  data: Float!
+interface APIResponse {
+  message: String
+  status: String
 }

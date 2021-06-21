@@ -1,0 +1,9 @@
+type ArduinoApp {
+  _id: ID
+  name: String!
+  desc: String!
+  own: String!
+  token: ArduinoAppToken
+  sensors: [String]
+  subscribe: Boolean!
+}
