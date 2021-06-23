@@ -26,11 +26,6 @@ import ArduinoSocket from './socket/arduino';
 
 import { arduinoSockets } from './db/arduinoSockets';
 
-// declare module 'express-serve-static-core' {
-//   interface Request {
-//     io: Server;
-//   }
-// }
 
 const db = mongoose.connection;
 const app = express();
@@ -103,13 +98,7 @@ async function startApolloServer() {
 
   server.applyMiddleware({ app });
 
-  io.of('/websocket').on('connection', (socket) => {
-    // console.log(socket.handshake, socket.client, socket.id);
-
-    Socketmain(socket);
-  });
-
-  io.of('/arduino').on('connection', (socket) => {
+  io.of('/websocket/arduino').on('connection', (socket) => {
     if (!app.request.io) {
       app.request.io = io;
     }
