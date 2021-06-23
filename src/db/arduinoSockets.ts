@@ -52,7 +52,7 @@ class arduinoSocketsClass {
       if (socket.subscribe.realtimedata.includes(String(sensorId))) {
         console.log('socket.socketId', socket.socketId);
         req.io
-          .of('/arduino')
+          .of('/websocket/arduino')
           .to(socket.socketId)
           .emit('arduino.sensor.realtimedata', {
             sensorId: sensorId,
@@ -72,7 +72,7 @@ class arduinoSocketsClass {
       if (socket.subscribe.realtimeData.includes(String(sensorId))) {
         console.log('socket.socketId', socket.socketId);
         req.io
-          .of('/arduino')
+          .of('/websocket/arduino')
           .to(socket.socketId)
           .emit('arduino.sensor.realtimeData', {
             sensorId: sensorId,

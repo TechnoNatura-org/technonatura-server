@@ -44,7 +44,7 @@ export default function ArduinoSocket(req: Request, socketGlobal: Socket) {
               );
 
               req.io
-                .of('/arduino')
+                .of('/websocket/arduino')
                 .to(socketGlobal.id)
                 .emit('arduino.sensor.realtimeData', {
                   sensorId: sensorId,
@@ -85,7 +85,7 @@ export default function ArduinoSocket(req: Request, socketGlobal: Socket) {
               const realtimedata = sensor?.data[sensor?.data.length - 1];
               // console.log('realtimedata', realtimedata);
               req.io
-                .of('/arduino')
+                .of('/websocket/arduino')
                 .to(socketGlobal.id)
                 .emit('arduino.sensor.realtimedata', {
                   sensorId: sensorId,
