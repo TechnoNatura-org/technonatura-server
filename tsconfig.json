@@ -13,7 +13,9 @@
       "@/ts/*": ["ts/*"],
       "@/models/*": ["src/models/*"],
       "@/controllers/*": ["src/controllers/*"]
-    }
+    },
+    "typeRoots": ["@types", "./node_modules/@types"]
   },
-  "include": ["src/**/*.ts", "src/**/*.graphql"]
+  "include": ["src/**/*.ts", "src/**/*.graphql"],
+  "exclude": ["node_modules"]
 }

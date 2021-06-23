@@ -22,6 +22,8 @@ import { VerifyAuthToken } from '../controllers/checkToken';
 import AddArduinoAppRoute from '../controllers/Arduino/app/addApp';
 import AddSensorRoute from '../controllers/Arduino/sensor/addSensor';
 
+import sendRealtimeData from '../socket/arduino/realtimeData';
+import { arduinoSockets } from '../db/arduinoSockets';
 declare module 'express-serve-static-core' {
   interface Request {
     id: string;
@@ -240,6 +242,13 @@ ArduinoRouter.post('/add/data/', async (req, res) => {
                     data: sensorData,
                   },
                 });
+
+                arduinoSockets.sendSensorRealtimedataToSocket(
+                  req,
+                  foundSensor._id,
+                  sensorData.data,
+                  sensorData.date,
+                );
               }
             }
           }
@@ -267,6 +276,14 @@ ArduinoRouter.post('/add/data/', async (req, res) => {
                     dateAdded: now,
                   },
                 });
+
+                // console.log();
+                arduinoSockets.sendSensorRealtimeDataToSocket(
+                  req,
+                  foundSensor._id,
+                  SensorRealtimeData,
+                  now,
+                );
               }
             }
           }

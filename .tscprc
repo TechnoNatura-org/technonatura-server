@@ -1,0 +1,9 @@
+{
+  "ignored_files": [],
+  "compiled_files": [
+    "src/**/*.graphql",
+    "src/**/*.gql",
+    "**/*.graphql",
+    "**/*.gql"
+  ]
+}

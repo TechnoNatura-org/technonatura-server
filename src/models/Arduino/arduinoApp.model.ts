@@ -6,7 +6,7 @@ import { ArduinoDB } from '../../db/arduinoDB';
 export interface arduinoAppInterface {
   name: string;
   desc: string;
-  own?: string;
+  own: string;
   token: {
     token: string;
     tokenCreated: number;

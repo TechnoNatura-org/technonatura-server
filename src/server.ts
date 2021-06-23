@@ -1,7 +1,10 @@
 import * as express from 'express';
+
 import * as cors from 'cors';
 import * as helmet from 'helmet';
-// methodOverride.
+
+import { createServer } from 'http';
+import { Server } from 'socket.io';
 
 import * as methodOverride from 'method-override';
 import * as mongoose from 'mongoose';
@@ -18,8 +21,22 @@ import SubscriptionRouter from './routes/subsciption.router';
 import AnythingRouter from './routes/any.route';
 import { corsOptions } from './controllers/cors';
 
+import Socketmain from './socket/index';
+import ArduinoSocket from './socket/arduino';
+
+import { arduinoSockets } from './db/arduinoSockets';
+
+// declare module 'express-serve-static-core' {
+//   interface Request {
+//     io: Server;
+//   }
+// }
+
 const db = mongoose.connection;
 const app = express();
+
+const http = createServer(app);
+const io = new Server(http);
 
 let MongoDB_URI =
   process.env.mongoDB_URI ||
@@ -48,16 +65,18 @@ app.use((req, res, next) => {
   next();
 });
 
+app.use(function(req, res, next) {
+  req.io = io;
+  next();
+});
+
 db.on('error', (err) => console.error('error when connecting to db'));
 db.once('open', () => console.log('connected to mongoose'));
 // app.use('/', PostRouter);
 app.use('/auth', cors(corsOptions), AuthRouter);
 // app.use('/contact', cors(corsOptions), ContactRouter);
 app.use('/contact', cors(corsOptions), ContactRouter);
-app.use(
-  '/arduino',
-  ArduinoRouter,
-);
+app.use('/arduino', ArduinoRouter);
 app.use('/', StoryRouter);
 app.use('/', SubscriptionRouter);
 app.use(
@@ -67,6 +86,9 @@ app.use(
 );
 
 app.get('/', (req, res) => {
+  req.io.of('/websocket').sockets.forEach((socket) => {
+    console.log(socket);
+  });
   res.json({ message: 'hey' });
 });
 
@@ -81,10 +103,27 @@ async function startApolloServer() {
 
   server.applyMiddleware({ app });
 
-  await new Promise((resolve) => app.listen({ port: process.env.PORT || 3030 }))
+  io.of('/websocket').on('connection', (socket) => {
+    // console.log(socket.handshake, socket.client, socket.id);
+
+    Socketmain(socket);
+  });
+
+  io.of('/arduino').on('connection', (socket) => {
+    if (!app.request.io) {
+      app.request.io = io;
+    }
+
+    ArduinoSocket(app.request, socket);
+  });
+
+  await new Promise((resolve) =>
+    http.listen({ port: process.env.PORT || 3030 }),
+  )
     .then(() => {
       return { server, app };
     })
+
     .catch(() => {
       return { server, app };
     });
