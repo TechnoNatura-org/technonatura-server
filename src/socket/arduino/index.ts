@@ -43,6 +43,47 @@ export default function ArduinoSocket(req: Request, socketGlobal: Socket) {
                 `a user socket with id: ${socketGlobal.id} subscribed their sensor with id: ${sensorId}`,
               );
 
+              // req.io
+              //   .of('/websocket/arduino')
+              //   .to(socketGlobal.id)
+              //   .emit('arduino.sensor.realtimeData', {
+              //     sensorId: sensorId,
+              //     data: sensor.realtimeData.data,
+              //     dateAdded: sensor.realtimeData.dateAdded,
+              //   });
+            }
+          }
+        } catch (err) {}
+      }
+    },
+  );
+
+  socketGlobal.on('arduino.sensor.get.realtimeData', 
+    async (sensorId: any, e: any, p: any) => {
+      //   console.log(socket.id, data, e, p);
+      const socket = arduinoSockets.arduinoSockets.find(
+        (sck) => sck.socketId == socketGlobal.id,
+      );
+
+      //   console.log(socket);
+      // console.log(
+      //           `a user socket with id: ${socketGlobal.id} tries to get their realtimeData sensor with id: ${sensorId}`,
+      //         );
+
+      if (socket) {
+        try {
+          const sensor = await SensorModel.findById(sensorId);
+
+          if (sensor) {
+            const isAlreadySubsribed = socket.subscribe.realtimeData.find(
+              (sb) => sb == sensorId,
+            );
+
+            if (isAlreadySubsribed) {
+              console.log(
+                `a user socket with id: ${socketGlobal.id} tries to get their realtimeData sensor with id: ${sensorId}`,
+              );
+
               req.io
                 .of('/websocket/arduino')
                 .to(socketGlobal.id)
@@ -55,8 +96,47 @@ export default function ArduinoSocket(req: Request, socketGlobal: Socket) {
           }
         } catch (err) {}
       }
-    },
-  );
+    });
+
+  socketGlobal.on('arduino.sensor.get.realtimedata', async (sensorId: any, e: any, p: any) => {
+      //   console.log(socket.id, data, e, p);
+      const socket = arduinoSockets.arduinoSockets.find(
+        (sck) => sck.socketId == socketGlobal.id,
+      );
+
+      //   console.log(socket);
+
+      if (socket) {
+        try {
+          const sensor = await SensorModel.findById(sensorId);
+
+          if (sensor) {
+            const isAlreadySubsribed = socket.subscribe.realtimedata.find(
+              (sb) => sb == sensorId,
+            );
+            console.log('isAlreadySubsribed', isAlreadySubsribed);
+
+            if (isAlreadySubsribed) {
+              socket.subscribe.realtimedata.push(sensorId);
+              console.log(
+                `a user socket with id: ${socketGlobal.id} subscribed their sensor with id: ${sensorId}; realtimedata`,
+              );
+              const realtimedata = sensor?.data[sensor?.data.length - 1];
+              // console.log('realtimedata', realtimedata);
+              req.io
+                .of('/websocket/arduino')
+                .to(socketGlobal.id)
+                .emit('arduino.sensor.realtimedata', {
+                  sensorId: sensorId,
+                  data: realtimedata.data,
+                  dateAdded: realtimedata.date,
+                });
+            }
+          }
+        } catch (err) {}
+      }
+    });
+
   socketGlobal.on(
     'arduino.subscribe.sensor.realtimedata',
     async (sensorId: any, e: any, p: any) => {
@@ -82,16 +162,16 @@ export default function ArduinoSocket(req: Request, socketGlobal: Socket) {
               console.log(
                 `a user socket with id: ${socketGlobal.id} subscribed their sensor with id: ${sensorId}; realtimedata`,
               );
-              const realtimedata = sensor?.data[sensor?.data.length - 1];
-              // console.log('realtimedata', realtimedata);
-              req.io
-                .of('/websocket/arduino')
-                .to(socketGlobal.id)
-                .emit('arduino.sensor.realtimedata', {
-                  sensorId: sensorId,
-                  data: realtimedata.data,
-                  dateAdded: realtimedata.date,
-                });
+              // const realtimedata = sensor?.data[sensor?.data.length - 1];
+              // // console.log('realtimedata', realtimedata);
+              // req.io
+              //   .of('/websocket/arduino')
+              //   .to(socketGlobal.id)
+              //   .emit('arduino.sensor.realtimedata', {
+              //     sensorId: sensorId,
+              //     data: realtimedata.data,
+              //     dateAdded: realtimedata.date,
+              //   });
             }
           }
         } catch (err) {}
