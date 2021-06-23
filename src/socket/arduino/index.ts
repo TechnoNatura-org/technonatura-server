@@ -75,14 +75,15 @@ export default function ArduinoSocket(req: Request, socketGlobal: Socket) {
             const isAlreadySubsribed = socket.subscribe.realtimedata.find(
               (sb) => sb == sensorId,
             );
+            console.log('isAlreadySubsribed', isAlreadySubsribed);
 
             if (!isAlreadySubsribed) {
               socket.subscribe.realtimedata.push(sensorId);
               console.log(
-                `a user socket with id: ${socketGlobal.id} subscribed their sensor with id: ${sensorId}`,
+                `a user socket with id: ${socketGlobal.id} subscribed their sensor with id: ${sensorId}; realtimedata`,
               );
               const realtimedata = sensor?.data[sensor?.data.length - 1];
-              console.log(realtimedata);
+              // console.log('realtimedata', realtimedata);
               req.io
                 .of('/arduino')
                 .to(socketGlobal.id)
