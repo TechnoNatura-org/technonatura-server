@@ -13,8 +13,8 @@ orbs:
 
 jobs:
   initial_job:
-    docker:
-      - image: circleci/node:14
+    # docker:
+    #   - image: circleci/node:14
     steps:
       - checkout
       - run:
