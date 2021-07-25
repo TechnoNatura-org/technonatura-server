@@ -1,10 +1,10 @@
 /*
- * =================== MTS TECHNONATURA SERVER =================
+ * =================== TECHNONATURA SERVER =================
  *
  * This API Script under MIT LICENSE
  * What is this for ? This is REST API for MTS Technonatura arduino database, user make app and saved the app to db.
  *
- * (c) 2021 by MTS-Technonatura, made with 💖 by Aldhan
+ * (c) 2021 by Aldhan
  * =============================================================
  */
 
@@ -67,7 +67,7 @@ AnyRouter.get('/allData', async (req, res) => {
   ];
 
   res.send({ data: WOOF });
-});
+})  ;
 
 AnyRouter.get('/api/getArduinoApp', async (req, res) => {
   const { appId } = req.query;

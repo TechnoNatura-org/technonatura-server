@@ -45,7 +45,8 @@ AuthRouter.post('/checkJWT', async (req, res) => {
             message: 'success',
             user: {
               follows: user?.follows,
-              name: user?.name,
+
+              fullName: user?.fullName,
               username: user?.username,
               email: user?.email,
               accountCreated: user?.accountCreated,
@@ -93,7 +94,7 @@ AuthRouter.post('/login', async (req, res) => {
       message: 'success',
       token: token,
       user: {
-        name: user.name,
+        fullName: user.fullName,
         username: user.username,
         password: user.password,
         email: user.email,
@@ -115,10 +116,10 @@ AuthRouter.post('/login', async (req, res) => {
 
 AuthRouter.post('/signup', async (req, res) => {
   // console.log(req.body);
-  const { email, password, username, name } = req.body;
+  const { email, password, username, fullName } = req.body;
 
   try {
-    const user = new User({ email, password, username, name });
+    const user = new User({ email, password, username, fullName });
     await user.save();
 
     // console.log(user);
@@ -136,7 +137,7 @@ AuthRouter.post('/signup', async (req, res) => {
       message: 'success',
       token: token,
       user: {
-        name: user.name,
+        fullName: user.fullName,
         username: user.username,
         password: user.password,
         email: user.email,
@@ -148,7 +149,12 @@ AuthRouter.post('/signup', async (req, res) => {
       },
     });
   } catch (err) {
-    const errors = await handleErrors(err, { email, password, username, name });
+    const errors = await handleErrors(err, {
+      email,
+      password,
+      username,
+      fullName,
+    });
     res.status(200).json({ errors });
   }
 });

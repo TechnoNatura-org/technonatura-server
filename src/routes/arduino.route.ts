@@ -1,10 +1,12 @@
-/*
- * =================== MTS TECHNONATURA SERVER =================
+/**
+ * =================== TECHNONATURA SERVER =================
  *
  * This API Script under MIT LICENSE
  * What is this for ? This is REST API for MTS Technonatura arduino database, user make app and saved the app to db.
  *
- * (c) 2021 by MTS-Technonatura, made with 💖 by Aldhan
+ * @license MIT
+ * 
+ * (c) 2021 by Aldhanekaa
  * =============================================================
  */
 

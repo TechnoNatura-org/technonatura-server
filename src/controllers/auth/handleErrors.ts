@@ -11,7 +11,7 @@ interface SignupBody {
   email: string;
   password: string;
   username: string;
-  name: string;
+  fullName: string;
 }
 
 interface Errors {

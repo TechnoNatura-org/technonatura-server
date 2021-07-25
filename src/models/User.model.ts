@@ -13,14 +13,39 @@ interface SocialMedia {
   url: string;
 }
 
-export type Grades = 7 | 8 | 9;
+export type GradeInNumber = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12;
+export type Grade = 'mi' | 'mts' | 'ma';
+
+export interface TeacherRoleInTechnoNatura {
+  teacher: boolean;
+  grade: GradeInNumber;
+  active: boolean;
+}
+
+export interface StudentRoleInTechnoNatura {
+  student: boolean;
+  grade: GradeInNumber;
+  startPeriod: number;
+  finishPeriod: number;
+}
+
+export interface AlumniRoleInTechnoNatura {
+  alumni: boolean;
+  grades: Array<{
+    grade: Grade;
+    startPeriod: number;
+    finishPeriod: number;
+  }>;
+}
+
 export interface UserInterface {
   isAccountVerified: boolean;
-  name: string;
+  fullName: string;
   username: string;
   email: string;
   password: string;
   avatar: string;
+
   banner: string;
   bio: string;
   status: {
@@ -34,12 +59,7 @@ export interface UserInterface {
   accountCreated: Date;
   birthDate: Date;
 
-  statusInMTsTechnoNatura: {
-    techer: boolean;
-    student: boolean;
-    alumni: boolean;
-    period: string; // only for student and alumni
-  };
+  roleInTechnoNatura:TeacherRoleInTechnoNatura|  StudentRoleInTechnoNatura | AlumniRoleInTechnoNatura;
 }
 
 export interface UserBaseDocument extends UserInterface, Document {
@@ -74,10 +94,12 @@ const userSchema = new Schema<UserDocument, UserModel>({
     type: String,
     default: '',
   },
+
   avatar: {
     type: String,
     default: '',
   },
+
   banner: {
     type: String,
     default: '',
@@ -104,7 +126,7 @@ const userSchema = new Schema<UserDocument, UserModel>({
     required: [true, 'Please enter a password'],
     minlength: [6, 'Minimum password length is 6 characters'],
   },
-  name: {
+  fullName: {
     type: String,
     required: [true, 'Please enter your name'],
     minlength: [4, 'Minimum name length is 4 characters'],
@@ -139,6 +161,8 @@ const userSchema = new Schema<UserDocument, UserModel>({
           'website',
           'youtube',
           'discord',
+          'twitch',
+          'twitter',
         ],
         required: [true, 'Please enter social media'],
       },
@@ -150,12 +174,28 @@ const userSchema = new Schema<UserDocument, UserModel>({
     },
   ],
 
-  statusInMTsTechnoNatura: {
-    techer: Boolean,
-    student: Boolean,
-    alumni: Boolean,
-    period: String, // only for student and alumni
+  roleInTechnoNatura: {
+    type: Object,
+    enum: [
+      {
+        teacher: Boolean,
+        grade: Number,
+        startPeriod: Number,
+        finishPeriod: Number,
+      },
+      {
+        student: Boolean,
+        grade: Number,
+        startPeriod: Number,
+        finishPeriod: Number,
+      },
+      {
+        alumni: Boolean,
+        grades: [{ grade: String, startPeriod: Number, finishPeriod: Number }],
+      },
+    ],
   },
+  badge: Array,
 });
 
 function validateUsername(str: string) {
