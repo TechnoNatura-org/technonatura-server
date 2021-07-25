@@ -29,6 +29,10 @@ jobs:
           name: Unit Testing
           command: |
             npm run test
+      - store_test_results:
+          path: test-results
+      - store_artifacts:
+          path: test-results
 workflows:
   build_tests:
     jobs:
