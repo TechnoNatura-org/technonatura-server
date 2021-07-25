@@ -25,8 +25,7 @@ import Socketmain from './socket/index';
 import ArduinoSocket from './socket/arduino';
 
 import { arduinoSockets } from './db/arduinoSockets';
-
-
+console.log(process.env);
 const db = mongoose.connection;
 const app = express();
 
@@ -34,30 +33,29 @@ const http = createServer(app);
 // const io = new Server(http);
 
 let MongoDB_URI =
-  process.env.mongoDB_URI ||
-  'mongodb://127.0.0.1:27017/mts-technonatura-server';
+	process.env.mongoDB_URI || 'mongodb://127.0.0.1:27017/technonatura-server';
 mongoose.connect(MongoDB_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
+	useNewUrlParser: true,
+	useUnifiedTopology: true,
 });
 
 app.use(
-  helmet({
-    contentSecurityPolicy: false,
-    crossOriginResourcePolicy: { policy: 'cross-origin' },
-    crossOriginEmbedderPolicy: false,
-    noSniff: true,
-    xssFilter: true,
-    hidePoweredBy: true,
-  }),
+	helmet({
+		contentSecurityPolicy: false,
+		crossOriginResourcePolicy: { policy: 'cross-origin' },
+		crossOriginEmbedderPolicy: false,
+		noSniff: true,
+		xssFilter: true,
+		hidePoweredBy: true,
+	}),
 );
 app.use(methodOverride('_method'));
 app.use(express.json());
 
 app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', '*');
+	res.header('Access-Control-Allow-Origin', '*');
 
-  next();
+	next();
 });
 
 // app.use(function(req, res, next) {
@@ -75,47 +73,47 @@ app.use('/arduino', ArduinoRouter);
 app.use('/', StoryRouter);
 app.use('/', SubscriptionRouter);
 app.use(
-  '/',
+	'/',
 
-  AnythingRouter,
+	AnythingRouter,
 );
 
 app.get('/', (req, res) => {
-  // req.io.of('/websocket').sockets.forEach((socket) => {
-  //   console.log(socket);
-  // });
-  res.json({ message: 'hey' });
+	// req.io.of('/websocket').sockets.forEach((socket) => {
+	//   console.log(socket);
+	// });
+	res.json({ message: 'hey' });
 });
 
 async function startApolloServer() {
-  const server = new ApolloServer({
-    typeDefs,
-    resolvers,
-    introspection: true,
-    playground: true,
-  });
-  await server.start();
+	const server = new ApolloServer({
+		typeDefs,
+		resolvers,
+		introspection: true,
+		playground: true,
+	});
+	await server.start();
 
-  server.applyMiddleware({ app });
+	server.applyMiddleware({ app });
 
-  // io.of('/websocket/arduino').on('connection', (socket) => {
-  //   if (!app.request.io) {
-  //     app.request.io = io;
-  //   }
+	// io.of('/websocket/arduino').on('connection', (socket) => {
+	//   if (!app.request.io) {
+	//     app.request.io = io;
+	//   }
 
-  //   ArduinoSocket(app.request, socket);
-  // });
+	//   ArduinoSocket(app.request, socket);
+	// });
 
-  await new Promise((resolve) =>
-    http.listen({ port: process.env.PORT || 3030 }),
-  )
-    .then(() => {
-      return { server, app };
-    })
+	await new Promise((resolve) =>
+		http.listen({ port: process.env.PORT || 3030 }),
+	)
+		.then(() => {
+			return { server, app };
+		})
 
-    .catch(() => {
-      return { server, app };
-    });
+		.catch(() => {
+			return { server, app };
+		});
 }
 
 startApolloServer();
