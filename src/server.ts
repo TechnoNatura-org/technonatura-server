@@ -1,53 +1,53 @@
 import * as express from 'express';
 
-// import * as cors from 'cors';
-// import * as helmet from 'helmet';
+import * as cors from 'cors';
+import * as helmet from 'helmet';
 
-// import { createServer } from 'http';
-// import { Server } from 'socket.io';
+import { createServer } from 'http';
+import { Server } from 'socket.io';
 
 import * as methodOverride from 'method-override';
-// import * as mongoose from 'mongoose';
-// import { ApolloServer, gql } from 'apollo-server-express';
+import * as mongoose from 'mongoose';
+import { ApolloServer, gql } from 'apollo-server-express';
 
-// import typeDefs from './graphql/typeDefs';
-// import resolvers from './graphql/resolvers';
+import typeDefs from './graphql/typeDefs';
+import resolvers from './graphql/resolvers';
 
-// import AuthRouter from './routes/auth';
-// import ContactRouter from './routes/contact.route';
-// import ArduinoRouter from './routes/arduino.route';
-// import StoryRouter from './routes/blog.route';
-// import SubscriptionRouter from './routes/subsciption.router';
-// import AnythingRouter from './routes/any.route';
-// import { corsOptions } from './controllers/cors';
+import AuthRouter from './routes/auth';
+import ContactRouter from './routes/contact.route';
+import ArduinoRouter from './routes/arduino.route';
+import StoryRouter from './routes/blog.route';
+import SubscriptionRouter from './routes/subsciption.router';
+import AnythingRouter from './routes/any.route';
+import { corsOptions } from './controllers/cors';
 
-// import Socketmain from './socket/index';
-// import ArduinoSocket from './socket/arduino';
+import Socketmain from './socket/index';
+import ArduinoSocket from './socket/arduino';
 
-// import { arduinoSockets } from './db/arduinoSockets';
-// const db = mongoose.connection;
+import { arduinoSockets } from './db/arduinoSockets';
+const db = mongoose.connection;
 const app = express();
 
-// const http = createServer(app);
+const http = createServer(app);
 // const io = new Server(http);
 
-// let MongoDB_URI =
-// 	process.env.mongoDB_URI || 'mongodb://127.0.0.1:27017/technonatura-server';
-// mongoose.connect(MongoDB_URI, {
-// 	useNewUrlParser: true,
-// 	useUnifiedTopology: true,
-// });
+let MongoDB_URI =
+	process.env.mongoDB_URI || 'mongodb://127.0.0.1:27017/technonatura-server';
+mongoose.connect(MongoDB_URI, {
+	useNewUrlParser: true,
+	useUnifiedTopology: true,
+});
 
-// app.use(
-// 	helmet({
-// 		contentSecurityPolicy: false,
-// 		crossOriginResourcePolicy: { policy: 'cross-origin' },
-// 		crossOriginEmbedderPolicy: false,
-// 		noSniff: true,
-// 		xssFilter: true,
-// 		hidePoweredBy: true,
-// 	}),
-// );
+app.use(
+	helmet({
+		contentSecurityPolicy: false,
+		crossOriginResourcePolicy: { policy: 'cross-origin' },
+		crossOriginEmbedderPolicy: false,
+		noSniff: true,
+		xssFilter: true,
+		hidePoweredBy: true,
+	}),
+);
 app.use(methodOverride('_method'));
 app.use(express.json());
 
@@ -84,39 +84,39 @@ app.get('/', (req, res) => {
 	res.json({ message: 'hey' });
 });
 
-app.listen(process.env.PORT || 3030, () => {});
+// app.listen(process.env.PORT || 3030, () => {});
 
-// async function startApolloServer() {
-// 	const server = new ApolloServer({
-// 		typeDefs,
-// 		resolvers,
-// 		introspection: true,
-// 		playground: true,
-// 	});
-// 	await server.start();
+async function startApolloServer() {
+	const server = new ApolloServer({
+		typeDefs,
+		resolvers,
+		introspection: true,
+		playground: true,
+	});
+	await server.start();
 
-// 	server.applyMiddleware({ app });
+	server.applyMiddleware({ app });
 
-// 	// io.of('/websocket/arduino').on('connection', (socket) => {
-// 	//   if (!app.request.io) {
-// 	//     app.request.io = io;
-// 	//   }
+	// io.of('/websocket/arduino').on('connection', (socket) => {
+	//   if (!app.request.io) {
+	//     app.request.io = io;
+	//   }
 
-// 	//   ArduinoSocket(app.request, socket);
-// 	// });
+	//   ArduinoSocket(app.request, socket);
+	// });
 
-// 	app.listen(process.env.PORT || 3030, () => {});
+	app.listen(process.env.PORT || 3030, () => {});
 
-// 	// await new Promise((resolve) =>
-// 	// 	http.listen({ port: process.env.PORT || 3030 }),
-// 	// )
-// 	// 	.then(() => {
-// 	// 		return { server, app };
-// 	// 	})
+	// await new Promise((resolve) =>
+	// 	http.listen({ port: process.env.PORT || 3030 }),
+	// )
+	// 	.then(() => {
+	// 		return { server, app };
+	// 	})
 
-// 	// 	.catch(() => {
-// 	// 		return { server, app };
-// 	// 	});
-// }
+	// 	.catch(() => {
+	// 		return { server, app };
+	// 	});
+}
 
-// startApolloServer();
+startApolloServer();
