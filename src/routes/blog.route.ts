@@ -10,22 +10,22 @@
 
 import * as express from 'express';
 
-import User, { UserBaseDocument } from '../models/User.model';
+import User, { UserBaseDocument } from '../models/User/User.model';
 import { VerifyAuthToken } from '../controllers/checkToken';
 import addPostController from '../controllers/stories/addpost.controller';
 
 declare module 'express-serve-static-core' {
-  interface Request {
-    id: string;
-    user?: UserBaseDocument | null;
-  }
+	interface Request {
+		id: string;
+		user?: UserBaseDocument | null;
+	}
 }
 
 const storyRouter = express.Router();
 
 storyRouter.get('/post/:id', (req, res) => {});
 storyRouter.get('/posts', (req, res) => {
-  res.json({ m: 'je' });
+	res.json({ m: 'je' });
 });
 storyRouter.use('/post', addPostController);
 

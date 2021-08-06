@@ -15,7 +15,7 @@ import Sensor from '../models/Arduino/Sensors/Sensor';
 
 import BlogPost from '../models/Blog/BlogPost.model';
 
-import User from '../models/User.model';
+import User from '../models/User/User.model';
 
 const AnyRouter = express.Router();
 

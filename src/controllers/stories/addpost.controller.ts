@@ -12,33 +12,33 @@ import * as express from 'express';
 
 import Blog, { blogPostBaseDocument } from '../../models/Blog/BlogPost.model';
 
-import User, { UserBaseDocument } from '../../models/User.model';
+import User, { UserBaseDocument } from '../../models/User/User.model';
 import { VerifyAuthToken } from '../checkToken';
 
 declare module 'express-serve-static-core' {
-  interface Request {
-    id: string;
-    user?: UserBaseDocument | null;
-  }
+	interface Request {
+		id: string;
+		user?: UserBaseDocument | null;
+	}
 }
 
 const storyRouter = express.Router();
 
 storyRouter.post('/', VerifyAuthToken, (req, res) => {
-  const {
-    title,
-    tags,
-    content,
-  }: {
-    title: string;
-    tags: Array<string>;
-    content: string;
-    publish: boolean;
-  } = req.body;
+	const {
+		title,
+		tags,
+		content,
+	}: {
+		title: string;
+		tags: Array<string>;
+		content: string;
+		publish: boolean;
+	} = req.body;
 
-  // const tags = Blog.distinct('tags', )
+	// const tags = Blog.distinct('tags', )
 
-  res.json({ m: 'je' });
+	res.json({ m: 'je' });
 });
 
 export default storyRouter;
