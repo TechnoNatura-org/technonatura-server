@@ -13,13 +13,13 @@ import { ApolloServer, gql } from 'apollo-server-express';
 import typeDefs from './graphql/typeDefs';
 import resolvers from './graphql/resolvers';
 
-import AuthRouter from './routes/auth';
-import ContactRouter from './routes/contact.route';
-import ArduinoRouter from './routes/arduino.route';
-import StoryRouter from './routes/blog.route';
-import SubscriptionRouter from './routes/subsciption.router';
-import AnythingRouter from './routes/any.route';
-import { corsOptions } from './controllers/cors';
+// import AuthRouter from './routes/auth';
+// import ContactRouter from './routes/contact.route';
+// import ArduinoRouter from './routes/arduino.route';
+// import StoryRouter from './routes/blog.route';
+// import SubscriptionRouter from './routes/subsciption.router';
+// import AnythingRouter from './routes/any.route';
+// import { corsOptions } from './controllers/cors';
 
 // import Socketmain from './socket/index';
 // import ArduinoSocket from './socket/arduino';
