@@ -62,20 +62,20 @@ app.use((req, res, next) => {
 //   next();
 // });
 
-// db.on('error', (err) => console.error('error when connecting to db'));
-// db.once('open', () => console.log('connected to mongoose'));
+db.on('error', (err) => console.error('error when connecting to db'));
+db.once('open', () => console.log('connected to mongoose'));
 // app.use('/', PostRouter);
-// app.use('/auth', cors(corsOptions), AuthRouter);
-// // app.use('/contact', cors(corsOptions), ContactRouter);
+app.use('/auth', cors(corsOptions), AuthRouter);
 // app.use('/contact', cors(corsOptions), ContactRouter);
-// app.use('/arduino', ArduinoRouter);
-// app.use('/', StoryRouter);
-// app.use('/', SubscriptionRouter);
-// app.use(
-// 	'/',
+app.use('/contact', cors(corsOptions), ContactRouter);
+app.use('/arduino', ArduinoRouter);
+app.use('/', StoryRouter);
+app.use('/', SubscriptionRouter);
+app.use(
+	'/',
 
-// 	AnythingRouter,
-// );
+	AnythingRouter,
+);
 
 app.get('/', (req, res) => {
 	// req.io.of('/websocket').sockets.forEach((socket) => {
@@ -105,18 +105,18 @@ async function startApolloServer() {
 	//   ArduinoSocket(app.request, socket);
 	// });
 
-	app.listen(process.env.PORT || 3030, () => {});
+	// app.listen(process.env.PORT || 3030, () => {});
 
-	// await new Promise((resolve) =>
-	// 	http.listen({ port: process.env.PORT || 3030 }),
-	// )
-	// 	.then(() => {
-	// 		return { server, app };
-	// 	})
+	await new Promise((resolve) =>
+		http.listen({ port: process.env.PORT || 3030 }),
+	)
+		.then(() => {
+			return { server, app };
+		})
 
-	// 	.catch(() => {
-	// 		return { server, app };
-	// 	});
+		.catch(() => {
+			return { server, app };
+		});
 }
 
 startApolloServer();
