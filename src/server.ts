@@ -21,10 +21,10 @@ import SubscriptionRouter from './routes/subsciption.router';
 import AnythingRouter from './routes/any.route';
 import { corsOptions } from './controllers/cors';
 
-import Socketmain from './socket/index';
-import ArduinoSocket from './socket/arduino';
+// import Socketmain from './socket/index';
+// import ArduinoSocket from './socket/arduino';
 
-import { arduinoSockets } from './db/arduinoSockets';
+// import { arduinoSockets } from './db/arduinoSockets';
 const db = mongoose.connection;
 const app = express();
 
@@ -65,7 +65,7 @@ app.use((req, res, next) => {
 db.on('error', (err) => console.error('error when connecting to db'));
 db.once('open', () => console.log('connected to mongoose'));
 // app.use('/', PostRouter);
-app.use('/auth', AuthRouter);
+app.use('/auth', cors(corsOptions), AuthRouter);
 // app.use('/contact', cors(corsOptions), ContactRouter);
 app.use('/contact', cors(corsOptions), ContactRouter);
 app.use('/arduino', ArduinoRouter);
