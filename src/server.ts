@@ -1,6 +1,6 @@
 import * as express from 'express';
 
-import * as cors from 'cors';
+// import * as cors from 'cors';
 import * as helmet from 'helmet';
 
 import { createServer } from 'http';
@@ -103,16 +103,18 @@ async function startApolloServer() {
 	//   ArduinoSocket(app.request, socket);
 	// });
 
-	await new Promise((resolve) =>
-		http.listen({ port: process.env.PORT || 3030 }),
-	)
-		.then(() => {
-			return { server, app };
-		})
+	app.listen(process.env.PORT || 3030, () => {});
 
-		.catch(() => {
-			return { server, app };
-		});
+	// await new Promise((resolve) =>
+	// 	http.listen({ port: process.env.PORT || 3030 }),
+	// )
+	// 	.then(() => {
+	// 		return { server, app };
+	// 	})
+
+	// 	.catch(() => {
+	// 		return { server, app };
+	// 	});
 }
 
 startApolloServer();
