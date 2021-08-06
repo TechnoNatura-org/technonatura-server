@@ -6,7 +6,7 @@ import { UserInterface, SocialMedia } from './index';
 
 import ArduinoApp from '../../models/Arduino/arduinoApp.model';
 
-// import { encrypt as EncryptEmail } from '../../controllers/auth/hashEmail';
+import { encrypt as EncryptEmail } from '../../controllers/auth/hashEmail';
 
 const {
 	default: { isEmail, isURL },
@@ -220,7 +220,7 @@ userSchema.pre('save', async function(next) {
 	// console.log('hello');
 	const salt = await bcrypt.genSalt();
 	this.password = await bcrypt.hash(this.password, salt);
-	// this.email = await EncryptEmail(this.email);
+	this.email = await EncryptEmail(this.email);
 
 	next();
 });
