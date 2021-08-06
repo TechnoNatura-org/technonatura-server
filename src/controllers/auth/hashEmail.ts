@@ -1,7 +1,14 @@
-import Cryptr from 'cryptr';
-// @ts-ignore
-const cryptr = new Cryptr(process.env.HASH_EMAIL_SECRET_PASS || 'sdf');
+import CryptoJS from 'crypto-js';
 
-const encryptEmail = (text: string) => cryptr.encrypt('bacon');
-const decryptEmail = (encryptedEmail: string) => cryptr.decrypt(encryptedEmail);
+const encryptEmail = (text: string) =>
+	CryptoJS.AES.encrypt(
+		JSON.stringify(text),
+		process.env.HASH_EMAIL_SECRET_KEY || 'sdf',
+	).toString();
+const decryptEmail = (encryptedEmail: string) =>
+	CryptoJS.AES.decrypt(
+		encryptedEmail,
+		process.env.HASH_EMAIL_SECRET_KEY || 'sdf',
+	);
+
 export { encryptEmail, decryptEmail };
