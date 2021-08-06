@@ -4,8 +4,6 @@ if (process.env.NODE_ENV !== 'production') {
 
 import User from '../../models/User/User.model';
 
-import lodash from 'lodash';
-
 interface SignupBody {
 	email: string;
 	password: string;

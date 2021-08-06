@@ -4,7 +4,7 @@ import * as cors from 'cors';
 import * as helmet from 'helmet';
 
 import { createServer } from 'http';
-import { Server } from 'socket.io';
+// import { Server } from 'socket.io';
 
 import * as methodOverride from 'method-override';
 import * as mongoose from 'mongoose';
@@ -65,17 +65,17 @@ app.use((req, res, next) => {
 db.on('error', (err) => console.error('error when connecting to db'));
 db.once('open', () => console.log('connected to mongoose'));
 // app.use('/', PostRouter);
-app.use('/auth', cors(corsOptions), AuthRouter);
+// app.use('/auth', cors(corsOptions), AuthRouter);
+// // app.use('/contact', cors(corsOptions), ContactRouter);
 // app.use('/contact', cors(corsOptions), ContactRouter);
-app.use('/contact', cors(corsOptions), ContactRouter);
-app.use('/arduino', ArduinoRouter);
-app.use('/', StoryRouter);
-app.use('/', SubscriptionRouter);
-app.use(
-	'/',
+// app.use('/arduino', ArduinoRouter);
+// app.use('/', StoryRouter);
+// app.use('/', SubscriptionRouter);
+// app.use(
+// 	'/',
 
-	AnythingRouter,
-);
+// 	AnythingRouter,
+// );
 
 app.get('/', (req, res) => {
 	// req.io.of('/websocket').sockets.forEach((socket) => {
