@@ -1,17 +1,17 @@
 import * as express from 'express';
 
 // import * as cors from 'cors';
-import * as helmet from 'helmet';
+// import * as helmet from 'helmet';
 
-import { createServer } from 'http';
+// import { createServer } from 'http';
 // import { Server } from 'socket.io';
 
 import * as methodOverride from 'method-override';
-import * as mongoose from 'mongoose';
-import { ApolloServer, gql } from 'apollo-server-express';
+// import * as mongoose from 'mongoose';
+// import { ApolloServer, gql } from 'apollo-server-express';
 
-import typeDefs from './graphql/typeDefs';
-import resolvers from './graphql/resolvers';
+// import typeDefs from './graphql/typeDefs';
+// import resolvers from './graphql/resolvers';
 
 // import AuthRouter from './routes/auth';
 // import ContactRouter from './routes/contact.route';
@@ -25,29 +25,29 @@ import resolvers from './graphql/resolvers';
 // import ArduinoSocket from './socket/arduino';
 
 // import { arduinoSockets } from './db/arduinoSockets';
-const db = mongoose.connection;
+// const db = mongoose.connection;
 const app = express();
 
-const http = createServer(app);
+// const http = createServer(app);
 // const io = new Server(http);
 
-let MongoDB_URI =
-	process.env.mongoDB_URI || 'mongodb://127.0.0.1:27017/technonatura-server';
-mongoose.connect(MongoDB_URI, {
-	useNewUrlParser: true,
-	useUnifiedTopology: true,
-});
+// let MongoDB_URI =
+// 	process.env.mongoDB_URI || 'mongodb://127.0.0.1:27017/technonatura-server';
+// mongoose.connect(MongoDB_URI, {
+// 	useNewUrlParser: true,
+// 	useUnifiedTopology: true,
+// });
 
-app.use(
-	helmet({
-		contentSecurityPolicy: false,
-		crossOriginResourcePolicy: { policy: 'cross-origin' },
-		crossOriginEmbedderPolicy: false,
-		noSniff: true,
-		xssFilter: true,
-		hidePoweredBy: true,
-	}),
-);
+// app.use(
+// 	helmet({
+// 		contentSecurityPolicy: false,
+// 		crossOriginResourcePolicy: { policy: 'cross-origin' },
+// 		crossOriginEmbedderPolicy: false,
+// 		noSniff: true,
+// 		xssFilter: true,
+// 		hidePoweredBy: true,
+// 	}),
+// );
 app.use(methodOverride('_method'));
 app.use(express.json());
 
@@ -62,8 +62,8 @@ app.use((req, res, next) => {
 //   next();
 // });
 
-db.on('error', (err) => console.error('error when connecting to db'));
-db.once('open', () => console.log('connected to mongoose'));
+// db.on('error', (err) => console.error('error when connecting to db'));
+// db.once('open', () => console.log('connected to mongoose'));
 // app.use('/', PostRouter);
 // app.use('/auth', cors(corsOptions), AuthRouter);
 // // app.use('/contact', cors(corsOptions), ContactRouter);
@@ -84,37 +84,39 @@ app.get('/', (req, res) => {
 	res.json({ message: 'hey' });
 });
 
-async function startApolloServer() {
-	const server = new ApolloServer({
-		typeDefs,
-		resolvers,
-		introspection: true,
-		playground: true,
-	});
-	await server.start();
+app.listen(process.env.PORT || 3030, () => {});
 
-	server.applyMiddleware({ app });
+// async function startApolloServer() {
+// 	const server = new ApolloServer({
+// 		typeDefs,
+// 		resolvers,
+// 		introspection: true,
+// 		playground: true,
+// 	});
+// 	await server.start();
 
-	// io.of('/websocket/arduino').on('connection', (socket) => {
-	//   if (!app.request.io) {
-	//     app.request.io = io;
-	//   }
+// 	server.applyMiddleware({ app });
 
-	//   ArduinoSocket(app.request, socket);
-	// });
+// 	// io.of('/websocket/arduino').on('connection', (socket) => {
+// 	//   if (!app.request.io) {
+// 	//     app.request.io = io;
+// 	//   }
 
-	app.listen(process.env.PORT || 3030, () => {});
+// 	//   ArduinoSocket(app.request, socket);
+// 	// });
 
-	// await new Promise((resolve) =>
-	// 	http.listen({ port: process.env.PORT || 3030 }),
-	// )
-	// 	.then(() => {
-	// 		return { server, app };
-	// 	})
+// 	app.listen(process.env.PORT || 3030, () => {});
 
-	// 	.catch(() => {
-	// 		return { server, app };
-	// 	});
-}
+// 	// await new Promise((resolve) =>
+// 	// 	http.listen({ port: process.env.PORT || 3030 }),
+// 	// )
+// 	// 	.then(() => {
+// 	// 		return { server, app };
+// 	// 	})
 
-startApolloServer();
+// 	// 	.catch(() => {
+// 	// 		return { server, app };
+// 	// 	});
+// }
+
+// startApolloServer();
