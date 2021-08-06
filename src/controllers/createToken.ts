@@ -1,53 +1,53 @@
 import * as jwt from 'jsonwebtoken';
 
 interface UserTypes {
-  email: string;
-  username: string;
-  password: string;
-  _id: string;
+	email: string;
+	username: string;
+	password: string;
+	_id: string;
 }
 
 export enum tokenForTypes {
-  auth,
-  ApiApp,
-  arduinoApp,
+	auth,
+	ApiApp,
+	arduinoApp,
 }
 
 interface ArduinoAppTypes {
-  ownerID: number;
-  appID: number;
+	ownerID: number;
+	appID: number;
 }
 
 // max age
 const maxAge = 3 * 24 * 60 * 60 * 60;
 const createToken = (
-  n: Partial<ArduinoAppTypes> | Partial<UserTypes>,
-  tokenFor: tokenForTypes,
+	n: Partial<ArduinoAppTypes> | Partial<UserTypes>,
+	tokenFor: tokenForTypes,
 ) => {
-  switch (tokenFor) {
-    case tokenForTypes.auth:
-      return jwt.sign({ ...n }, process.env.AUTH_SECRET_TOKEN || 'authSecret', {
-        expiresIn: '1y',
-      });
+	switch (tokenFor) {
+		case tokenForTypes.auth:
+			return jwt.sign({ ...n }, process.env.AUTH_SECRET_TOKEN || 'authSecret', {
+				expiresIn: '1y',
+			});
 
-      break;
+			break;
 
-    case tokenForTypes.arduinoApp:
-      return jwt.sign(
-        { ...n },
-        process.env.ArduinoApp_SECRET_TOKEN || 'arduinoSecret',
-        {
-          expiresIn: '1y',
-        },
-      );
-      break;
+		case tokenForTypes.arduinoApp:
+			return jwt.sign(
+				{ ...n },
+				process.env.ARDUINO_APP_SECRET_TOKEN || 'arduinoSecret',
+				{
+					expiresIn: '1y',
+				},
+			);
+			break;
 
-    case tokenForTypes.ApiApp:
-      break;
+		case tokenForTypes.ApiApp:
+			break;
 
-    default:
-      break;
-  }
+		default:
+			break;
+	}
 };
 
 export default createToken;
