@@ -1,4 +1,4 @@
-import * as crypto from 'crypto';
+// import * as crypto from 'crypto';
 // var algorithm = 'aes-192-cbc'; //algorithm to use
 // var password = process.env.HASH_EMAIL_SECRET_PASS;
 
