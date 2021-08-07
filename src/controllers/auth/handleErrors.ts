@@ -24,7 +24,7 @@ async function handleErrors(
 		code: number;
 		_message: string;
 		keyValue: {
-			username?: string;
+			password?: string;
 			email?: string;
 		};
 	},
@@ -37,9 +37,9 @@ async function handleErrors(
 	if (err.message == 'Only Letters and Numbers are allowed') {
 		errors.username = err.message;
 	}
-	if (err.message === 'incorrect username') {
+	if (err.message === 'incorrect email') {
 		// incorrect email
-		errors.username = 'That username is not registered';
+		errors.email = 'That email is not registered';
 	}
 
 	// incorrect password
