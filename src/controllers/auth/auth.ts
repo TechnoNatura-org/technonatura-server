@@ -160,6 +160,7 @@ AuthRouter.post('/signup', async (req, res) => {
 			fullName,
 			gender,
 			birthDate,
+			roles: ['user'],
 		});
 
 		if (roleInTechnoNatura === 'student') {
