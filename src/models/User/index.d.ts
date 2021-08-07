@@ -1,5 +1,3 @@
-import { type } from 'node:os';
-
 interface SocialMedia {
 	name: string;
 	url: string;
