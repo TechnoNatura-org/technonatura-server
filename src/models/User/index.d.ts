@@ -1,3 +1,5 @@
+import { type } from 'node:os';
+
 interface SocialMedia {
 	name: string;
 	url: string;
@@ -19,13 +21,11 @@ export interface StudentRoleInTechnoNatura {
 	startPeriod: number;
 }
 
-export interface AlumniRoleInTechnoNatura {
-	grades: Array<{
-		grade: Grade;
-		startPeriod: number;
-		finishPeriod: number;
-	}>;
-}
+export type AlumniRoleInTechnoNatura = Array<{
+	grade: Grade;
+	startPeriod: number;
+	finishPeriod: number;
+}>;
 
 export interface UserInterface {
 	isAccountVerified: boolean;
@@ -46,6 +46,7 @@ export interface UserInterface {
 
 	dream: string;
 	hobbies: Array<string>;
+	gender: 'male' | 'female';
 
 	follows: Array<string>;
 	followers: Array<string>;

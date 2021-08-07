@@ -1,7 +1,3 @@
-if (process.env.NODE_ENV !== 'production') {
-	require('dotenv').config();
-}
-
 import * as express from 'express';
 import * as jwt from 'jsonwebtoken';
 import User, { UserBaseDocument } from '../../models/User/User.model';
@@ -36,13 +32,15 @@ AuthRouter.post('/checkJWT', async (req, res) => {
 
 				// @ts-ignore
 				if (verifyToken.password != user?.password) {
-					res
-						.status(200)
-						.json({ message: 'invalid password, password might has changed' });
+					res.status(200).json({
+						status: 'error',
+						message: 'invalid password, password might has changed',
+					});
 					return;
 				} else {
 					res.status(200).json({
-						message: 'success',
+						message: 'success login',
+						status: 'success',
 						user: {
 							follows: user?.follows,
 
@@ -62,79 +60,76 @@ AuthRouter.post('/checkJWT', async (req, res) => {
 				}
 			}
 		} catch (err) {
-			res.status(200).json({ message: 'invalid token' });
+			console.log(err);
+			res.status(200).json({ status: 'error', message: 'invalid token' });
 			return;
 		}
 
 		// console.log(token.split(' '));
 	}
 
-	res.json({ message: 'token undefined' });
+	res.json({ status: 'warning', message: 'token undefined' });
 	return;
 });
 
 AuthRouter.post('/login', async (req, res) => {
-	const { username, password } = req.body;
+	const { email, password } = req.body;
 	// const { token } = req.headers;
 	// console.log(req.headers);
 
 	try {
-		const user = await User.login(username, password);
+		const user = await User.login(email, password);
 		const token = createToken(
 			{
-				username: user.username,
 				password: user.password,
 				_id: user._id,
-				email: user.email,
 			},
 			tokenForTypes.auth,
 		);
 
 		res.status(200).json({
+			status: 'success',
 			message: 'success',
 			token: token,
-			user: {
-				fullName: user.fullName,
-				username: user.username,
-				password: user.password,
-				email: user.email,
-				_id: user._id,
-				follows: user.follows,
-				roles: user.roles,
-				isAccountVerified: user.isAccountVerified,
-				socialMedias: user.socialMedias,
-			},
+			user: user,
 		});
 	} catch (err) {
 		console.log('ERR! ', err);
 
 		const errors = await handleErrors(err);
 		console.log(errors);
-		res.status(200).json({ errors });
+		res.status(200).json({ status: 'error', errors });
 	}
 });
 
 AuthRouter.post('/signup', async (req, res) => {
-	// console.log(req.body);
+	console.log('========== GET INTO SIGN UP =============');
 	const {
 		email,
 		password,
 		username,
 		fullName,
 		roleInTechnoNatura,
-		grade,
+		gradeInNumber,
 		startPeriod,
+		gender,
+		birthDate,
 	}: {
 		email: string;
 		password: string;
 		username: string;
 		fullName: string;
 		roleInTechnoNatura: 'student' | 'mentor';
-		grade: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12;
+		gender: 'male' | 'female';
+		gradeInNumber: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12;
 		startPeriod: number;
+
+		birthDate: string;
 	} = req.body;
 
-	if (!roleInTechnoNatura || !grade) {
+	// console.log(req.body);
+
+	if (!roleInTechnoNatura || !gradeInNumber) {
 		res.status(200).json({
 			message: 'Please fill roleInTechnoNatura and grade',
 			status: 'error',
@@ -157,15 +152,29 @@ AuthRouter.post('/signup', async (req, res) => {
 	}
 
 	try {
-		const user = new User({ email, password, username, fullName });
+		console.log(birthDate);
+		const user = new User({
+			email,
+			password,
+			username,
+			fullName,
+			gender,
+			birthDate,
+		});
 
 		if (roleInTechnoNatura === 'student') {
 			user.roleInTechnoNatura = {
 				student: true,
-				grade: grade,
+				grade: gradeInNumber,
 				startPeriod: startPeriod,
 			};
-		} else {
+		} else if (roleInTechnoNatura === 'mentor') {
+			user.roleInTechnoNatura = {
+				teacher: true,
+				grade: gradeInNumber,
+				active: true,
+				isVerified: false,
+			};
 		}
 
 		await user.save();
@@ -174,10 +183,8 @@ AuthRouter.post('/signup', async (req, res) => {
 
 		const token = createToken(
 			{
-				username: user.username,
 				password: user.password,
 				_id: user._id,
-				email: user.email,
 			},
 			tokenForTypes.auth,
 		);
@@ -186,19 +193,10 @@ AuthRouter.post('/signup', async (req, res) => {
 			status: 'success',
 
 			token: token,
-			user: {
-				fullName: user.fullName,
-				username: user.username,
-				password: user.password,
-				email: user.email,
-				_id: user._id,
-				follows: user.follows,
-				roles: user.roles,
-				isAccountVerified: user.isAccountVerified,
-				socialMedias: user.socialMedias,
-			},
+			user: user,
 		});
 	} catch (err) {
+		// console.log(err);
 		const errors = await handleErrors(err, {
 			email,
 			password,
@@ -207,6 +205,8 @@ AuthRouter.post('/signup', async (req, res) => {
 		});
 		res.status(200).json({ errors });
 	}
+
+	console.log('========== PASSED SIGN UP =============');
 });
 
 AuthRouter.post('/changePassword', VerifyAuthToken, async (req, res) => {

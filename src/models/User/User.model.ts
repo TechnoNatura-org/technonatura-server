@@ -32,7 +32,7 @@ export interface UserDocument extends UserBaseDocument {}
 
 // For model
 export interface UserModel extends Model<UserBaseDocument> {
-	login(username: string, password: string): Promise<UserBaseDocument>;
+	login(email: string, password: string): Promise<UserBaseDocument>;
 }
 
 const userSchema = new Schema<UserDocument, UserModel>({
@@ -113,8 +113,8 @@ const userSchema = new Schema<UserDocument, UserModel>({
 	followers: [String],
 
 	birthDate: {
-		type: Date,
-		required: [true, 'Please enter your name'],
+		type: Number,
+		required: [true, 'Please enter your birthDate'],
 	},
 
 	roles: [String], // the role name, the role name must be unique
@@ -175,14 +175,15 @@ const userSchema = new Schema<UserDocument, UserModel>({
 			},
 		],
 	},
-	alumni: {
-		alumni: Boolean,
-		grades: [{ grade: String, startPeriod: Number, finishPeriod: Number }],
-	},
+	alumni: [{ grade: String, startPeriod: Number, finishPeriod: Number }],
 
 	badges: [String],
 	hobbies: [String],
 	dream: String,
+	gender: {
+		type: String,
+		enum: ['male', 'female'],
+	},
 });
 
 function validateUsername(str: string) {
@@ -220,7 +221,7 @@ userSchema.pre('save', async function(next) {
 	// console.log('hello');
 	const salt = await bcrypt.genSalt();
 	this.password = await bcrypt.hash(this.password, salt);
-	this.email = await EncryptEmail(this.email);
+	// this.email = await EncryptEmail(this.email);
 
 	next();
 });
@@ -228,10 +229,10 @@ userSchema.pre('save', async function(next) {
 // static method to login user
 userSchema.statics.login = async function(
 	this: Model<UserDocument>,
-	username,
+	email,
 	password,
 ) {
-	const user = await this.findOne({ username: username });
+	const user = await this.findOne({ email });
 	if (user) {
 		const auth = await bcrypt.compare(password, user.password);
 		if (auth) {
@@ -239,7 +240,7 @@ userSchema.statics.login = async function(
 		}
 		throw new Error('incorrect password');
 	}
-	throw new Error('incorrect username');
+	throw new Error('incorrect email');
 };
 
 export default model<UserDocument, UserModel>('User', userSchema);

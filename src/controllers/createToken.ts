@@ -26,6 +26,7 @@ const createToken = (
 ) => {
 	switch (tokenFor) {
 		case tokenForTypes.auth:
+			console.log('auth!');
 			return jwt.sign({ ...n }, process.env.AUTH_SECRET_TOKEN || 'authSecret', {
 				expiresIn: '1y',
 			});
