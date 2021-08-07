@@ -7,8 +7,8 @@ import * as cors from 'cors';
 // cors.
 var whitelist = [
 	'http://localhost:3000',
-	'https://technonatura-dashboard.vercel.app/',
-	'https://dashboard.technonatura.vercel.app/',
+	'https://technonatura-dashboard.vercel.app',
+	'https://dashboard.technonatura.vercel.app',
 ];
 var corsOptions: cors.CorsOptions = {
 	origin: function(origin, callback) {
