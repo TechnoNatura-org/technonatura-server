@@ -150,15 +150,12 @@ const userSchema = new Schema<UserDocument, UserModel>({
 			{
 				teacher: Boolean,
 				grade: Number,
-				startPeriod: Number,
-				finishPeriod: Number,
+
 				isVerified: Boolean,
 			},
 			{
 				student: Boolean,
 				grade: Number,
-				startPeriod: Number,
-				finishPeriod: Number,
 			},
 			{
 				alumni: Boolean,
@@ -169,7 +166,6 @@ const userSchema = new Schema<UserDocument, UserModel>({
 							enum: ['mi', 'mts', 'ma'],
 						},
 						startPeriod: Number,
-						finishPeriod: Number,
 					},
 				],
 			},

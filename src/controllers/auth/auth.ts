@@ -41,20 +41,7 @@ AuthRouter.post('/checkJWT', async (req, res) => {
 					res.status(200).json({
 						message: 'success login',
 						status: 'success',
-						user: {
-							follows: user?.follows,
-
-							fullName: user?.fullName,
-							username: user?.username,
-							email: user?.email,
-							accountCreated: user?.accountCreated,
-							isAccountVerified: user?.isAccountVerified,
-							roles: user?.roles,
-							socialMedias: user?.socialMedias,
-							bio: user?.bio,
-							avatar: user?.avatar,
-							banner: user?.banner,
-						},
+						user: user,
 					});
 					return;
 				}
@@ -167,7 +154,6 @@ AuthRouter.post('/signup', async (req, res) => {
 			user.roleInTechnoNatura = {
 				student: true,
 				grade: gradeInNumber,
-				startPeriod: startPeriod,
 			};
 		} else if (roleInTechnoNatura === 'mentor') {
 			user.roleInTechnoNatura = {

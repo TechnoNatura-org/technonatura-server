@@ -132,6 +132,8 @@ AnyRouter.get('/users', async (req, res) => {
 		id: string;
 		avatar: string;
 		roleInTechnoNatura: string;
+		startPeriod?: number;
+		gradeInNumber: number;
 	}> = [];
 	try {
 		const usersRes = await User.find({});
@@ -148,6 +150,9 @@ AnyRouter.get('/users', async (req, res) => {
 					roleInTechnoNatura: item.roleInTechnoNatura.student
 						? 'student'
 						: 'teacher',
+					// @ts-ignore
+					startPeriod: item.roleInTechnoNatura.startPeriod,
+					gradeInNumber: item.roleInTechnoNatura.grade,
 				},
 			);
 		});

@@ -16,13 +16,11 @@ export interface TeacherRoleInTechnoNatura {
 export interface StudentRoleInTechnoNatura {
 	student: boolean;
 	grade: GradeInNumber;
-	startPeriod: number;
 }
 
 export type AlumniRoleInTechnoNatura = Array<{
 	grade: Grade;
 	startPeriod: number;
-	finishPeriod: number;
 }>;
 
 export interface UserInterface {
