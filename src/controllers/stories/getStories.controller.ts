@@ -10,9 +10,10 @@
 
 import * as express from 'express';
 
-import User, { UserBaseDocument } from '../models/User/User.model';
-import { VerifyAuthToken } from '../controllers/checkToken';
-import addPostController from '../controllers/stories/addpost.controller';
+import Blog, { blogPostBaseDocument } from '../../models/Blog/BlogPost.model';
+
+import User, { UserBaseDocument } from '../../models/User/User.model';
+import { VerifyAuthToken } from '../checkToken';
 
 declare module 'express-serve-static-core' {
 	interface Request {
@@ -23,10 +24,21 @@ declare module 'express-serve-static-core' {
 
 const storyRouter = express.Router();
 
-storyRouter.get('/post/:id', (req, res) => {});
-storyRouter.get('/posts', (req, res) => {
-	res.json({ m: 'je' });
+storyRouter.post('/', VerifyAuthToken, async (req, res) => {
+	try {
+		const stories = await Blog.find({ author: req.id });
+
+		res.json({
+			message: 'Success Fetched Data!',
+			status: 'success',
+			stories,
+		});
+		return;
+	} catch (err) {
+		res.json({ message: 'error on the server', status: 'error' });
+
+		return;
+	}
 });
-storyRouter.use('/post', addPostController);
 
 export default storyRouter;
