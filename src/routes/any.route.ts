@@ -66,7 +66,7 @@ AnyRouter.get('/allData', async (req, res) => {
 	res.send({ data: WOOF });
 });
 
-AnyRouter.get('/api/getArduinoApp', async (req, res) => {
+AnyRouter.get('/getArduinoApp', async (req, res) => {
 	const { appId } = req.query;
 
 	try {
@@ -105,7 +105,7 @@ AnyRouter.get('/api/getArduinoApp', async (req, res) => {
 	return;
 });
 
-AnyRouter.get('/api/getSensor', async (req, res) => {
+AnyRouter.get('/getSensor', async (req, res) => {
 	const { sensorId } = req.query;
 
 	const sensor = await Sensor.findById(sensorId);
@@ -116,6 +116,104 @@ AnyRouter.get('/api/getSensor', async (req, res) => {
 			message: 'sensor found!',
 			status: 'success',
 			sensor: sensor,
+		});
+		return;
+	}
+
+	res.send({ message: 'sensor not found', status: 'warning' });
+});
+
+AnyRouter.get('/users', async (req, res) => {
+	// const App = await AppDoc?.getApp();
+	const users: Array<{
+		username: string;
+		name: string;
+		isAccountVerified: boolean;
+		id: string;
+		avatar: string;
+		roleInTechnoNatura: string;
+	}> = [];
+	try {
+		const usersRes = await User.find({});
+		usersRes.forEach((item) => {
+			users.push(
+				// @ts-ignore
+				{
+					username: item.username,
+					name: item.fullName,
+					isAccountVerified: item.isAccountVerified,
+					id: item.id,
+					avatar: item.avatar,
+					// @ts-ignore
+					roleInTechnoNatura: item.roleInTechnoNatura.student
+						? 'student'
+						: 'teacher',
+				},
+			);
+		});
+
+		res.send({
+			message: `Users ${users.length > 0 ? 'Found!' : 'Not Found!'}`,
+			status: 'success',
+			users: users,
+		});
+		return;
+	} catch (err) {
+		res.send({
+			message: `error occured`,
+			status: 'error',
+		});
+		return;
+	}
+
+	res.send({ message: 'sensor not found', status: 'warning' });
+});
+
+AnyRouter.get('/teachers', async (req, res) => {
+	// const App = await AppDoc?.getApp();
+	const teachers: Array<{
+		username: string;
+		name: string;
+		isAccountVerified: boolean;
+		isTeacherVerified: boolean;
+		id: string;
+		avatar: string;
+		roleInTechnoNatura: string;
+	}> = [];
+	try {
+		// @ts-ignore
+		const teachersRes = await User.find({
+			roleInTechnoNatura: { teacher: true },
+		});
+		teachersRes.forEach((item) => {
+			teachers.push(
+				// @ts-ignore
+				{
+					username: item.username,
+					name: item.fullName,
+					isAccountVerified: item.isAccountVerified,
+					id: item.id,
+					avatar: item.avatar,
+					// @ts-ignore
+					isTeacherVerified: item.roleInTechnoNatura.isVerified,
+					// @ts-ignore
+					roleInTechnoNatura: item.roleInTechnoNatura.student
+						? 'student'
+						: 'teacher',
+				},
+			);
+		});
+
+		res.send({
+			message: `Users ${teachers.length > 0 ? 'Found!' : 'Not Found!'}`,
+			status: 'success',
+			teachers: teachers,
+		});
+		return;
+	} catch (err) {
+		res.send({
+			message: `error occured`,
+			status: 'error',
 		});
 		return;
 	}

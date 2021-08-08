@@ -42,12 +42,23 @@ app.use(
 	helmet({
 		contentSecurityPolicy: false,
 		crossOriginResourcePolicy: { policy: 'cross-origin' },
-		crossOriginEmbedderPolicy: false,
+		crossOriginEmbedderPolicy: true,
 		noSniff: true,
 		xssFilter: true,
 		hidePoweredBy: true,
 	}),
 );
+// app.use(
+// 	'/graphql',
+// 	helmet({
+// 		contentSecurityPolicy: false,
+// 		crossOriginResourcePolicy: { policy: 'cross-origin' },
+// 		crossOriginEmbedderPolicy: true,
+// 		noSniff: true,
+// 		xssFilter: true,
+// 		hidePoweredBy: true,
+// 	}),
+// );
 app.use(methodOverride('_method'));
 app.use(express.json());
 
@@ -72,7 +83,7 @@ app.use('/arduino', ArduinoRouter);
 app.use('/', StoryRouter);
 app.use('/', SubscriptionRouter);
 app.use(
-	'/',
+	'/api',
 
 	AnythingRouter,
 );
