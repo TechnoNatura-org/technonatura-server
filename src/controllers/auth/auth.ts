@@ -159,7 +159,6 @@ AuthRouter.post('/signup', async (req, res) => {
 			user.roleInTechnoNatura = {
 				teacher: true,
 				grade: gradeInNumber,
-				active: true,
 				isVerified: false,
 			};
 		}

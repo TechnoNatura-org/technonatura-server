@@ -9,7 +9,6 @@ export type Grade = 'mi' | 'mts' | 'ma';
 export interface TeacherRoleInTechnoNatura {
 	teacher: boolean;
 	grade: GradeInNumber;
-	active: boolean;
 	isVerified: boolean;
 }
 

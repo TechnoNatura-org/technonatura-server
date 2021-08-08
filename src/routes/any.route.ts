@@ -180,15 +180,16 @@ AnyRouter.get('/teachers', async (req, res) => {
 		username: string;
 		name: string;
 		isAccountVerified: boolean;
-		isTeacherVerified: boolean;
 		id: string;
 		avatar: string;
 		roleInTechnoNatura: string;
+		verifiedTeacher: boolean;
+		gradeInNumber: number;
 	}> = [];
 	try {
 		// @ts-ignore
 		const teachersRes = await User.find({
-			roleInTechnoNatura: { teacher: true },
+			'roleInTechnoNatura.teacher': true,
 		});
 		teachersRes.forEach((item) => {
 			teachers.push(
@@ -200,17 +201,14 @@ AnyRouter.get('/teachers', async (req, res) => {
 					id: item.id,
 					avatar: item.avatar,
 					// @ts-ignore
-					isTeacherVerified: item.roleInTechnoNatura.isVerified,
-					// @ts-ignore
-					roleInTechnoNatura: item.roleInTechnoNatura.student
-						? 'student'
-						: 'teacher',
+					verifiedTeacher: item.roleInTechnoNatura.isVerified,
+					gradeInNumber: item.roleInTechnoNatura.grade,
 				},
 			);
 		});
 
 		res.send({
-			message: `Users ${teachers.length > 0 ? 'Found!' : 'Not Found!'}`,
+			message: `Teachers ${teachers.length > 0 ? 'Found!' : 'Not Found!'}`,
 			status: 'success',
 			teachers: teachers,
 		});
@@ -222,8 +220,6 @@ AnyRouter.get('/teachers', async (req, res) => {
 		});
 		return;
 	}
-
-	res.send({ message: 'sensor not found', status: 'warning' });
 });
 
 export default AnyRouter;

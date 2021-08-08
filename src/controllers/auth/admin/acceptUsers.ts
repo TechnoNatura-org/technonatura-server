@@ -58,9 +58,25 @@ AuthRouter.post('/acceptusers', VerifyAuthToken, async (req, res) => {
 				for (const userId of usersId) {
 					try {
 						// console.log(usersId, userId, 'userId');
-						const verifiedUser = await User.findByIdAndUpdate(userId, {
-							isAccountVerified: true,
-						});
+						const verifiedUser = await User.findById(userId);
+						console.log(req.query);
+						if (req.query.teacher && verifiedUser) {
+							await verifiedUser.updateOne({
+								isAccountVerified: true,
+								$set: {
+									// @ts-ignore
+									roleInTechnoNatura: {
+										...verifiedUser.roleInTechnoNatura,
+										isVerified: true,
+									},
+								},
+							});
+						} else if (verifiedUser) {
+							await verifiedUser.updateOne({
+								isAccountVerified: true,
+							});
+						}
+
 						// console.log(verifiedUser);
 					} catch (err) {
 						// console.log("err when fetching unverified users", err)
