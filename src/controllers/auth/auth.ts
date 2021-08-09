@@ -110,7 +110,7 @@ AuthRouter.post('/signup', async (req, res) => {
 		roleInTechnoNatura: 'student' | 'mentor' | 'staff';
 		gender: 'male' | 'female';
 		gradeInNumber: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12;
-		startPeriod: number;
+		startPeriod?: number;
 
 		staffRole: string;
 
@@ -127,12 +127,14 @@ AuthRouter.post('/signup', async (req, res) => {
 		return;
 	}
 
+	// @ts-ignore
 	if (startPeriod < 1980) {
 		res.status(200).json({
 			message: 'Invalid Start Period',
 			status: 'error',
 		});
 		return;
+		// @ts-ignore
 	} else if (startPeriod > new Date().getFullYear()) {
 		res.status(200).json({
 			message: 'Invalid Start Period',
@@ -157,6 +159,9 @@ AuthRouter.post('/signup', async (req, res) => {
 			user.roleInTechnoNatura = {
 				student: true,
 				grade: gradeInNumber,
+
+				// @ts-ignore
+				startPeriod,
 			};
 		} else if (roleInTechnoNatura === 'mentor') {
 			user.roleInTechnoNatura = {

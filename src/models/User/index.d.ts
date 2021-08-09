@@ -21,6 +21,7 @@ export interface StaffRoleInTechnoNatura {
 export interface StudentRoleInTechnoNatura {
 	student: boolean;
 	grade: GradeInNumber;
+	startPeriod: number;
 }
 
 export type AlumniRoleInTechnoNatura = Array<{

@@ -160,6 +160,7 @@ const userSchema = new Schema<UserDocument, UserModel>({
 			{
 				student: Boolean,
 				grade: Number,
+				startPeriod: Number,
 			},
 			{
 				alumni: Boolean,
@@ -178,8 +179,10 @@ const userSchema = new Schema<UserDocument, UserModel>({
 	alumni: [{ grade: String, startPeriod: Number, finishPeriod: Number }],
 
 	badges: [String],
+
 	hobbies: [String],
 	dream: String,
+
 	gender: {
 		type: String,
 		enum: ['male', 'female'],
