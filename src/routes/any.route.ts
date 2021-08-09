@@ -133,7 +133,7 @@ AnyRouter.get('/users', async (req, res) => {
 		avatar: string;
 		roleInTechnoNatura: string;
 		startPeriod?: number;
-		gradeInNumber: number;
+		gradeInNumber?: number;
 	}> = [];
 	try {
 		const usersRes = await User.find({});
@@ -152,7 +152,9 @@ AnyRouter.get('/users', async (req, res) => {
 						: 'teacher',
 					// @ts-ignore
 					startPeriod: item.roleInTechnoNatura.startPeriod,
-					gradeInNumber: item.roleInTechnoNatura.grade,
+					gradeInNumber:
+						// @ts-ignore
+						!item.roleInTechnoNatura.staff && item.roleInTechnoNatura.grade,
 				},
 			);
 		});
@@ -174,7 +176,7 @@ AnyRouter.get('/users', async (req, res) => {
 	res.send({ message: 'sensor not found', status: 'warning' });
 });
 
-AnyRouter.get('/teachers', async (req, res) => {
+AnyRouter.get('/staff-accounts', async (req, res) => {
 	// const App = await AppDoc?.getApp();
 	const teachers: Array<{
 		username: string;
@@ -184,12 +186,17 @@ AnyRouter.get('/teachers', async (req, res) => {
 		avatar: string;
 		roleInTechnoNatura: string;
 		verifiedTeacher: boolean;
-		gradeInNumber: number;
+		staffRole?: number;
 	}> = [];
 	try {
 		// @ts-ignore
 		const teachersRes = await User.find({
-			'roleInTechnoNatura.teacher': true,
+			$or: [
+				{
+					'roleInTechnoNatura.staff': true,
+				},
+				{ 'roleInTechnoNatura.teacher': true },
+			],
 		});
 		teachersRes.forEach((item) => {
 			teachers.push(
@@ -202,7 +209,9 @@ AnyRouter.get('/teachers', async (req, res) => {
 					avatar: item.avatar,
 					// @ts-ignore
 					verifiedTeacher: item.roleInTechnoNatura.isVerified,
-					gradeInNumber: item.roleInTechnoNatura.grade,
+					staffRole:
+						// @ts-ignore
+						item.roleInTechnoNatura.grade || item.roleInTechnoNatura.role,
 				},
 			);
 		});

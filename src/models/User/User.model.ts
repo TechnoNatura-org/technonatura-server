@@ -150,7 +150,11 @@ const userSchema = new Schema<UserDocument, UserModel>({
 			{
 				teacher: Boolean,
 				grade: Number,
-
+				isVerified: Boolean,
+			},
+			{
+				staff: Boolean,
+				role: String,
 				isVerified: Boolean,
 			},
 			{

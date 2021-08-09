@@ -12,6 +12,12 @@ export interface TeacherRoleInTechnoNatura {
 	isVerified: boolean;
 }
 
+export interface StaffRoleInTechnoNatura {
+	staff: boolean;
+	role: string;
+	isVerified: boolean;
+}
+
 export interface StudentRoleInTechnoNatura {
 	student: boolean;
 	grade: GradeInNumber;
@@ -54,7 +60,10 @@ export interface UserInterface {
 	accountCreated: Date;
 	birthDate: Date;
 
-	roleInTechnoNatura: TeacherRoleInTechnoNatura | StudentRoleInTechnoNatura;
+	roleInTechnoNatura:
+		| TeacherRoleInTechnoNatura
+		| StudentRoleInTechnoNatura
+		| StaffRoleInTechnoNatura;
 	alumni: AlumniRoleInTechnoNatura;
 
 	badges: Array<string>;

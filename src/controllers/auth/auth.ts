@@ -101,15 +101,18 @@ AuthRouter.post('/signup', async (req, res) => {
 		startPeriod,
 		gender,
 		birthDate,
+		staffRole,
 	}: {
 		email: string;
 		password: string;
 		username: string;
 		fullName: string;
-		roleInTechnoNatura: 'student' | 'mentor';
+		roleInTechnoNatura: 'student' | 'mentor' | 'staff';
 		gender: 'male' | 'female';
 		gradeInNumber: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12;
 		startPeriod: number;
+
+		staffRole: string;
 
 		birthDate: string;
 	} = req.body;
@@ -143,7 +146,7 @@ AuthRouter.post('/signup', async (req, res) => {
 		const user = new User({
 			email,
 			password,
-			username,
+			username: username.toLowerCase(),
 			fullName,
 			gender,
 			birthDate,
@@ -159,6 +162,12 @@ AuthRouter.post('/signup', async (req, res) => {
 			user.roleInTechnoNatura = {
 				teacher: true,
 				grade: gradeInNumber,
+				isVerified: false,
+			};
+		} else if (roleInTechnoNatura === 'staff') {
+			user.roleInTechnoNatura = {
+				staff: true,
+				role: staffRole,
 				isVerified: false,
 			};
 		}
