@@ -19,6 +19,9 @@ import ArduinoRouter from './routes/arduino.route';
 import StoryRouter from './routes/story.route';
 import SubscriptionRouter from './routes/subsciption.router';
 import AnythingRouter from './routes/any.route';
+
+import BranchRouter from './routes/branch.route';
+
 import { corsOptions } from './controllers/cors';
 
 // import Socketmain from './socket/index';
@@ -81,6 +84,7 @@ app.use('/auth', cors(corsOptions), AuthRouter);
 app.use('/contact', cors(corsOptions), ContactRouter);
 app.use('/arduino', ArduinoRouter);
 app.use('/story', cors(corsOptions), StoryRouter);
+app.use('/branch', cors(corsOptions), BranchRouter);
 app.use('/', SubscriptionRouter);
 app.use(
 	'/api',

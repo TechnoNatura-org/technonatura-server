@@ -151,16 +151,28 @@ const userSchema = new Schema<UserDocument, UserModel>({
 				teacher: Boolean,
 				grade: Number,
 				isVerified: Boolean,
+				branch: {
+					type: String,
+					required: [true, 'technonatura branch cannot be blank'],
+				},
 			},
 			{
 				staff: Boolean,
 				role: String,
 				isVerified: Boolean,
+				branch: {
+					type: String,
+					required: [true, 'technonatura branch cannot be blank'],
+				},
 			},
 			{
 				student: Boolean,
 				grade: Number,
 				startPeriod: Number,
+				branch: {
+					type: String,
+					required: [true, 'technonatura branch cannot be blank'],
+				},
 			},
 			{
 				alumni: Boolean,
@@ -171,6 +183,10 @@ const userSchema = new Schema<UserDocument, UserModel>({
 							enum: ['mi', 'mts', 'ma'],
 						},
 						startPeriod: Number,
+						branch: {
+							type: String,
+							required: [true, 'technonatura branch cannot be blank'],
+						},
 					},
 				],
 			},

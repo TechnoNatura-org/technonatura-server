@@ -16,17 +16,22 @@ export interface StaffRoleInTechnoNatura {
 	staff: boolean;
 	role: string;
 	isVerified: boolean;
+
+	branch: string;
 }
 
 export interface StudentRoleInTechnoNatura {
 	student: boolean;
 	grade: GradeInNumber;
 	startPeriod: number;
+
+	branch: string;
 }
 
 export type AlumniRoleInTechnoNatura = Array<{
 	grade: Grade;
 	startPeriod: number;
+	branch: string;
 }>;
 
 export interface UserInterface {

@@ -59,10 +59,31 @@ AuthRouter.post('/acceptusers', VerifyAuthToken, async (req, res) => {
 					try {
 						// console.log(usersId, userId, 'userId');
 						const verifiedUser = await User.findById(userId);
-						console.log(req.query);
-						if (req.query.teacher && verifiedUser) {
+
+						// @ts-ignore
+						if (verifiedUser?.roleInTechnoNatura.teacher) {
+							if (!verifiedUser.roles.includes('teacher')) {
+								verifiedUser.roles.push('teacher');
+							}
 							await verifiedUser.updateOne({
 								isAccountVerified: true,
+								roles: [...verifiedUser.roles],
+								$set: {
+									// @ts-ignore
+									roleInTechnoNatura: {
+										...verifiedUser.roleInTechnoNatura,
+										isVerified: true,
+									},
+								},
+							});
+							// @ts-ignore
+						} else if (verifiedUser?.roleInTechnoNatura.staff) {
+							if (!verifiedUser.roles.includes('staff')) {
+								verifiedUser.roles.push('staff');
+							}
+							await verifiedUser.updateOne({
+								isAccountVerified: true,
+								roles: [...verifiedUser.roles],
 								$set: {
 									// @ts-ignore
 									roleInTechnoNatura: {

@@ -102,6 +102,7 @@ AuthRouter.post('/signup', async (req, res) => {
 		gender,
 		birthDate,
 		staffRole,
+		branch,
 	}: {
 		email: string;
 		password: string;
@@ -115,6 +116,7 @@ AuthRouter.post('/signup', async (req, res) => {
 		staffRole: string;
 
 		birthDate: string;
+		branch: string;
 	} = req.body;
 
 	// console.log(req.body);
@@ -162,18 +164,21 @@ AuthRouter.post('/signup', async (req, res) => {
 
 				// @ts-ignore
 				startPeriod,
+				branch,
 			};
 		} else if (roleInTechnoNatura === 'mentor') {
 			user.roleInTechnoNatura = {
 				teacher: true,
 				grade: gradeInNumber,
 				isVerified: false,
+				branch,
 			};
 		} else if (roleInTechnoNatura === 'staff') {
 			user.roleInTechnoNatura = {
 				staff: true,
 				role: staffRole,
 				isVerified: false,
+				branch,
 			};
 		}
 

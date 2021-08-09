@@ -17,8 +17,11 @@ import BlogPost from '../models/Blog/BlogPost.model';
 
 import User from '../models/User/User.model';
 
+import TechnoNaturaBranchController from '../controllers/public/branch.controller';
+
 const AnyRouter = express.Router();
 
+AnyRouter.use('/', TechnoNaturaBranchController);
 AnyRouter.get('/allData', async (req, res) => {
 	const allUsers = User.count();
 	const verifiedUsers = User.find({ isAccountVerified: true }).count();
