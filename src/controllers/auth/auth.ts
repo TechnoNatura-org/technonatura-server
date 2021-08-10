@@ -77,8 +77,6 @@ AuthRouter.post('/login', async (req, res) => {
 
 		sendRegisterLoginInfo(true, user.email, user.username, system, date);
 
-		const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
-
 		res.status(200).json({
 			status: 'success',
 			message: 'success',

@@ -24,11 +24,6 @@ import EmailTemplate from '../controllers/EmailTemplate';
 
 const AnyRouter = express.Router();
 
-AnyRouter.get('/getIP', (req, res) => {
-	const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
-	res.send(ip);
-});
-
 AnyRouter.get('/email', async (req, res) => {
 	try {
 		let sendEmailRes = await transporter.sendMail({
