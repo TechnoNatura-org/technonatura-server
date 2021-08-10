@@ -75,9 +75,7 @@ AuthRouter.post('/login', async (req, res) => {
 			tokenForTypes.auth,
 		);
 
-		sendRegisterLoginInfo(true, user.email, user.username, system, {
-			...platform,
-		});
+		sendRegisterLoginInfo(true, user.email, user.username, system);
 
 		res.status(200).json({
 			status: 'success',
@@ -202,9 +200,7 @@ AuthRouter.post('/signup', async (req, res) => {
 			},
 			tokenForTypes.auth,
 		);
-		sendRegisterLoginInfo(true, user.email, user.username, system, {
-			...platform,
-		});
+		sendRegisterLoginInfo(true, user.email, user.username, system);
 		res.status(200).json({
 			message: 'success',
 			status: 'success',

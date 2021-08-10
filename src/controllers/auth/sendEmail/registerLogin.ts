@@ -8,11 +8,6 @@ export default async function sendRegisterInfo(
 	email: string,
 	username: string,
 	system: string,
-	platform: {
-		description: string;
-		name: string;
-		os: { family: string };
-	},
 ) {
 	try {
 		let sendEmailRes = await transporter.sendMail({
@@ -123,7 +118,9 @@ export default async function sendRegisterInfo(
 					? ` <p class="max-w-96 lh-lg text-white text-center text-2xl" style="line-height: 2; font-size: 24px; color: #dadada; max-width: 384px; -premailer-width: 384; width: 100%; margin: 0;" align="center">
       Langkah selanjutnya adalah menerima verifikasi oleh <a https://t.me/Aldhaneka>Aldhaneka</a>
       </p>`
-					: `${platform.name} ${platform.os.family} – ${platform.description}`
+					: `<p class="max-w-96 lh-lg text-white text-center text-2xl" style="line-height: 2; font-size: 24px; color: #dadada; max-width: 384px; -premailer-width: 384; width: 100%; margin: 0;" align="center">
+      ${system}
+      </p>`
 			}  
      
 
