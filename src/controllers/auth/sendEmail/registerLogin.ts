@@ -94,7 +94,11 @@ export default async function sendRegisterInfo(
   <tbody>
     <tr>
       <td style="line-height: 24px; font-size: 16px; margin: 0;" align="left">
-        <h1 class="text-white text-center" style="color: #ffffff; padding-top: 0; padding-bottom: 0; font-weight: 500; vertical-align: baseline; font-size: 36px; line-height: 43.2px; margin: 0;" align="center">
+        <h1 class="text-white text-center" style="color: #ffffff; padding-top: 0; padding-bottom: 0; font-weight: 500; vertical-align: baseline; font-size: 36px; line-height: 43.2px; margin: 0;" align="center">${
+					!login
+						? 'Selamat, kamu berhasil melakukan registrasi di TechnoNatura Dashbor!'
+						: `Seseorang baru saja masuk ke akun mu pada : ${new Date()}`
+				}</h1>
 
       </td>
     </tr>
@@ -114,7 +118,13 @@ export default async function sendRegisterInfo(
   <tbody>
     <tr>
       <td style="line-height: 24px; font-size: 16px; margin: 0;" align="left">
-      
+      ${
+				!login
+					? ` <p class="max-w-96 lh-lg text-white text-center text-2xl" style="line-height: 2; font-size: 24px; color: #dadada; max-width: 384px; -premailer-width: 384; width: 100%; margin: 0;" align="center">
+      Langkah selanjutnya adalah menerima verifikasi oleh <a https://t.me/Aldhaneka>Aldhaneka</a>
+      </p>`
+					: `${platform.name} ${platform.os.family} – ${platform.description}`
+			}  
      
 
       </td>
