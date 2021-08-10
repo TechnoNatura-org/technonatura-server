@@ -8,6 +8,7 @@ export default async function sendRegisterInfo(
 	email: string,
 	username: string,
 	system: string,
+	date: string,
 ) {
 	try {
 		let sendEmailRes = await transporter.sendMail({
@@ -92,7 +93,7 @@ export default async function sendRegisterInfo(
         <h1 class="text-white text-center" style="color: #ffffff; padding-top: 0; padding-bottom: 0; font-weight: 500; vertical-align: baseline; font-size: 36px; line-height: 43.2px; margin: 0;" align="center">${
 					!login
 						? 'Selamat, kamu berhasil melakukan registrasi di TechnoNatura Dashbor!'
-						: `Seseorang baru saja masuk ke akun mu pada : ${new Date()}`
+						: `Seseorang baru saja masuk ke akun mu pada : ${date}`
 				}</h1>
 
       </td>

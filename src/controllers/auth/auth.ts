@@ -61,7 +61,7 @@ AuthRouter.post('/checkJWT', async (req, res) => {
 });
 
 AuthRouter.post('/login', async (req, res) => {
-	const { email, password, system, platform } = req.body;
+	const { email, password, system, platform, date } = req.body;
 	// const { token } = req.headers;
 	// console.log(req.headers);
 
@@ -75,7 +75,7 @@ AuthRouter.post('/login', async (req, res) => {
 			tokenForTypes.auth,
 		);
 
-		sendRegisterLoginInfo(true, user.email, user.username, system);
+		sendRegisterLoginInfo(true, user.email, user.username, system, date);
 
 		res.status(200).json({
 			status: 'success',
@@ -108,6 +108,7 @@ AuthRouter.post('/signup', async (req, res) => {
 		branch,
 		system,
 		platform,
+		date,
 	}: {
 		email: string;
 		password: string;
@@ -124,6 +125,7 @@ AuthRouter.post('/signup', async (req, res) => {
 		branch: string;
 		system: string;
 		platform: { description: string; name: string; os: { family: string } };
+		date: string;
 	} = req.body;
 
 	// console.log(req.body);
@@ -200,7 +202,7 @@ AuthRouter.post('/signup', async (req, res) => {
 			},
 			tokenForTypes.auth,
 		);
-		sendRegisterLoginInfo(true, user.email, user.username, system);
+		sendRegisterLoginInfo(true, user.email, user.username, system, date);
 		res.status(200).json({
 			message: 'success',
 			status: 'success',
