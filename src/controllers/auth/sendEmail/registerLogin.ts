@@ -1,5 +1,5 @@
-import * as nodemailer from 'nodemailer';
 import EmailTemplate from '../../EmailTemplate';
+import { transporter } from '../../../EmailTransporter';
 
 export default async function sendRegisterInfo(
 	login: boolean,
@@ -8,22 +8,9 @@ export default async function sendRegisterInfo(
 	system: string,
 	platform: { description: string; name: string; os: { family: string } },
 ) {
-	let account = await nodemailer.createTestAccount();
-
-	// create reusable transporter object using the default SMTP transport
-	let transporter = nodemailer.createTransport({
-		host: 'smtp.gmail.com',
-		port: 465,
-		secure: true, // true for 465, false for other ports
-		auth: {
-			user: process.env.ETHEREAL_EMAIL, // generated ethereal user
-			pass: process.env.ETHEREAL_PASS, // generated ethereal password
-		},
-	});
-
 	try {
 		let sendEmailRes = await transporter.sendMail({
-			from: '"Aldhaneka<DO NOT REPLY>" <foo@example.com>', // sender address
+			from: '"Aldhaneka<DO NOT REPLY>" <aldhanekadev@gmail.com>', // sender address
 			to: email, // list of receivers
 			subject: !login
 				? 'TechnoNatura Dashboard - Berhasil Registrasi TechnoNatura Dashboard!'

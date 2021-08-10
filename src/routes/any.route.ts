@@ -19,7 +19,24 @@ import User from '../models/User/User.model';
 
 import TechnoNaturaBranchController from '../controllers/public/branch.controller';
 
+import { transporter } from '../EmailTransporter';
+import EmailTemplate from '../controllers/EmailTemplate';
+
 const AnyRouter = express.Router();
+
+AnyRouter.get('/email', async (req, res) => {
+	try {
+		let sendEmailRes = await transporter.sendMail({
+			from: '"Aldhaneka<DO NOT REPLY>" <aldhanekadev@gmail.com>', // sender address
+			to: 'aldhaneka@gmail.com', // list of receivers
+			subject: 'HALO',
+			html: EmailTemplate(`<body><h1>Aloha</h1></body>`),
+		});
+		res.send(JSON.stringify(sendEmailRes));
+	} catch (err) {
+		res.send(String(err));
+	}
+});
 
 AnyRouter.use('/', TechnoNaturaBranchController);
 AnyRouter.get('/allData', async (req, res) => {
