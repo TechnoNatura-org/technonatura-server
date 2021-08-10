@@ -1,4 +1,4 @@
-import * as nodemailer from 'nodemailer';
+import nodemailer from 'nodemailer';
 import EmailTemplate from '../../EmailTemplate';
 
 export default async function sendRegisterInfo(
