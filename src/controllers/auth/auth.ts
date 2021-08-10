@@ -4,8 +4,9 @@ import User, { UserBaseDocument } from '../../models/User/User.model';
 import { VerifyAuthToken } from '../../controllers/checkToken';
 
 import createToken, { tokenForTypes } from '../../controllers/createToken';
-import { checkRoles } from '../../controllers/checkRoles';
 import handleErrors from './handleErrors';
+
+import sendRegisterLoginInfo from './sendEmail/registerLogin';
 
 const AuthRouter = express.Router();
 
@@ -60,7 +61,7 @@ AuthRouter.post('/checkJWT', async (req, res) => {
 });
 
 AuthRouter.post('/login', async (req, res) => {
-	const { email, password } = req.body;
+	const { email, password, system, platform } = req.body;
 	// const { token } = req.headers;
 	// console.log(req.headers);
 
@@ -73,6 +74,10 @@ AuthRouter.post('/login', async (req, res) => {
 			},
 			tokenForTypes.auth,
 		);
+
+		sendRegisterLoginInfo(true, user.email, user.username, system, {
+			...platform,
+		});
 
 		res.status(200).json({
 			status: 'success',
@@ -103,6 +108,8 @@ AuthRouter.post('/signup', async (req, res) => {
 		birthDate,
 		staffRole,
 		branch,
+		system,
+		platform,
 	}: {
 		email: string;
 		password: string;
@@ -117,6 +124,8 @@ AuthRouter.post('/signup', async (req, res) => {
 
 		birthDate: string;
 		branch: string;
+		system: string;
+		platform: { description: string; name: string; os: { family: string } };
 	} = req.body;
 
 	// console.log(req.body);
@@ -146,7 +155,7 @@ AuthRouter.post('/signup', async (req, res) => {
 	}
 
 	try {
-		console.log(birthDate);
+		// console.log(birthDate);
 		const user = new User({
 			email,
 			password,
@@ -193,6 +202,9 @@ AuthRouter.post('/signup', async (req, res) => {
 			},
 			tokenForTypes.auth,
 		);
+		sendRegisterLoginInfo(true, user.email, user.username, system, {
+			...platform,
+		});
 		res.status(200).json({
 			message: 'success',
 			status: 'success',
