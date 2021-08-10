@@ -116,10 +116,10 @@ export default async function sendRegisterInfo(
       <td style="line-height: 24px; font-size: 16px; margin: 0;" align="left">
       ${
 				!login
-					? ` <p class="max-w-96 lh-lg text-white text-center text-2xl" style="line-height: 2; font-size: 24px; color: #dadada; max-width: 384px; -premailer-width: 384; width: 100%; margin: 0;" align="center">
+					? ` <p class="max-w-96 lh-lg text-white text-center text-xl" style="line-height: 2; font-size: 17px; color: #dadada; max-width: 384px; -premailer-width: 384; width: 100%; margin: 0;" align="center">
       Langkah selanjutnya adalah menerima verifikasi oleh <a https://t.me/Aldhaneka>Aldhaneka</a>
       </p>`
-					: `<p class="max-w-96 lh-lg text-white text-center text-2xl" style="line-height: 2; font-size: 24px; color: #dadada; max-width: 384px; -premailer-width: 384; width: 100%; margin: 0;" align="center">
+					: `<p class="max-w-96 lh-lg text-white text-center text-xl" style="line-height: 2; font-size: 15px; color: #dadada; max-width: 384px; -premailer-width: 384; width: 100%; margin: 0;" align="center">
       ${system}
       </p>`
 			}  
