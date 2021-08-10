@@ -14,9 +14,8 @@ export default async function sendRegisterInfo(
 		let sendEmailRes = await transporter.sendMail({
 			from: '"Aldhaneka<DO NOT REPLY>" <aldhanekadev@gmail.com>', // sender address
 			to: email, // list of receivers
-			subject: !login
-				? 'TechnoNatura Dashboard - Berhasil Registrasi TechnoNatura Dashboard!'
-				: 'TechnoNatura Dashboard - Seseorang Baru Saja Masuk ke Akun Anda!',
+			subject:
+				'TechnoNatura Dashboard - Berhasil Registrasi TechnoNatura Dashboard!',
 			html: EmailTemplate(`
   <body style="outline: 0; width: 100%; min-width: 100%; height: 100%; -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; font-family: Helvetica, Arial, sans-serif; line-height: 24px; font-weight: normal; font-size: 16px; -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box; color: #000000; margin: 0; padding: 0; border: 0;" bgcolor="#ffffff"><table class="body" valign="top" role="presentation" border="0" cellpadding="0" cellspacing="0" style="outline: 0; width: 100%; min-width: 100%; height: 100%; -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; font-family: Helvetica, Arial, sans-serif; line-height: 24px; font-weight: normal; font-size: 16px; -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box; color: #000000; margin: 0; padding: 0; border: 0;" bgcolor="#ffffff">
 <tbody>
