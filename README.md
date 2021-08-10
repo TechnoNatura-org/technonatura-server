@@ -15,6 +15,14 @@ Follow the author!
 
 [![GitHub followers](https://img.shields.io/github/followers/Aldhanekaa.svg?style=social&label=Follow&maxAge=2592000)](https://github.com/Aldahnekaa?tab=followers)
 
+required ENVs:
+AUTH_SECRET_TOKEN=[JWT Token]
+ArduinoApp_SECRET_TOKEN=[arduino token key]
+APIApp_SECRET_TOKEN=[COMING SOON]
+HASH_EMAIL_SECRET_KEY=[secret key to hash email]
+ETHEREAL_PASS=[ur google ethernal pass]
+ETHEREAL_EMAIL=[your google ethernal email]
+
 ---
 
 (c) 2021 - Present Aldhanekaa [![MIT license](https://img.shields.io/badge/License-MIT-blue.svg)](https://lbesson.mit-license.org/)
