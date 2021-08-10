@@ -168,7 +168,7 @@ export default async function sendRegisterInfo(
 
 Email mu: ${email}
 <br>
-Username mu:
+Username mu: ${username}
 <br>
 
 Sistem: 
