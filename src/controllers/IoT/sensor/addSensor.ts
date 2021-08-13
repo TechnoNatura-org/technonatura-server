@@ -10,9 +10,9 @@
 
 import * as express from 'express';
 
-import ArduinoApp from '../../../models/Arduino/arduinoApp.model';
+import ArduinoApp from '../../../models/IoT/arduinoApp.model';
 import { UserBaseDocument } from '../../../models/User/User.model';
-import Sensor from '../../../models/Arduino/Sensors/Sensor';
+import Sensor from '../../../models/IoT/Sensors/Sensor';
 
 import { VerifyAuthToken } from '../../checkToken';
 import handleErrors from '../handleErrors';
@@ -34,10 +34,10 @@ ArduinoAppAddSensorRouter.post('/', VerifyAuthToken, async (req, res) => {
 	 */
 	const arduinoApp = await ArduinoApp.findById(req.body.arduinoAppId);
 	const isThereSensorNameLikeThis = await Sensor.findOne({
-		appID: arduinoApp?.id,
+		appId: arduinoApp?.id,
 	})
 		.findOne({
-			own: req.id,
+			userId: req.id,
 		})
 		.findOne({
 			name: {
@@ -46,7 +46,7 @@ ArduinoAppAddSensorRouter.post('/', VerifyAuthToken, async (req, res) => {
 		});
 	const sensor = new Sensor({
 		name: req.body.sensorName,
-		own: req.id,
+		userId: req.id,
 		appID: arduinoApp?.id,
 	});
 
@@ -57,7 +57,7 @@ ArduinoAppAddSensorRouter.post('/', VerifyAuthToken, async (req, res) => {
 			console.log(sensor, req.id);
 			try {
 				// increments user point
-				await req.user?.updateOne({
+				req.user?.updateOne({
 					$inc: {
 						points: 10,
 					},

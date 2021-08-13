@@ -3,13 +3,15 @@ import * as Validator from 'validator';
 import { ArduinoDB } from '../../../db/arduinoDB';
 
 const {
-  default: { isNumeric },
+	default: { isNumeric },
 } = Validator;
 
-export interface sensorDataInterface {
-  date: number;
-  data: number;
+export interface sensorDataInterfaceI<A, B> {
+	date: number;
+	data: A | B;
 }
+
+export type sensorDataInterface = sensorDataInterfaceI<number, boolean>;
 
 export interface sensorDataBaseDocument extends sensorDataInterface, Document {}
 
@@ -20,22 +22,21 @@ export interface sensorDataDocument extends sensorDataBaseDocument {}
 export interface sensorDataModel extends Model<sensorDataBaseDocument> {}
 
 export const sensorDataSchema = new Schema<sensorDataDocument, sensorDataModel>(
-  {
-    date: {
-      type: Number,
-      required: true,
-      validate: [isNumeric, 'Please enter a valid email'],
-      default: Date.now,
-    },
-    data: {
-      type: Number,
-      required: [true, 'Please enter the data'],
-      validate: [isNumeric, 'Please enter a valid email'],
-    },
-  },
+	{
+		date: {
+			type: Number,
+			required: true,
+			validate: [isNumeric, 'Please enter a valid email'],
+			default: Date.now,
+		},
+		data: {
+			type: [Boolean, Number],
+			required: [true, 'Please enter the data'],
+		},
+	},
 );
 
 export default ArduinoDB.model<sensorDataDocument, sensorDataModel>(
-  'sensorData',
-  sensorDataSchema,
+	'sensorData',
+	sensorDataSchema,
 );

@@ -24,15 +24,15 @@ import BranchRouter from './routes/branch.route';
 
 import { corsOptions } from './controllers/cors';
 
-// import Socketmain from './socket/index';
-// import ArduinoSocket from './socket/arduino';
+import Socketmain from './socket/index';
+import ArduinoSocket from './socket/arduino';
 
-// import { arduinoSockets } from './db/arduinoSockets';
+import { arduinoSockets } from './db/arduinoSockets';
 const db = mongoose.connection;
 const app = express();
 
 const http = createServer(app);
-// const io = new Server(http);
+const io = new Server(http);
 
 let MongoDB_URI =
 	process.env.mongoDB_URI || 'mongodb://127.0.0.1:27017/technonatura-server';
@@ -71,10 +71,10 @@ app.use((req, res, next) => {
 	next();
 });
 
-// app.use(function(req, res, next) {
-//   req.io = io;
-//   next();
-// });
+app.use(function(req, res, next) {
+	req.io = io;
+	next();
+});
 
 db.on('error', (err) => console.error('error when connecting to db'));
 db.once('open', () => console.log('connected to mongoose'));
@@ -82,7 +82,7 @@ db.once('open', () => console.log('connected to mongoose'));
 app.use('/auth', cors(corsOptions), AuthRouter);
 // app.use('/contact', cors(corsOptions), ContactRouter);
 app.use('/contact', cors(corsOptions), ContactRouter);
-app.use('/arduino', ArduinoRouter);
+app.use('/iot', ArduinoRouter);
 app.use('/story', cors(corsOptions), StoryRouter);
 app.use('/branch', cors(corsOptions), BranchRouter);
 app.use('/', SubscriptionRouter);
@@ -93,9 +93,9 @@ app.use(
 );
 
 app.get('/', (req, res) => {
-	// req.io.of('/websocket').sockets.forEach((socket) => {
-	//   console.log(socket);
-	// });
+	req.io.of('/websocket').sockets.forEach((socket) => {
+		//   console.log(socket);
+	});
 	res.json({ message: 'hey' });
 });
 
@@ -112,13 +112,13 @@ async function startApolloServer() {
 
 	server.applyMiddleware({ app });
 
-	// io.of('/websocket/arduino').on('connection', (socket) => {
-	//   if (!app.request.io) {
-	//     app.request.io = io;
-	//   }
+	io.of('/websocket/arduino').on('connection', (socket) => {
+		if (!app.request.io) {
+			app.request.io = io;
+		}
 
-	//   ArduinoSocket(app.request, socket);
-	// });
+		ArduinoSocket(app.request, socket);
+	});
 
 	// app.listen(process.env.PORT || 3030, () => {});
 

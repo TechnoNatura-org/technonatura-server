@@ -10,8 +10,8 @@
 
 import * as express from 'express';
 
-import ArduinoApp from '../models/Arduino/arduinoApp.model';
-import Sensor from '../models/Arduino/Sensors/Sensor';
+import ArduinoApp from '../models/IoT/arduinoApp.model';
+import Sensor from '../models/IoT/Sensors/Sensor';
 
 import BlogPost from '../models/Blog/BlogPost.model';
 
@@ -158,6 +158,10 @@ AnyRouter.get('/users', async (req, res) => {
 	try {
 		const usersRes = await User.find({});
 		usersRes.forEach((item) => {
+			if (req.query.isAccountVerified && !item.isAccountVerified) {
+				return;
+			}
+
 			users.push(
 				// @ts-ignore
 				{
@@ -201,6 +205,7 @@ AnyRouter.get('/staff-accounts', async (req, res) => {
 	const teachers: Array<{
 		username: string;
 		name: string;
+
 		isAccountVerified: boolean;
 		id: string;
 		avatar: string;
@@ -224,6 +229,7 @@ AnyRouter.get('/staff-accounts', async (req, res) => {
 				{
 					username: item.username,
 					name: item.fullName,
+
 					isAccountVerified: item.isAccountVerified,
 					id: item.id,
 					avatar: item.avatar,

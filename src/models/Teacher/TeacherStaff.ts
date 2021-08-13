@@ -1,10 +1,8 @@
 import { Schema, Model, Document, model, Types, Query, Error } from 'mongoose';
-import * as Validator from 'validator';
-import * as bcrypt from 'bcrypt';
 
 import { TeacherStaffI } from './index';
 
-import ArduinoApp from '../../models/Arduino/arduinoApp.model';
+import ArduinoApp from '../IoT/arduinoApp.model';
 
 import { encryptEmail as EncryptEmail } from '../../controllers/auth/hashEmail';
 

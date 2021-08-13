@@ -208,7 +208,6 @@ Username mu: ${username}
     </body>
     `),
 		});
-		console.log(sendEmailRes);
 	} catch (err) {
 		console.error('e');
 	}

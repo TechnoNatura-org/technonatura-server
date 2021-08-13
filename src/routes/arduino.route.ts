@@ -14,18 +14,18 @@ import * as express from 'express';
 import { Request } from 'express';
 import * as jwt from 'jsonwebtoken';
 
-import ArduinoApp from '../models/Arduino/arduinoApp.model';
-import Sensor from '../models/Arduino/Sensors/Sensor';
+import ArduinoApp from '../models/IoT/arduinoApp.model';
+import Sensor from '../models/IoT/Sensors/Sensor';
 import { UserBaseDocument } from '../models/User/User.model';
-import SensorsData from '../models/Arduino/Sensors/SensorsData.model';
+import SensorsData from '../models/IoT/Sensors/SensorsData.model';
 
 import { VerifyAuthToken } from '../controllers/checkToken';
 
-import AddArduinoAppRoute from '../controllers/Arduino/app/addApp';
-import AddSensorRoute from '../controllers/Arduino/sensor/addSensor';
+import AddArduinoAppRoute from '../controllers/IoT/app/addApp';
+import AddSensorRoute from '../controllers/IoT/sensor/addSensor';
 
-import sendRealtimeData from '../socket/arduino/realtimeData';
-import { arduinoSockets } from '../db/arduinoSockets';
+// import sendRealtimeData from '../socket/arduino/realtimeData';
+// // import { arduinoSockets } from '../db/arduinoSockets';
 declare module 'express-serve-static-core' {
 	interface Request {
 		id: string;
@@ -50,13 +50,26 @@ ArduinoRouter.use((req, res, next) => {
 
 ArduinoRouter.post('/apps', VerifyAuthToken, async (req, res) => {
 	try {
-		const apps = await ArduinoApp.find({ own: req.id });
-		res.status(200).send({ apps: apps });
+		let apps;
+		if (req.query.sharedWithMe) {
+			apps = await ArduinoApp.find({
+				$or: [
+					{
+						'team.userId': req.id,
+					},
+				],
+			});
+		} else {
+			apps = await ArduinoApp.find({ own: req.id });
+		}
+		res.status(200).send({ apps: apps, status: 'success' });
 		return;
 	} catch (err) {
-		res
-			.status(200)
-			.send({ message: 'error when fetching apps', err: JSON.parse(err) });
+		res.status(200).send({
+			message: 'error when fetching apps',
+			err: JSON.parse(err),
+			status: 'error',
+		});
 	}
 });
 
@@ -110,7 +123,7 @@ ArduinoRouter.post(
 		if (isThereArduinoApp) {
 			try {
 				// @ts-ignore
-				const sensors = await ArduinoApp.getAllSensors(isThereArduinoApp.id);
+				// const sensors = await ArduinoApp.getAllSensors(isThereArduinoApp.id);
 
 				res.status(200).send({ sensors: sensors });
 			} catch (err) {
@@ -161,7 +174,7 @@ ArduinoRouter.post(
 		const sensor = await Sensor.findById(sensorID);
 
 		// console.log(sensor, req.id);
-		if (sensor && sensor.own == req.id) {
+		if (sensor && sensor.userId == req.id) {
 			try {
 				await sensor.deleteOne();
 				res.status(200).send({ message: 'success', status: 'success' });
@@ -241,17 +254,17 @@ ArduinoRouter.post('/add/data/', async (req, res) => {
 
 								await foundSensor.updateOne({
 									$push: {
-										data: sensorData,
+										datas: sensorData,
 									},
 								});
 
-								arduinoSockets.sendSensorRealtimedataToSocket(
-									req,
-									foundSensor._id,
-									sensorData.data,
-									sensorData.date,
-									sensorData._id,
-								);
+								// arduinoSockets.sendDatas(
+								// 	req,
+								// 	foundSensor._id,
+								// 	String(sensorData.data),
+								// 	sensorData.date,
+								// 	sensorData._id,
+								// );
 							}
 						}
 					}
@@ -281,12 +294,12 @@ ArduinoRouter.post('/add/data/', async (req, res) => {
 								});
 
 								// console.log();
-								arduinoSockets.sendSensorRealtimeDataToSocket(
-									req,
-									foundSensor._id,
-									SensorRealtimeData,
-									now,
-								);
+								// arduinoSockets.sendSensorRealtimeDataToSocket(
+								// 	req,
+								// 	foundSensor._id,
+								// 	SensorRealtimeData,
+								// 	now,
+								// );
 							}
 						}
 					}

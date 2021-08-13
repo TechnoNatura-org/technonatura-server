@@ -11,7 +11,9 @@
 import * as express from 'express';
 import { Request } from 'express';
 
-import ArduinoApp from '../../../models/Arduino/arduinoApp.model';
+import ArduinoApp from '../../../models/IoT/arduinoApp.model';
+import Teammate from '../../../models/IoT/Teammate.model';
+
 import { UserBaseDocument } from '../../../models/User/User.model';
 
 import { VerifyAuthToken } from '../../checkToken';
@@ -54,23 +56,58 @@ ArduinoAppAddRouter.post(
 		 */
 
 		//@ts-ignore
-		const { arduinoAppName, desc } = req.body;
-
+		const {
+			name,
+			desc,
+			visibility,
+			team,
+			isTeam,
+		}: {
+			name: string;
+			desc: string;
+			visibility: 'public' | 'private';
+			team: Array<{
+				id: string;
+				role: 'admin' | 'viewer' | 'owner' | 'blocked';
+				receiveNotification: boolean;
+			}>;
+			isTeam: boolean;
+		} = req.body;
 		const isThere = await ArduinoApp.find({
 			own: req.id,
 		}).findOne({
 			name: {
-				$regex: new RegExp('^' + arduinoAppName.toLowerCase() + '$', 'i'),
+				$regex: new RegExp('^' + name.toLowerCase() + '$', 'i'),
 			},
 		});
 
 		// if there is same sensor name
 		if (!isThere) {
 			const App = new ArduinoApp({
-				name: arduinoAppName,
+				name: name,
 				desc: desc,
 				own: req.id,
+				visibility,
+				isTeam,
 			});
+
+			if (isTeam) {
+				team.forEach((teammate) => {
+					const mate = new Teammate({
+						userId: teammate.id,
+						receiveNotification: false,
+						role: teammate.role,
+					});
+					App.team.push(mate);
+				});
+
+				const mate = new Teammate({
+					own: req.id,
+					receiveNotification: false,
+					role: 'owner',
+				});
+				App.team.push(mate);
+			}
 
 			try {
 				const token = createToken(
@@ -87,7 +124,7 @@ ArduinoAppAddRouter.post(
 
 				await App.save();
 
-				await req.user?.updateOne({
+				req.user?.updateOne({
 					$inc: {
 						points: 50,
 					},
@@ -95,10 +132,10 @@ ArduinoAppAddRouter.post(
 				// user
 
 				res.status(200).send({
-					message: 'App Created',
-					arduinoAppToken: token,
+					message: 'IoT App Created',
+					AppToken: token,
 					status: 'success',
-					arduinoAppID: App._id,
+					AppId: App._id,
 				});
 				return;
 			} catch (err) {
@@ -112,7 +149,9 @@ ArduinoAppAddRouter.post(
 			}
 		} else {
 			res.status(200).send({
-				message: 'this name is already registered',
+				errors: {
+					name: 'This name is already in used.',
+				},
 				status: 'warning',
 			});
 			return;

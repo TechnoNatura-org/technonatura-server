@@ -4,7 +4,7 @@ import * as bcrypt from 'bcrypt';
 
 import { UserInterface, SocialMedia } from './index';
 
-import ArduinoApp from '../../models/Arduino/arduinoApp.model';
+import ArduinoApp from '../IoT/arduinoApp.model';
 
 import { encryptEmail as EncryptEmail } from '../../controllers/auth/hashEmail';
 
