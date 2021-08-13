@@ -91,11 +91,12 @@ ArduinoAppAddRouter.post(
 				visibility,
 				isTeam,
 			});
-
+			console.log(req.body);
 			if (isTeam) {
 				team.forEach((teammate) => {
 					const mate = new Teammate({
-						userId: teammate.id,
+						// @ts-ignore
+						userId: String(teammate.userId),
 						receiveNotification: false,
 						role: teammate.role,
 					});
