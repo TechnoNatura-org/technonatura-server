@@ -243,7 +243,7 @@ ArduinoRouter.post('/add/data/', async (req, res) => {
 		// convert jwt
 		const verifyToken = await jwt.verify(
 			iotAppToken,
-			process.env.ARDUINO_APP_SECRET_TOKEN || 'arduinoSecret',
+			process.env.IOT_APP_TOKEN || 'arduinoSecret',
 		);
 
 		const arduinoApp = await ArduinoApp.findById(

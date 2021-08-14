@@ -34,13 +34,9 @@ const createToken = (
 			break;
 
 		case tokenForTypes.arduinoApp:
-			return jwt.sign(
-				{ ...n },
-				process.env.ARDUINO_APP_SECRET_TOKEN || 'arduinoSecret',
-				{
-					expiresIn: '5y',
-				},
-			);
+			return jwt.sign({ ...n }, process.env.IOT_APP_TOKEN || 'arduinoSecret', {
+				expiresIn: '5y',
+			});
 			break;
 
 		case tokenForTypes.ApiApp:
