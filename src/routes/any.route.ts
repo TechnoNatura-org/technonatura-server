@@ -86,7 +86,7 @@ AnyRouter.get('/allData', async (req, res) => {
 	res.send({ data: WOOF });
 });
 
-AnyRouter.get('/getArduinoApp', async (req, res) => {
+AnyRouter.get('/getIoTCloudApp', async (req, res) => {
 	const { appId } = req.query;
 
 	try {
