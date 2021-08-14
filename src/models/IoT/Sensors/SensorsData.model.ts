@@ -6,12 +6,12 @@ const {
 	default: { isNumeric },
 } = Validator;
 
-export interface sensorDataInterfaceI<A, B> {
+export interface sensorDataInterfaceI<A> {
 	date: number;
-	data: A | B;
+	data: A;
 }
 
-export type sensorDataInterface = sensorDataInterfaceI<number, boolean>;
+export type sensorDataInterface = sensorDataInterfaceI<number | boolean>;
 
 export interface sensorDataBaseDocument extends sensorDataInterface, Document {}
 
@@ -30,7 +30,7 @@ export const sensorDataSchema = new Schema<sensorDataDocument, sensorDataModel>(
 			default: Date.now,
 		},
 		data: {
-			type: [Boolean, Number],
+			type: Number,
 			required: [true, 'Please enter the data'],
 		},
 	},

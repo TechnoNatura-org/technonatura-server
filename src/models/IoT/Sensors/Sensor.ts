@@ -7,25 +7,25 @@ const {
 	default: { isEmail, isURL },
 } = Validator;
 
-export interface sensorInterfaceI<A, B> {
+export interface sensorInterfaceI<A> {
 	name: string;
 	desc: string;
 
 	appId: string;
 	userId: string;
 
-	datas?: Array<sensorDataInterfaceI<A, B>>;
-	data: {
-		data: A | B;
+	datas?: Array<sensorDataInterfaceI<A>>;
+	realtimeData: {
+		data: A;
 		dateAdded: number;
 	};
 	dataType: 'number' | 'boolean';
 }
 
-export type sensorInterface = sensorInterfaceI<number, boolean>;
+export type sensorInterface = sensorInterfaceI<number | boolean>;
 
 export interface sensorBaseDocument extends sensorInterface, Document {
-	datas: Types.Array<sensorDataInterfaceI<number, boolean>>;
+	datas: Types.Array<sensorDataInterfaceI<number | boolean>>;
 }
 
 // Export this for strong typing
@@ -55,10 +55,8 @@ const sensorSchema = new Schema<sensorDocument, sensorModel>({
 	},
 
 	datas: [sensorDataSchema],
-	data: {
-		data: {
-			type: [Boolean, Number],
-		},
+	realtimeData: {
+		data: Number,
 		dateAdded: Number,
 	},
 

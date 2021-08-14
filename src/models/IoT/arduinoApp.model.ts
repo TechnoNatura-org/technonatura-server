@@ -66,7 +66,7 @@ const ArduinoAppSchema = new Schema<sensorsDocument, sensorsModel>({
 	team: [
 		{
 			userId: String,
-			role: { type: String, default: 'visitor' },
+			role: { type: String, default: 'viewer' },
 			receiveNotification: { type: Boolean, default: false },
 		},
 	],
@@ -90,7 +90,7 @@ function validateUsername(str: string) {
 // };
 
 const ArduinoAppModel = ArduinoDB.model<sensorsDocument, sensorsModel>(
-	'ArduinoApp',
+	'IoTApp',
 	ArduinoAppSchema,
 );
 ArduinoAppModel.getAllSensors = async function(

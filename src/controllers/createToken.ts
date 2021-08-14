@@ -38,7 +38,7 @@ const createToken = (
 				{ ...n },
 				process.env.ARDUINO_APP_SECRET_TOKEN || 'arduinoSecret',
 				{
-					expiresIn: '1y',
+					expiresIn: '5y',
 				},
 			);
 			break;

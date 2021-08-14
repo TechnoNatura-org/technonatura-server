@@ -24,8 +24,11 @@ import { VerifyAuthToken } from '../controllers/checkToken';
 import AddArduinoAppRoute from '../controllers/IoT/app/addApp';
 import ModifyApp from '../controllers/IoT/app/modifyApp';
 
+import { decryptIoTAppToken } from '../controllers/IoT/hashToken';
+
 import AddSensorRoute from '../controllers/IoT/sensor/addSensor';
 import modifyApp from '../controllers/IoT/app/modifyApp';
+import modifySensor from '../controllers/IoT/sensor/modifySensor';
 
 // import sendRealtimeData from '../socket/arduino/realtimeData';
 // // import { arduinoSockets } from '../db/arduinoSockets';
@@ -56,9 +59,22 @@ ArduinoRouter.post('/apps', VerifyAuthToken, async (req, res) => {
 		let apps;
 		if (req.query.sharedWithMe) {
 			apps = await ArduinoApp.find({
-				$or: [
+				$and: [
 					{
 						'team.userId': req.id,
+					},
+					{
+						$or: [
+							{
+								'team.role': 'owner',
+							},
+							{
+								'team.role': 'admin',
+							},
+							{
+								'team.role': 'viewer',
+							},
+						],
 					},
 				],
 			});
@@ -87,13 +103,14 @@ ArduinoRouter.post('/app', VerifyAuthToken, async (req, res) => {
 	}
 });
 ArduinoRouter.post('/sensor', VerifyAuthToken, async (req, res) => {
-	const { sensorId, appId } = req.body;
+	const { sensorId } = req.body;
 
 	if (sensorId) {
 		try {
-			const sensor = await Sensor.findById(sensorId).findOne({ appID: appId });
+			const sensor = await Sensor.findById(sensorId);
+			const app = await ArduinoApp.findById(sensor?.appId);
 
-			res.status(200).send({ sensor: sensor });
+			res.status(200).send({ sensor: sensor, app });
 			return;
 		} catch (err) {
 			res
@@ -108,6 +125,7 @@ ArduinoRouter.post('/sensor', VerifyAuthToken, async (req, res) => {
 
 ArduinoRouter.use('/add/', AddArduinoAppRoute);
 ArduinoRouter.use('/edit/', modifyApp);
+ArduinoRouter.use('/edit/sensor', modifySensor);
 
 ArduinoRouter.use('/add/sensor', AddSensorRoute);
 
@@ -152,8 +170,10 @@ ArduinoRouter.post('/del/:iotAppId', VerifyAuthToken, async (req, res) => {
 	// console.log(sensor, req.id);
 	if (app && app.own == req.id) {
 		try {
+			const sensors = await Sensor.find({ appId: iotAppId }).deleteMany();
+
 			await app.deleteOne();
-			await Sensor.find({ iotAppId: iotAppId }).deleteMany();
+
 			res.status(200).send({ message: 'IoT app deleted', status: 'success' });
 			return;
 		} catch (err) {
@@ -170,11 +190,11 @@ ArduinoRouter.post('/del/:iotAppId', VerifyAuthToken, async (req, res) => {
 });
 
 ArduinoRouter.post(
-	'/del/sensor/:sensorID',
+	'/del/sensor/:sensorId',
 	VerifyAuthToken,
 	async (req, res) => {
-		const { sensorID } = req.params;
-		const sensor = await Sensor.findById(sensorID);
+		const { sensorId } = req.params;
+		const sensor = await Sensor.findById(sensorId);
 
 		// console.log(sensor, req.id);
 		if (sensor && sensor.userId == req.id) {
@@ -210,25 +230,27 @@ ArduinoRouter.post(
 	(req, res) => {},
 );
 ArduinoRouter.post('/add/data/', async (req, res) => {
-	const { arduinoAppToken, sensors, realtimeData } = req.body;
+	const { iotAppToken, sensors, realtimeData } = req.body;
 	//   console.log(req.body);
 
-	if (!arduinoAppToken) {
+	if (!iotAppToken) {
 		res.status(200).json({ message: 'token not provided', status: 'error' });
 		return;
 	}
 
 	try {
 		// convert jwt
+		// convert jwt
 		const verifyToken = await jwt.verify(
-			arduinoAppToken,
-			process.env.ArduinoApp_SECRET_TOKEN || 'arduinoSecret',
+			iotAppToken,
+			process.env.ARDUINO_APP_SECRET_TOKEN || 'arduinoSecret',
 		);
 
 		const arduinoApp = await ArduinoApp.findById(
 			// @ts-ignore
-			verifyToken.appID,
+			verifyToken.appId,
 		);
+		console.log('arduinoApp', arduinoApp);
 
 		if (!arduinoApp) {
 			res
@@ -246,14 +268,15 @@ ArduinoRouter.post('/add/data/', async (req, res) => {
 						// console.log(isNaN(TypeOfSensorData));
 						if (!isNaN(TypeOfSensorData)) {
 							const foundSensor = await Sensor.find({
-								appID: arduinoApp._id,
+								appId: arduinoApp._id,
 							}).findOne({
 								name: sensor,
 							});
-							// console.log(foundSensor, arduinoApp._id, sensor);
 
 							if (foundSensor) {
-								const sensorData = new SensorsData({ data: TypeOfSensorData });
+								const sensorData = new SensorsData({
+									data: TypeOfSensorData,
+								});
 
 								await foundSensor.updateOne({
 									$push: {
@@ -299,6 +322,7 @@ ArduinoRouter.post('/add/data/', async (req, res) => {
 			.json({ message: 'Please give an sensors input', status: 'error' });
 		return;
 	} catch (err) {
+		console.log(err);
 		res.status(200).json({ message: 'token might expired', status: 'error' });
 		return;
 	}

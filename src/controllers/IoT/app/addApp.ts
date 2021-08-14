@@ -18,7 +18,7 @@ import { UserBaseDocument } from '../../../models/User/User.model';
 
 import { VerifyAuthToken } from '../../checkToken';
 import createToken, { tokenForTypes } from '../../createToken';
-import { encryptIoTAppToken } from '../hashToken';
+
 import handleErrors from '../handleErrors';
 
 declare module 'express-serve-static-core' {
@@ -109,15 +109,14 @@ ArduinoAppAddRouter.post(
 			}
 
 			try {
-				// const token = createToken(
-				// 	{
-				// 		// @ts-ignore
-				// 		ownerID: req.id,
-				// 		appID: App.id,
-				// 	},
-				// 	tokenForTypes.arduinoApp,
-				// );
-				const token = encryptIoTAppToken(App.id);
+				const token = createToken(
+					{
+						// @ts-ignore
+						ownerId: req.id,
+						appId: App.id,
+					},
+					tokenForTypes.arduinoApp,
+				);
 				// @ts-ignore
 				App.token.token = token;
 				App.token.tokenCreated = Date.now();

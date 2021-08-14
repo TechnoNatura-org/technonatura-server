@@ -89,8 +89,8 @@ export default function ArduinoSocket(req: Request, socketGlobal: Socket) {
 								.to(socketGlobal.id)
 								.emit('arduino.sensor.data', {
 									sensorId: sensorId,
-									data: sensor.data.data,
-									dateAdded: sensor.data.dateAdded,
+									realtimedata: sensor.realtimeData.data,
+									dateAdded: sensor.realtimeData.dateAdded,
 								});
 						}
 					}
