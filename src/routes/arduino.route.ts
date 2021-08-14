@@ -230,7 +230,7 @@ ArduinoRouter.post(
 	(req, res) => {},
 );
 ArduinoRouter.post('/add/data/', async (req, res) => {
-	const { iotAppToken, sensors, realtimeData } = req.body;
+	const { iotAppToken, sensors } = req.body;
 	//   console.log(req.body);
 
 	if (!iotAppToken) {
@@ -259,7 +259,7 @@ ArduinoRouter.post('/add/data/', async (req, res) => {
 			return;
 		}
 
-		if (typeof sensors == 'object' || typeof realtimeData == 'object') {
+		if (typeof sensors == 'object') {
 			try {
 				if (sensors) {
 					for (const sensor in sensors) {
