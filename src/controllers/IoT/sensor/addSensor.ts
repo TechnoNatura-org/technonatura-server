@@ -32,7 +32,7 @@ ArduinoAppAddSensorRouter.post('/', VerifyAuthToken, async (req, res) => {
 	 * - arduinoAppName
 	 * - sensorName
 	 */
-	const arduinoApp = await ArduinoApp.findById(req.body.arduinoAppId);
+	const arduinoApp = await ArduinoApp.findById(req.body.appId);
 	const isThereSensorNameLikeThis = await Sensor.findOne({
 		appId: arduinoApp?.id,
 	})
@@ -46,8 +46,10 @@ ArduinoAppAddSensorRouter.post('/', VerifyAuthToken, async (req, res) => {
 		});
 	const sensor = new Sensor({
 		name: req.body.sensorName,
+		desc: req.body.desc,
+		dataType: req.body.dataType,
 		userId: req.id,
-		appID: arduinoApp?.id,
+		appId: arduinoApp?.id,
 	});
 
 	// console.log(isThereSensorNameLikeThis);
@@ -84,14 +86,18 @@ ArduinoAppAddSensorRouter.post('/', VerifyAuthToken, async (req, res) => {
 			}
 		} else {
 			res.status(200).send({
-				message: 'this sensor name already taken',
+				errors: {
+					message: 'this sensor name already taken',
+				},
 				status: 'error',
 			});
 			return;
 		}
 	} else {
 		res.status(200).send({
-			message: 'app is not registered',
+			errors: {
+				sensorName: 'App isnt registered',
+			},
 			status: 'error',
 		});
 	}

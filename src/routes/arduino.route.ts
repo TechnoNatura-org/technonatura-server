@@ -22,7 +22,10 @@ import SensorsData from '../models/IoT/Sensors/SensorsData.model';
 import { VerifyAuthToken } from '../controllers/checkToken';
 
 import AddArduinoAppRoute from '../controllers/IoT/app/addApp';
+import ModifyApp from '../controllers/IoT/app/modifyApp';
+
 import AddSensorRoute from '../controllers/IoT/sensor/addSensor';
+import modifyApp from '../controllers/IoT/app/modifyApp';
 
 // import sendRealtimeData from '../socket/arduino/realtimeData';
 // // import { arduinoSockets } from '../db/arduinoSockets';
@@ -74,10 +77,10 @@ ArduinoRouter.post('/apps', VerifyAuthToken, async (req, res) => {
 });
 
 ArduinoRouter.post('/app', VerifyAuthToken, async (req, res) => {
-	const { arduinoAppId } = req.body;
+	const { iotAppId } = req.body;
 
 	try {
-		const app = await ArduinoApp.findById(arduinoAppId);
+		const app = await ArduinoApp.findById(iotAppId);
 		res.status(200).send({ app: app });
 	} catch (err) {
 		res.status(200).send({ message: 'error when fetching apps' });
@@ -104,6 +107,7 @@ ArduinoRouter.post('/sensor', VerifyAuthToken, async (req, res) => {
 });
 
 ArduinoRouter.use('/add/', AddArduinoAppRoute);
+ArduinoRouter.use('/edit/', modifyApp);
 
 ArduinoRouter.use('/add/sensor', AddSensorRoute);
 
@@ -117,22 +121,23 @@ ArduinoRouter.post(
 	 */
 
 	async (req: UserInRequest, res) => {
-		const { arduinoAppId } = req.body;
-		const isThereArduinoApp = await ArduinoApp.findById(arduinoAppId);
+		const { iotAppId } = req.body;
+		const isThereArduinoApp = await ArduinoApp.findById(iotAppId);
 
 		if (isThereArduinoApp) {
 			try {
 				// @ts-ignore
-				// const sensors = await ArduinoApp.getAllSensors(isThereArduinoApp.id);
+				const sensors = await ArduinoApp.getAllSensors(isThereArduinoApp.id);
 
 				res.status(200).send({ sensors: sensors });
 			} catch (err) {
+				console.log();
 				res
-					.status(500)
+					.status(200)
 					.send({ message: 'error when fetching sensors', status: 'error' });
 			}
 		} else {
-			res.status(500).send({ message: 'app not found', status: 'error' });
+			res.status(200).send({ message: 'app not found', status: 'error' });
 		}
 	},
 );
@@ -140,18 +145,16 @@ ArduinoRouter.post(
 // ===========================================================
 // DELETE APP AND SENSORS
 // ===========================================================
-ArduinoRouter.post('/del/:appID', VerifyAuthToken, async (req, res) => {
-	const { appID } = req.params;
-	const app = await ArduinoApp.findById(appID);
+ArduinoRouter.post('/del/:iotAppId', VerifyAuthToken, async (req, res) => {
+	const { iotAppId } = req.params;
+	const app = await ArduinoApp.findById(iotAppId);
 
 	// console.log(sensor, req.id);
 	if (app && app.own == req.id) {
 		try {
 			await app.deleteOne();
-			await Sensor.find({ appID: appID }).deleteOne();
-			res
-				.status(200)
-				.send({ message: 'arduino app deleted', status: 'success' });
+			await Sensor.find({ iotAppId: iotAppId }).deleteMany();
+			res.status(200).send({ message: 'IoT app deleted', status: 'success' });
 			return;
 		} catch (err) {
 			res.status(200).send({
@@ -258,47 +261,21 @@ ArduinoRouter.post('/add/data/', async (req, res) => {
 									},
 								});
 
+								const now = Date.now();
+
+								await foundSensor.updateOne({
+									realtimeData: {
+										data: TypeOfSensorData,
+										dateAdded: now,
+									},
+								});
+
 								// arduinoSockets.sendDatas(
 								// 	req,
 								// 	foundSensor._id,
 								// 	String(sensorData.data),
 								// 	sensorData.date,
 								// 	sensorData._id,
-								// );
-							}
-						}
-					}
-				}
-
-				if (realtimeData) {
-					for (const sensor in realtimeData) {
-						const SensorRealtimeData = Number(realtimeData[sensor]);
-
-						// console.log(isNaN(SensorData));
-						if (!isNaN(SensorRealtimeData)) {
-							const foundSensor = await Sensor.find({
-								appID: arduinoApp._id,
-							}).findOne({
-								name: sensor,
-							});
-							// console.log(foundSensor, arduinoApp._id, sensor);
-
-							if (foundSensor) {
-								const now = Date.now();
-
-								await foundSensor.updateOne({
-									realtimeData: {
-										data: SensorRealtimeData,
-										dateAdded: now,
-									},
-								});
-
-								// console.log();
-								// arduinoSockets.sendSensorRealtimeDataToSocket(
-								// 	req,
-								// 	foundSensor._id,
-								// 	SensorRealtimeData,
-								// 	now,
 								// );
 							}
 						}

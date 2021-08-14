@@ -89,9 +89,13 @@ ArduinoAppAddRouter.post(
 				desc: desc,
 				own: req.id,
 				visibility,
-				isTeam,
 			});
-			console.log(req.body);
+			const mate = new Teammate({
+				userId: String(req.id),
+				receiveNotification: false,
+				role: 'owner',
+			});
+			App.team.push(mate);
 			if (isTeam) {
 				team.forEach((teammate) => {
 					const mate = new Teammate({
@@ -102,13 +106,6 @@ ArduinoAppAddRouter.post(
 					});
 					App.team.push(mate);
 				});
-
-				const mate = new Teammate({
-					own: req.id,
-					receiveNotification: false,
-					role: 'owner',
-				});
-				App.team.push(mate);
 			}
 
 			try {
@@ -127,7 +124,7 @@ ArduinoAppAddRouter.post(
 
 				await App.save();
 
-				req.user?.updateOne({
+				await req.user?.updateOne({
 					$inc: {
 						points: 50,
 					},

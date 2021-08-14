@@ -9,6 +9,7 @@ const {
 
 export interface sensorInterfaceI<A, B> {
 	name: string;
+	desc: string;
 
 	appId: string;
 	userId: string;
@@ -39,7 +40,11 @@ const sensorSchema = new Schema<sensorDocument, sensorModel>({
 		validate: [validateUsername, 'Only characters and numbers are allowed'],
 		minlength: [4, 'Minimum name length is 4 characters'],
 	},
-
+	desc: {
+		type: String,
+		required: [true, 'The sensor desc please'],
+		minlength: [4, 'Minimum name length is 4 characters'],
+	},
 	appId: {
 		type: String,
 		required: true,
@@ -48,10 +53,7 @@ const sensorSchema = new Schema<sensorDocument, sensorModel>({
 		type: String,
 		required: true,
 	},
-	own: {
-		type: String,
-		required: true,
-	},
+
 	datas: [sensorDataSchema],
 	data: {
 		data: {

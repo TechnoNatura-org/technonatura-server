@@ -16,7 +16,6 @@ export interface arduinoAppInterface {
 
 	sensors: Array<string>;
 
-	isTeam: boolean;
 	team: Array<{
 		userId: string;
 		role: 'owner' | 'admin' | 'viewer' | 'blocked';
@@ -64,10 +63,6 @@ const ArduinoAppSchema = new Schema<sensorsDocument, sensorsModel>({
 		tokenCreated: Number,
 	},
 
-	isTeam: {
-		type: Boolean,
-		default: false,
-	},
 	team: [
 		{
 			userId: String,
@@ -99,9 +94,9 @@ const ArduinoAppModel = ArduinoDB.model<sensorsDocument, sensorsModel>(
 	ArduinoAppSchema,
 );
 ArduinoAppModel.getAllSensors = async function(
-	appID: string,
+	appId: string,
 ): Promise<sensorInterface[] | undefined> {
-	const sensors = await Sensor.find({ appID: appID });
+	const sensors = await Sensor.find({ appId: appId });
 
 	return sensors;
 };

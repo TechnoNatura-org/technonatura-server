@@ -94,7 +94,7 @@ AnyRouter.get('/getArduinoApp', async (req, res) => {
 		// const App = await AppDoc?.getApp();
 
 		if (App) {
-			const AppSensors = await Sensor.find({ appID: App?._id });
+			const AppSensors = await Sensor.find({ appId: App?._id });
 
 			// @ts-ignore
 			App.token = '';

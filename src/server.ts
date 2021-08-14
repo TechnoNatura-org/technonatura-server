@@ -39,6 +39,7 @@ let MongoDB_URI =
 mongoose.connect(MongoDB_URI, {
 	useNewUrlParser: true,
 	useUnifiedTopology: true,
+	useFindAndModify: false,
 });
 
 app.use(
