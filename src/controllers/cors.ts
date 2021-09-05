@@ -10,6 +10,7 @@ var whitelist = [
 	'https://technonatura-dashboard.vercel.app',
 	'https://dashboard.technonatura.vercel.app',
 	'https://app.technonatura.vercel.app',
+	'https://tn.vercel.app',
 ];
 var corsOptions: cors.CorsOptions = {
 	origin: function(origin, callback) {
