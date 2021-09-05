@@ -25,6 +25,7 @@ export interface UserBaseDocument extends UserInterface, Document {
 
 	changePassword(password: string): Promise<string>;
 	deleteAccount(): Promise<void>;
+	getStudents(): Promise<UserInterface>;
 }
 
 // Export this for strong typing
@@ -231,7 +232,7 @@ userSchema.methods.deleteAccount = async function(this: UserBaseDocument) {
 		await ArduinoApp.deleteApp(this.id);
 		await this.delete();
 	} catch (err) {
-		throw new Error(err);
+		throw new Error(String(err));
 	}
 };
 

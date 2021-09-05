@@ -86,7 +86,7 @@ ArduinoRouter.post('/apps', VerifyAuthToken, async (req, res) => {
 	} catch (err) {
 		res.status(200).send({
 			message: 'error when fetching apps',
-			err: JSON.parse(err),
+			err: JSON.parse(String(err)),
 			status: 'error',
 		});
 	}

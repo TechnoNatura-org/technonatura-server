@@ -27,6 +27,8 @@ import { corsOptions } from './controllers/cors';
 import Socketmain from './socket/index';
 import ArduinoSocket from './socket/arduino';
 
+import CronJobs from './cron-job/grade';
+
 import { arduinoSockets } from './db/arduinoSockets';
 const db = mongoose.connection;
 const app = express();
@@ -122,6 +124,7 @@ async function startApolloServer() {
 	});
 
 	// app.listen(process.env.PORT || 3030, () => {});
+	CronJobs();
 
 	await new Promise((resolve) =>
 		http.listen({ port: process.env.PORT || 3030 }),
