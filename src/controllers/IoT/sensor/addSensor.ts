@@ -75,8 +75,7 @@ ArduinoAppAddSensorRouter.post('/', VerifyAuthToken, async (req, res) => {
 				});
 			} catch (err) {
 				// console.log('ERROR WHEN ADD SENSOR', err);
-				// @ts-ignore
-				const errors = await handleErrors(err);
+				const errors = await handleErrors(Object(err));
 
 				res.status(200).send({
 					message:

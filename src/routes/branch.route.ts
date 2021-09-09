@@ -28,7 +28,7 @@ TechnoNaturaBranchRouter.post('/add', async (req, res) => {
 		});
 		return;
 	} catch (err) {
-		const errors = await TechnoNaturaBranchHandleErrors(err);
+		const errors = await TechnoNaturaBranchHandleErrors(Object(err));
 		res.json({
 			message: 'Error when fetching TechnoNatura Branches',
 			status: 'error',

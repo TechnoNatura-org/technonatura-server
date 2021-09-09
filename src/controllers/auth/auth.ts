@@ -85,8 +85,7 @@ AuthRouter.post('/login', async (req, res) => {
 		});
 	} catch (err) {
 		console.log('ERR! ', err);
-		// @ts-ignore
-		const errors = await handleErrors(err);
+		const errors = await handleErrors(Object(err));
 		console.log(errors);
 		res.status(200).json({ status: 'error', errors });
 	}
@@ -212,8 +211,7 @@ AuthRouter.post('/signup', async (req, res) => {
 		});
 	} catch (err) {
 		// console.log(err);
-		// @ts-ignore
-		const errors = await handleErrors(err, {
+		const errors = await handleErrors(Object(err), {
 			email,
 			password,
 			username,
@@ -273,8 +271,7 @@ AuthRouter.post('/changePassword', VerifyAuthToken, async (req, res) => {
 	} catch (err) {
 		console.log('ERR! ', err);
 
-		// @ts-ignore
-		const errors = await handleErrors(err);
+		const errors = await handleErrors(Object(err));
 		res.status(200).json({
 			errors,
 			status: 'error',
@@ -305,8 +302,7 @@ AuthRouter.post('/deleteAccount', VerifyAuthToken, async (req, res) => {
 		} catch (err) {
 			console.log('ERR! ', err);
 
-			// @ts-ignore
-			const errors = await handleErrors(err);
+			const errors = await handleErrors(Object(err));
 			let message = 'error occured';
 
 			// if (!lodash.isEmpty(errors)) {

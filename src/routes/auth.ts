@@ -68,7 +68,7 @@ AuthRouter.post('/new/role', VerifyAuthToken, async (req, res) => {
 	} catch (err) {
 		console.log('ERR! ', err);
 
-		const errors = await handleErrors(err);
+		const errors = await handleErrors(Object(err));
 		console.log(errors);
 		res.status(200).json({ errors });
 	}

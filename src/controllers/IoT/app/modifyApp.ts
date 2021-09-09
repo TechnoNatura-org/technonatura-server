@@ -83,8 +83,7 @@ IoTCloudAppEditRouter.post(
 			});
 			return;
 		} catch (err) {
-			// @ts-ignore
-			const errors = await handleErrors(err);
+			const errors = await handleErrors(Object(err));
 			res.status(200).send({
 				message: 'error',
 				errors,
