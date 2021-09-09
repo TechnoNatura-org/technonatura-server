@@ -6,7 +6,7 @@ import { UserInterface, SocialMedia } from './index';
 
 import ArduinoApp from '../IoT/arduinoApp.model';
 
-import { encryptEmail as EncryptEmail } from '../../controllers/auth/hashEmail';
+// import { encryptEmail as EncryptEmail } from '../../controllers/auth/hashEmail';
 
 const {
 	default: { isEmail, isURL },

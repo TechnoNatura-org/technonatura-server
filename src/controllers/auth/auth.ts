@@ -85,7 +85,7 @@ AuthRouter.post('/login', async (req, res) => {
 		});
 	} catch (err) {
 		console.log('ERR! ', err);
-
+		// @ts-ignore
 		const errors = await handleErrors(err);
 		console.log(errors);
 		res.status(200).json({ status: 'error', errors });
@@ -212,6 +212,7 @@ AuthRouter.post('/signup', async (req, res) => {
 		});
 	} catch (err) {
 		// console.log(err);
+		// @ts-ignore
 		const errors = await handleErrors(err, {
 			email,
 			password,
@@ -272,8 +273,13 @@ AuthRouter.post('/changePassword', VerifyAuthToken, async (req, res) => {
 	} catch (err) {
 		console.log('ERR! ', err);
 
+		// @ts-ignore
 		const errors = await handleErrors(err);
-		res.status(200).json({ errors, status: 'error', message: 'error occured' });
+		res.status(200).json({
+			errors,
+			status: 'error',
+			message: 'error occured',
+		});
 	}
 });
 
@@ -299,6 +305,7 @@ AuthRouter.post('/deleteAccount', VerifyAuthToken, async (req, res) => {
 		} catch (err) {
 			console.log('ERR! ', err);
 
+			// @ts-ignore
 			const errors = await handleErrors(err);
 			let message = 'error occured';
 

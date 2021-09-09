@@ -138,6 +138,7 @@ ArduinoAppAddRouter.post(
 				});
 				return;
 			} catch (err) {
+				// @ts-ignore
 				const errors = await handleErrors(err);
 				res.status(200).send({
 					message: 'error',
