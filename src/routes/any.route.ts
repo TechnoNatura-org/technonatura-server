@@ -121,7 +121,7 @@ AnyRouter.get('/getIoTCloudApp', async (req, res) => {
 		return;
 	}
 
-	res.send({ message: 'app not found', status: 'warning' });
+	res.send({ message: 'Please provide appId query', status: 'warning' });
 	return;
 });
 
