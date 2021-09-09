@@ -139,7 +139,17 @@ ArduinoAppAddRouter.post(
 				return;
 			} catch (err) {
 				// @ts-ignore
-				const errors = await handleErrors(err);
+				const err2: {
+					message: string;
+					code: number;
+					_message: string;
+					keyValue: {
+						name?: string;
+						email?: string;
+					};
+				} = err;
+
+				const errors = await handleErrors(err2);
 				res.status(200).send({
 					message: 'error',
 					errors,
