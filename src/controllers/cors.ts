@@ -11,12 +11,16 @@ var whitelist = [
 	'https://dashboard.technonatura.vercel.app',
 	'https://app.technonatura.vercel.app',
 	'https://tn.vercel.app',
+	'https://tn-project.vercel.app',
+	'https://tn-project-beta.vercel.app',
+	'exp://127.0.0.1:19000',
+	'http://127.0.0.1:5000/',
 ];
 var corsOptions: cors.CorsOptions = {
 	origin: function(origin, callback) {
 		// console.log(process.env.NODE_ENV);
 		if (process.env.NODE_ENV !== 'dev') {
-			// console.log(origin);
+			console.log('origin', origin);
 			if (origin && whitelist.indexOf(origin) !== -1) {
 				callback(null, true);
 			} else {

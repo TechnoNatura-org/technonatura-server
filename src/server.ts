@@ -82,7 +82,7 @@ app.use(function(req, res, next) {
 db.on('error', (err) => console.error('error when connecting to db'));
 db.once('open', () => console.log('connected to mongoose'));
 // app.use('/', PostRouter);
-app.use('/auth', cors(corsOptions), AuthRouter);
+app.use('/auth', AuthRouter);
 // app.use('/contact', cors(corsOptions), ContactRouter);
 app.use('/contact', cors(corsOptions), ContactRouter);
 app.use('/iot', ArduinoRouter);
