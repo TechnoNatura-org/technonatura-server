@@ -171,9 +171,9 @@ AnyRouter.get('/user/id/:userId', async (req, res) => {
 		}
 
 		res.send({
-			message: `Users ${usersRes ? 'Found!' : 'Not Found!'}`,
+			message: `Users ${user ? 'Found!' : 'Not Found!'}`,
 			status: 'success',
-			user: usersRes,
+			user: user,
 		});
 		return;
 	} catch (err) {
@@ -210,9 +210,9 @@ AnyRouter.get('/user/username/:username', async (req, res) => {
 		}
 
 		res.send({
-			message: `Users ${usersRes ? 'Found!' : 'Not Found!'}`,
+			message: `Users ${user ? 'Found!' : 'Not Found!'}`,
 			status: 'success',
-			user: usersRes,
+			user: user,
 		});
 		return;
 	} catch (err) {
