@@ -15,6 +15,7 @@ var whitelist = [
 	'https://tn-project-beta.vercel.app',
 	'exp://127.0.0.1:19000',
 	'http://127.0.0.1:5000/',
+	'https://iot.technonatura.vercel.app'
 ];
 var corsOptions: cors.CorsOptions = {
 	origin: function(origin, callback) {
