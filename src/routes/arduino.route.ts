@@ -229,6 +229,7 @@ ArduinoRouter.post(
 	VerifyAuthToken,
 	(req, res) => {},
 );
+
 ArduinoRouter.post('/add/data/', async (req, res) => {
 	const { iotAppToken, sensors } = req.body;
 	//   console.log(req.body);
@@ -317,6 +318,59 @@ ArduinoRouter.post('/add/data/', async (req, res) => {
 				return;
 			}
 		}
+		res
+			.status(200)
+			.json({ message: 'Please give an sensors input', status: 'error' });
+		return;
+	} catch (err) {
+		console.log(err);
+		res.status(200).json({ message: 'token might expired', status: 'error' });
+		return;
+	}
+});
+
+ArduinoRouter.post('/add/sensor/data/', async (req, res) => {
+	const { appId, form } = req.body;
+	//   console.log(req.body);
+
+	if (!appId) {
+		res.status(200).json({ message: 'token not provided', status: 'error' });
+		return;
+	}
+
+	try {
+	
+		const arduinoApp = await ArduinoApp.findById(
+			// @ts-ignore
+			appId
+		);
+		console.log('arduinoApp', arduinoApp);
+
+		if (!arduinoApp) {
+			res
+				.status(200)
+				.json({ message: 'Arduino App Not Found', status: 'error' });
+			return;
+		}
+		console.log(form)
+		const foundSensor = await Sensor.find({
+								appId: arduinoApp._id,
+							}).findOne({
+								name: form.sensorName,
+							}).updateOne({
+								realtimeData: {
+									data: form.sensorData,
+									dateAdded: form.date
+								},
+								
+									"$push":{
+										datas: {
+									data: form.sensorData,
+									date: form.date
+								}
+									}
+								
+							});
 		res
 			.status(200)
 			.json({ message: 'Please give an sensors input', status: 'error' });
