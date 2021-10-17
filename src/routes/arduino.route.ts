@@ -22,9 +22,6 @@ import SensorsData from '../models/IoT/Sensors/SensorsData.model';
 import { VerifyAuthToken } from '../controllers/checkToken';
 
 import AddArduinoAppRoute from '../controllers/IoT/app/addApp';
-import ModifyApp from '../controllers/IoT/app/modifyApp';
-
-import { decryptIoTAppToken } from '../controllers/IoT/hashToken';
 
 import AddSensorRoute from '../controllers/IoT/sensor/addSensor';
 import modifyApp from '../controllers/IoT/app/modifyApp';
@@ -339,10 +336,9 @@ ArduinoRouter.post('/add/sensor/data/', async (req, res) => {
 	}
 
 	try {
-	
 		const arduinoApp = await ArduinoApp.findById(
 			// @ts-ignore
-			appId
+			appId,
 		);
 		console.log('arduinoApp', arduinoApp);
 
@@ -352,25 +348,26 @@ ArduinoRouter.post('/add/sensor/data/', async (req, res) => {
 				.json({ message: 'Arduino App Not Found', status: 'error' });
 			return;
 		}
-		console.log(form)
+		console.log(form);
 		const foundSensor = await Sensor.find({
-								appId: arduinoApp._id,
-							}).findOne({
-								name: form.sensorName,
-							}).updateOne({
-								realtimeData: {
-									data: form.sensorData,
-									dateAdded: form.date
-								},
-								
-									"$push":{
-										datas: {
-									data: form.sensorData,
-									date: form.date
-								}
-									}
-								
-							});
+			appId: arduinoApp._id,
+		})
+			.findOne({
+				name: form.sensorName,
+			})
+			.updateOne({
+				realtimeData: {
+					data: form.sensorData,
+					dateAdded: form.date,
+				},
+
+				$push: {
+					datas: {
+						data: form.sensorData,
+						date: form.date,
+					},
+				},
+			});
 		res
 			.status(200)
 			.json({ message: 'Please give an sensors input', status: 'error' });

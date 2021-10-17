@@ -12,13 +12,11 @@ import * as express from 'express';
 import { Request } from 'express';
 
 import ArduinoApp from '../../../models/IoT/arduinoApp.model';
-import Teammate from '../../../models/IoT/Teammate.model';
+// import Teammate from '../../../models/IoT/Teammate.model';
 
 import { UserBaseDocument } from '../../../models/User/User.model';
 
 import { VerifyAuthToken } from '../../checkToken';
-import createToken, { tokenForTypes } from '../../createToken';
-import { encryptIoTAppToken } from '../hashToken';
 import handleErrors from '../handleErrors';
 
 declare module 'express-serve-static-core' {

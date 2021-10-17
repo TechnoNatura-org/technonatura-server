@@ -40,6 +40,8 @@ ClassroomRouterAddClass.post('/', VerifyAuthToken, async (req, res) => {
 			active,
 			category,
 			desc,
+			from,
+			to,
 		});
 
 		if (thumbnail) {

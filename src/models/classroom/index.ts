@@ -41,11 +41,6 @@ const classroomSchema = new Schema<ClassroomDocument, ClassroomModel>({
 		required: [true, 'desc cannot be blank'],
 	},
 
-	owner: {
-		type: String,
-		default: '',
-	},
-
 	category: {
 		type: String,
 		default: '',

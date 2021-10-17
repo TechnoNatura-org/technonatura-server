@@ -19,7 +19,7 @@ import ArduinoRouter from './routes/arduino.route';
 import StoryRouter from './routes/story.route';
 import SubscriptionRouter from './routes/subsciption.router';
 import AnythingRouter from './routes/any.route';
-
+import ClassroomRouter from './routes/classroom.route';
 import BranchRouter from './routes/branch.route';
 
 import { corsOptions } from './controllers/cors';
@@ -89,6 +89,8 @@ app.use('/iot', ArduinoRouter);
 app.use('/story', cors(corsOptions), StoryRouter);
 app.use('/branch', cors(corsOptions), BranchRouter);
 app.use('/', SubscriptionRouter);
+app.use('/', ClassroomRouter);
+
 app.use(
 	'/api',
 
