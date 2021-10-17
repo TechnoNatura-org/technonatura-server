@@ -33,6 +33,7 @@ const classroomSchema = new Schema<ClassroomDocument, ClassroomModel>({
 	name: {
 		type: String,
 		lowercase: true,
+		unique: true,
 		required: [true, 'username cannot be blank'],
 		validate: [validateClassroomName, 'Only Letters and Numbers are allowed'],
 	},
