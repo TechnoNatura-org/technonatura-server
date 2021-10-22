@@ -42,6 +42,10 @@ const userSchema = new Schema<ProjectDocument, ProjectModel>({
 		type: String,
 		default: '',
 	},
+	branch: {
+		type: String,
+		default: '',
+	},
 
 	content: {
 		type: String,
@@ -73,6 +77,8 @@ const userSchema = new Schema<ProjectDocument, ProjectModel>({
 
 	isTeam: Boolean,
 	teamId: Number,
+
+	draft: Boolean,
 });
 
 function validateProjectname(str: string) {

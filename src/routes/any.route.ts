@@ -22,9 +22,11 @@ import TechnoNaturaBranchController from '../controllers/public/branch.controlle
 import { transporter } from '../EmailTransporter';
 import EmailTemplate from '../controllers/EmailTemplate';
 
-const AnyRouter = express.Router();
+import UserPublicAPI_Router from './api/user';
 
-AnyRouter.get('/email', async (req, res) => {
+const PublicAPI_Router = express.Router();
+
+PublicAPI_Router.get('/email', async (req, res) => {
 	try {
 		let sendEmailRes = await transporter.sendMail({
 			from: '"Aldhaneka<DO NOT REPLY>" <aldhanekadev@gmail.com>', // sender address
@@ -38,8 +40,10 @@ AnyRouter.get('/email', async (req, res) => {
 	}
 });
 
-AnyRouter.use('/', TechnoNaturaBranchController);
-AnyRouter.get('/allData', async (req, res) => {
+PublicAPI_Router.use('/user', UserPublicAPI_Router);
+
+PublicAPI_Router.use('/', TechnoNaturaBranchController);
+PublicAPI_Router.get('/allData', async (req, res) => {
 	const allUsers = User.count();
 	const verifiedUsers = User.find({ isAccountVerified: true }).count();
 	const unVerifiedUsers = User.find({ isAccountVerified: false }).count();
@@ -86,7 +90,7 @@ AnyRouter.get('/allData', async (req, res) => {
 	res.send({ data: WOOF });
 });
 
-AnyRouter.get('/getIoTCloudApp', async (req, res) => {
+PublicAPI_Router.get('/getIoTCloudApp', async (req, res) => {
 	const { appId } = req.query;
 
 	try {
@@ -129,7 +133,7 @@ AnyRouter.get('/getIoTCloudApp', async (req, res) => {
 	return;
 });
 
-AnyRouter.get('/getSensor', async (req, res) => {
+PublicAPI_Router.get('/getSensor', async (req, res) => {
 	const { sensorId } = req.query;
 
 	const sensor = await Sensor.findById(sensorId);
@@ -147,8 +151,7 @@ AnyRouter.get('/getSensor', async (req, res) => {
 	res.send({ message: 'sensor not found', status: 'warning' });
 });
 
-
-AnyRouter.get('/user/id/:userId', async (req, res) => {
+PublicAPI_Router.get('/user/id/:userId', async (req, res) => {
 	// const App = await AppDoc?.getApp();
 	let user: {
 		username: string;
@@ -157,17 +160,25 @@ AnyRouter.get('/user/id/:userId', async (req, res) => {
 		id: string;
 		avatar: string;
 		roleInTechnoNatura: object;
-		roles: Array<string>
-		} = {username: '', fullName: '', isAccountVerified: false, id: '', avatar: '', roleInTechnoNatura: {}, roles: []};
+		roles: Array<string>;
+	} = {
+		username: '',
+		fullName: '',
+		isAccountVerified: false,
+		id: '',
+		avatar: '',
+		roleInTechnoNatura: {},
+		roles: [],
+	};
 	try {
 		const usersRes = await User.findById(req.params.userId);
 		if (usersRes) {
-			user.username = usersRes.username
-			user.fullName = usersRes.fullName
-			user.isAccountVerified = usersRes.isAccountVerified
-			user.id = usersRes.id
-			user.roleInTechnoNatura = usersRes.roleInTechnoNatura
-			user.roles = usersRes.roles
+			user.username = usersRes.username;
+			user.fullName = usersRes.fullName;
+			user.isAccountVerified = usersRes.isAccountVerified;
+			user.id = usersRes.id;
+			user.roleInTechnoNatura = usersRes.roleInTechnoNatura;
+			user.roles = usersRes.roles;
 		}
 
 		res.send({
@@ -187,46 +198,7 @@ AnyRouter.get('/user/id/:userId', async (req, res) => {
 	res.send({ message: 'sensor not found', status: 'warning' });
 });
 
-AnyRouter.get('/user/username/:username', async (req, res) => {
-	// const App = await AppDoc?.getApp();
-	let user: {
-		username: string;
-		fullName: string;
-		isAccountVerified: boolean;
-		id: string;
-		avatar: string;
-		roleInTechnoNatura: object;
-		roles: Array<string>
-		} = {username: '', fullName: '', isAccountVerified: false, id: '', avatar: '', roleInTechnoNatura: {}, roles: []};
-	try {
-		const usersRes = await User.findOne({username: req.params.username})
-		if (usersRes) {
-			user.username = usersRes.username
-			user.fullName = usersRes.fullName
-			user.isAccountVerified = usersRes.isAccountVerified
-			user.id = usersRes.id
-			user.roleInTechnoNatura = usersRes.roleInTechnoNatura
-			user.roles = usersRes.roles
-		}
-
-		res.send({
-			message: `Users ${user ? 'Found!' : 'Not Found!'}`,
-			status: 'success',
-			user: user,
-		});
-		return;
-	} catch (err) {
-		res.send({
-			message: `error occured`,
-			status: 'error',
-		});
-		return;
-	}
-
-	res.send({ message: 'sensor not found', status: 'warning' });
-});
-
-AnyRouter.get('/users', async (req, res) => {
+PublicAPI_Router.get('/users', async (req, res) => {
 	// const App = await AppDoc?.getApp();
 	const users: Array<{
 		username: string;
@@ -283,7 +255,7 @@ AnyRouter.get('/users', async (req, res) => {
 	res.send({ message: 'sensor not found', status: 'warning' });
 });
 
-AnyRouter.get('/staff-accounts', async (req, res) => {
+PublicAPI_Router.get('/staff-accounts', async (req, res) => {
 	// const App = await AppDoc?.getApp();
 	const teachers: Array<{
 		username: string;
@@ -340,4 +312,4 @@ AnyRouter.get('/staff-accounts', async (req, res) => {
 	}
 });
 
-export default AnyRouter;
+export default PublicAPI_Router;

@@ -6,6 +6,9 @@ interface SocialMedia {
 export type GradeInNumber = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12;
 export type Grade = 'mi' | 'mts' | 'ma';
 
+export interface AulmniRoleInTechnoNatura {
+	alumni: boolean;
+}
 export interface TeacherRoleInTechnoNatura {
 	teacher: boolean;
 	grade: GradeInNumber;
@@ -28,7 +31,7 @@ export interface StudentRoleInTechnoNatura {
 	branch: string;
 }
 
-export type AlumniRoleInTechnoNatura = Array<{
+export type AlumniInTechnoNatura = Array<{
 	grade: Grade;
 	startPeriod: number;
 	branch: string;
@@ -70,7 +73,7 @@ export interface UserInterface {
 		| TeacherRoleInTechnoNatura
 		| StudentRoleInTechnoNatura
 		| StaffRoleInTechnoNatura;
-	alumni: AlumniRoleInTechnoNatura;
+	alumni: AlumniInTechnoNatura;
 
 	badges: Array<string>;
 }

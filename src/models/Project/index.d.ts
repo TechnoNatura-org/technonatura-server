@@ -19,6 +19,9 @@ export interface ProjectPostInterface {
 
 	category: string;
 	tags: [string];
+	branch: string;
+
+	draft: boolean;
 }
 
 // export type ProjectPostTeamT = ProjectPostInterface & { isTeam: true };
