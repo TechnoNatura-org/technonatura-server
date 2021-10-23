@@ -21,6 +21,7 @@ import SubscriptionRouter from './routes/subsciption.router';
 import AnythingRouter from './routes/any.route';
 import ClassroomRouter from './routes/classroom.route';
 import BranchRouter from './routes/branch.route';
+import ProjectRouter from './routes/project.route';
 
 import { corsOptions } from './controllers/cors';
 
@@ -54,6 +55,9 @@ app.use(
 		hidePoweredBy: true,
 	}),
 );
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ limit: '50mb' }));
+
 // app.use(
 // 	'/graphql',
 // 	helmet({
@@ -90,6 +94,7 @@ app.use('/story', cors(corsOptions), StoryRouter);
 app.use('/branch', cors(corsOptions), BranchRouter);
 app.use('/', SubscriptionRouter);
 app.use('/', ClassroomRouter);
+app.use('/', ProjectRouter);
 
 app.use(
 	'/api',

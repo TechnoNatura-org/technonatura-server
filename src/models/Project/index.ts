@@ -14,6 +14,7 @@ export interface ProjectBaseDocument extends ProjectPostInterface, Document {
 	// changePassword(password: string): Promise<string>;
 	// deleteAccount(): Promise<void>;
 	// getStudents(): Promise<ProjectI>;
+	assets: Types.Array<{ url: string; desc: string }>;
 }
 
 // Export this for strong typing
@@ -34,7 +35,7 @@ const userSchema = new Schema<ProjectDocument, ProjectModel>({
 		type: String,
 		lowercase: true,
 		unique: true,
-		required: [true, 'username cannot be blank'],
+		required: [true, 'name cannot be blank'],
 		validate: [validateProjectname, 'Only Letters and Numbers are allowed'],
 	},
 
@@ -61,7 +62,12 @@ const userSchema = new Schema<ProjectDocument, ProjectModel>({
 		type: String,
 		default: '',
 	},
-	assets: [String], // the role name, the role name must be unique
+	assets: [
+		{
+			url: String,
+			desc: String,
+		},
+	], // the role name, the role name must be unique
 
 	classroomId: {
 		type: String,
@@ -76,13 +82,13 @@ const userSchema = new Schema<ProjectDocument, ProjectModel>({
 	},
 
 	isTeam: Boolean,
-	teamId: Number,
+	teamId: String,
 
 	draft: Boolean,
 });
 
 function validateProjectname(str: string) {
-	if (!str.match(/^[a-zA-Z0-9]+$/)) {
+	if (!str.match(/^[a-zA-Z0-9._-]*$/)) {
 		return false;
 	}
 
