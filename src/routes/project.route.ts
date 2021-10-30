@@ -24,8 +24,6 @@ const ProjectRouter = express.Router();
 
 ProjectRouter.use('/project/add', cors(corsOptions), ProjectPrivateAPI);
 ProjectRouter.get('/projects/:username', async (req, res) => {
-	console.log(req.params.name);
-
 	try {
 		const user = await User.findOne({ username: req.params.username });
 
