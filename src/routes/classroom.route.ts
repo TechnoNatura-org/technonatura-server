@@ -65,15 +65,19 @@ ClassroomRouter.get<{
 					});
 					let classroomsRes: object[] = [];
 
-					for (let classroom of classrooms) {
-						try {
-							const project = await Project.findOne({
-								classroomId: classroom.id,
-								owner: user.id,
-							});
+					if (!req.query.allClassrooms) {
+						for (let classroom of classrooms) {
+							try {
+								const project = await Project.findOne({
+									classroomId: classroom.id,
+									owner: user.id,
+								});
 
-							if (!project) classroomsRes.push(classroom);
-						} catch (err) {}
+								if (!project) classroomsRes.push(classroom);
+							} catch (err) {}
+						}
+					} else {
+						classroomsRes = [...classrooms];
 					}
 
 					res.json({
@@ -91,7 +95,10 @@ ClassroomRouter.get<{
 				}
 			}
 		}
+
+		console.log(req.query);
 	} catch (err) {
+		console.log(err);
 		res.json({
 			message: 'error occured when fetching classroom!',
 			status: 'error',

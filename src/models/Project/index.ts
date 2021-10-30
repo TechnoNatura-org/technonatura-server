@@ -1,6 +1,4 @@
 import { Schema, Model, Document, model, Types, Query, Error } from 'mongoose';
-import * as Validator from 'validator';
-import * as bcrypt from 'bcrypt';
 
 import { ProjectPostInterface } from './index.d';
 
@@ -40,6 +38,10 @@ const userSchema = new Schema<ProjectDocument, ProjectModel>({
 	},
 
 	owner: {
+		type: String,
+		default: '',
+	},
+	desc: {
 		type: String,
 		default: '',
 	},
@@ -84,7 +86,12 @@ const userSchema = new Schema<ProjectDocument, ProjectModel>({
 	isTeam: Boolean,
 	teamId: String,
 
-	draft: Boolean,
+	created: {
+		type: Date,
+		default: Date.now,
+	},
+
+	// draft: Boolean,
 });
 
 function validateProjectname(str: string) {
@@ -94,54 +101,5 @@ function validateProjectname(str: string) {
 
 	return true;
 }
-
-// userSchema.methods.changePassword = async function(
-// 	this: ProjectBaseDocument,
-// 	password: string,
-// ) {
-// 	// console.log(this.password);
-// 	const salt = await bcrypt.genSalt();
-// 	const hashedPassword = await bcrypt.hash(password, salt);
-// 	await this.updateOne({ password: hashedPassword });
-// 	// console.log(this.password);
-
-// 	return hashedPassword;
-// };
-
-// userSchema.methods.deleteAccount = async function(this: ProjectBaseDocument) {
-// 	try {
-// 		await ArduinoApp.deleteApp(this.id);
-// 		await this.delete();
-// 	} catch (err) {
-// 		throw new Error(String(err));
-// 	}
-// };
-
-// // fire a function before doc saved to db
-// userSchema.pre('save', async function(next) {
-// 	// console.log('hello');
-// 	const salt = await bcrypt.genSalt();
-// 	this.password = await bcrypt.hash(this.password, salt);
-// 	// this.email = await EncryptEmail(this.email);
-
-// 	next();
-// });
-
-// // static method to login user
-// userSchema.statics.login = async function(
-// 	this: Model<ProjectDocument>,
-// 	email,
-// 	password,
-// ) {
-// 	const user = await this.findOne({ email });
-// 	if (user) {
-// 		const auth = await bcrypt.compare(password, user.password);
-// 		if (auth) {
-// 			return user;
-// 		}
-// 		throw new Error('incorrect password');
-// 	}
-// 	throw new Error('incorrect email');
-// };
 
 export default model<ProjectDocument, ProjectModel>('Project', userSchema);

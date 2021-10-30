@@ -5,6 +5,9 @@ import { VerifyAuthToken } from '../checkToken';
 import User, { UserBaseDocument } from '../../models/User/User.model';
 import Project from '../../models/Project/index';
 import HandleError from './handleErrors';
+
+import * as cloudinary from 'cloudinary';
+
 const ClassroomRouterAddClass = express.Router();
 
 declare module 'express-serve-static-core' {
@@ -22,14 +25,13 @@ ClassroomRouterAddClass.post('/', VerifyAuthToken, async (req, res) => {
 		title,
 		name,
 		desc,
-
 		assets,
 		classroomId,
 		content,
 		tags,
 	}: {
 		draft: boolean;
-		thumbnail: string | null;
+		thumbnail: string;
 		assets: Array<{ url: string; desc: string }>;
 		tags: string;
 
@@ -51,6 +53,42 @@ ClassroomRouterAddClass.post('/', VerifyAuthToken, async (req, res) => {
 
 		if (!isthere) {
 			try {
+				await cloudinary.v2.config({
+					cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+					api_key: process.env.CLOUDINARY_API_KEY,
+					api_secret: process.env.CLOUDINARY_API_SECRET_KEY,
+					secure: true,
+				});
+				const thumbnailImage = await cloudinary.v2.uploader.upload(thumbnail, {
+					folder: 'TN-Project',
+					public_id: `THUMBNAIL_${req.user.id}-${classroomId}_${String(
+						Date.now(),
+					)}`,
+				});
+				let finalAssets: Array<{ url: string; desc: string }> = [];
+
+				for (let asset of assets) {
+					let rUrl = /^((https?|ftp):)?\/\/(((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:)*@)?(((\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5]))|((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?)(:\d*)?)(\/((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)+(\/(([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)*)*)?)?(\?((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|[\uE000-\uF8FF]|\/|\?)*)?(\#((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|\/|\?)*)?$/i; // eslint-disable-next-line
+
+					if (!rUrl.test(asset.url)) {
+						const assetImage = await cloudinary.v2.uploader.upload(asset.url, {
+							folder: 'TN-Project',
+							// @ts-ignore
+							public_id: `ASSET_${req.user.id}-${name}_${String(Date.now())}`,
+						});
+						finalAssets.push({
+							url: assetImage.url,
+							desc: asset.desc,
+						});
+
+						continue;
+					}
+
+					finalAssets.push({ url: asset.url, desc: asset.desc });
+				}
+
+				console.log('finalAssets !!', finalAssets);
+
 				const project = new Project({
 					owner: req.user.id,
 					// @ts-ignore
@@ -59,20 +97,17 @@ ClassroomRouterAddClass.post('/', VerifyAuthToken, async (req, res) => {
 					gradePeriod: req.user.roleInTechnoNatura.startPeriod,
 					name,
 					title,
-					draft: false,
+					// draft: false,
 					category,
 					desc,
 					content,
 					// @ts-ignore
 					branch: req.user.roleInTechnoNatura.branch,
-					assets,
 					classroomId,
 					tags,
+					assets: finalAssets,
+					thumbnail: thumbnailImage.url,
 				});
-
-				if (thumbnail) {
-					project.thumbnail = thumbnail;
-				}
 
 				await project.save();
 
