@@ -23,6 +23,8 @@ export interface ProjectPostInterface {
 
 	created: number;
 
+	stars: Array<string>;
+
 	// draft: boolean;
 }
 

@@ -13,6 +13,8 @@ export interface ProjectBaseDocument extends ProjectPostInterface, Document {
 	// deleteAccount(): Promise<void>;
 	// getStudents(): Promise<ProjectI>;
 	assets: Types.Array<{ url: string; desc: string }>;
+
+	stars: Types.Array<string>;
 }
 
 // Export this for strong typing
@@ -70,6 +72,7 @@ const userSchema = new Schema<ProjectDocument, ProjectModel>({
 			desc: String,
 		},
 	], // the role name, the role name must be unique
+	stars: [String], // the role name, the role name must be unique
 
 	classroomId: {
 		type: String,
