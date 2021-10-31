@@ -8,7 +8,7 @@ import HandleError from './handleErrors';
 
 import * as cloudinary from 'cloudinary';
 
-const ClassroomRouterAddClass = express.Router();
+const ProjectRouterAddProject = express.Router();
 
 declare module 'express-serve-static-core' {
 	interface Request {
@@ -17,7 +17,7 @@ declare module 'express-serve-static-core' {
 	}
 }
 
-ClassroomRouterAddClass.post('/', VerifyAuthToken, async (req, res) => {
+ProjectRouterAddProject.post('/', VerifyAuthToken, async (req, res) => {
 	const {
 		draft,
 		thumbnail,
@@ -139,4 +139,4 @@ ClassroomRouterAddClass.post('/', VerifyAuthToken, async (req, res) => {
 	}
 });
 
-export default ClassroomRouterAddClass;
+export default ProjectRouterAddProject;

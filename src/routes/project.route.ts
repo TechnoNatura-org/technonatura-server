@@ -20,11 +20,13 @@ import { corsOptions } from '../controllers/cors';
 
 import AddProjectAPI from '../controllers/project/add';
 import EditProjectAPI from '../controllers/project/edit';
+import DeleteProjectAPI from '../controllers/project/delete';
 
 const ProjectRouter = express.Router();
 
 ProjectRouter.use('/project/add', cors(corsOptions), AddProjectAPI);
 ProjectRouter.use('/project/edit', cors(corsOptions), EditProjectAPI);
+ProjectRouter.use('/project/delete', cors(corsOptions), DeleteProjectAPI);
 
 ProjectRouter.get('/projects/:username', async (req, res) => {
 	try {
