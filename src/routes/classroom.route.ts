@@ -96,7 +96,14 @@ ClassroomRouter.get<{
 			}
 		}
 
-		console.log(req.query);
+		const classrooms = await Classroom.find({});
+
+		res.json({
+			message: 'success fetched classrooms!',
+			status: 'success',
+			classrooms: classrooms,
+		});
+		return;
 	} catch (err) {
 		console.log(err);
 		res.json({

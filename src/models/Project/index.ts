@@ -2,10 +2,6 @@ import { Schema, Model, Document, model, Types, Query, Error } from 'mongoose';
 
 import { ProjectPostInterface } from './index.d';
 
-import ArduinoApp from '../IoT/arduinoApp.model';
-
-// import { encryptEmail as EncryptEmail } from '../../controllers/auth/hashEmail';
-
 export { ProjectPostInterface };
 
 export interface ProjectBaseDocument extends ProjectPostInterface, Document {
