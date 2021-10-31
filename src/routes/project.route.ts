@@ -18,11 +18,14 @@ import User from '../models/User/User.model';
 import * as cors from 'cors';
 import { corsOptions } from '../controllers/cors';
 
-import ProjectPrivateAPI from '../controllers/project/add';
+import AddProjectAPI from '../controllers/project/add';
+import EditProjectAPI from '../controllers/project/edit';
 
 const ProjectRouter = express.Router();
 
-ProjectRouter.use('/project/add', cors(corsOptions), ProjectPrivateAPI);
+ProjectRouter.use('/project/add', cors(corsOptions), AddProjectAPI);
+ProjectRouter.use('/project/edit', cors(corsOptions), EditProjectAPI);
+
 ProjectRouter.get('/projects/:username', async (req, res) => {
 	try {
 		const user = await User.findOne({ username: req.params.username });

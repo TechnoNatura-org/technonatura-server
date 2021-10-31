@@ -18,7 +18,7 @@ declare module 'express-serve-static-core' {
 }
 
 ClassroomRouterAddClass.post('/', VerifyAuthToken, async (req, res) => {
-	const {
+	let {
 		draft,
 		thumbnail,
 		category,
@@ -29,6 +29,7 @@ ClassroomRouterAddClass.post('/', VerifyAuthToken, async (req, res) => {
 		classroomId,
 		content,
 		tags,
+		projectName,
 	}: {
 		draft: boolean;
 		thumbnail: string;
@@ -43,53 +44,72 @@ ClassroomRouterAddClass.post('/', VerifyAuthToken, async (req, res) => {
 		// isTeam: boolean;
 		classroomId: string;
 		content: string;
+		projectName: string;
 	} = req.body;
 
 	if (req.user) {
 		const isthere = await Project.findOne({
 			owner: req.user.id,
-			classroomId,
+			name: projectName,
 		});
 
-		if (!isthere) {
+		if (isthere) {
 			try {
-				await cloudinary.v2.config({
-					cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-					api_key: process.env.CLOUDINARY_API_KEY,
-					api_secret: process.env.CLOUDINARY_API_SECRET_KEY,
-					secure: true,
-				});
-				const thumbnailImage = await cloudinary.v2.uploader.upload(thumbnail, {
-					folder: 'TN-Project',
-					public_id: `THUMBNAIL_${req.user.id}-${classroomId}_${String(
-						Date.now(),
-					)}`,
-				});
-				let finalAssets: Array<{ url: string; desc: string }> = [];
-
-				for (let asset of assets) {
-					let rUrl = /^((https?|ftp):)?\/\/(((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:)*@)?(((\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5]))|((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?)(:\d*)?)(\/((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)+(\/(([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)*)*)?)?(\?((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|[\uE000-\uF8FF]|\/|\?)*)?(\#((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|\/|\?)*)?$/i; // eslint-disable-next-line
-
-					if (!rUrl.test(asset.url)) {
-						const assetImage = await cloudinary.v2.uploader.upload(asset.url, {
-							folder: 'TN-Project',
-							// @ts-ignore
-							public_id: `ASSET_${req.user.id}-${name}_${String(Date.now())}`,
-						});
-						finalAssets.push({
-							url: assetImage.url,
-							desc: asset.desc,
-						});
-
-						continue;
-					}
-
-					finalAssets.push({ url: asset.url, desc: asset.desc });
+				let thumbnailImage: string = '';
+				if (isthere.thumbnail != thumbnail) {
+					await cloudinary.v2.config({
+						cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+						api_key: process.env.CLOUDINARY_API_KEY,
+						api_secret: process.env.CLOUDINARY_API_SECRET_KEY,
+						secure: true,
+					});
+					const uploadedImage = await cloudinary.v2.uploader.upload(thumbnail, {
+						folder: 'TN-Project',
+						public_id: `THUMBNAIL_${req.user.id}-${classroomId}_${String(
+							Date.now(),
+						)}`,
+					});
+					thumbnailImage = uploadedImage.url;
+				} else {
+					thumbnailImage = thumbnail;
 				}
 
-				console.log('finalAssets !!', finalAssets);
+				let finalAssets: Array<{ url: string; desc: string }> = [];
 
-				const project = new Project({
+				for (let i = 0; i < assets.length; i++) {
+					let rUrl = /^((https?|ftp):)?\/\/(((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:)*@)?(((\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5]))|((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?)(:\d*)?)(\/((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)+(\/(([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)*)*)?)?(\?((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|[\uE000-\uF8FF]|\/|\?)*)?(\#((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|\/|\?)*)?$/i; // eslint-disable-next-line
+					let asset = assets[i];
+
+					if (
+						!isthere.assets[i] ||
+						(isthere.assets[i] && isthere.assets[i].url != asset.url)
+					) {
+						if (!rUrl.test(asset.url)) {
+							const assetImage = await cloudinary.v2.uploader.upload(
+								asset.url,
+								{
+									folder: 'TN-Project',
+									// @ts-ignore
+									public_id: `ASSET_${req.user.id}-${name}_${String(
+										Date.now(),
+									)}`,
+								},
+							);
+							finalAssets.push({
+								url: assetImage.url,
+								desc: asset.desc,
+							});
+
+							continue;
+						}
+					} else {
+						finalAssets.push({ url: asset.url, desc: asset.desc });
+					}
+				}
+
+				// console.log('finalAssets !!', finalAssets);
+
+				const project = await isthere.updateOne({
 					owner: req.user.id,
 					// @ts-ignore
 					grade: req.user.roleInTechnoNatura.grade,
@@ -106,14 +126,12 @@ ClassroomRouterAddClass.post('/', VerifyAuthToken, async (req, res) => {
 					classroomId,
 					tags,
 					assets: finalAssets,
-					thumbnail: thumbnailImage.url,
+					thumbnail: thumbnailImage,
 				});
-
-				await project.save();
 
 				res.json({
 					status: 'success',
-					message: 'project successfully created!',
+					message: 'Project successfully modified!',
 					project: project,
 				});
 				return;
@@ -133,7 +151,7 @@ ClassroomRouterAddClass.post('/', VerifyAuthToken, async (req, res) => {
 		} else {
 			res.json({
 				status: 'error',
-				message: 'You already had project with this classroom assignment.',
+				message: 'Project not found!',
 			});
 		}
 	}
