@@ -24,7 +24,7 @@ CheckJWTRouter.post('/', async (req, res) => {
 			// @ts-ignore
 			if (typeof verifyToken != 'string' && verifyToken.password) {
 				// @ts-ignore
-				const user = await User.findById(verifyToken._id);
+				const user = await User.findById(verifyToken._id).select('+password');
 
 				// @ts-ignore
 				if (verifyToken.password != user?.password) {

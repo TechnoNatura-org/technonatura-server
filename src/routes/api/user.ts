@@ -19,26 +19,11 @@ UserPublicAPI_Router.get('/:username', async (req, res) => {
 		const userRes = await User.findOne({
 			username: req.params.username,
 		});
-		if (userRes) {
-			user.username = userRes.username;
-			user.fullName = userRes.fullName;
-			user.isAccountVerified = userRes.isAccountVerified;
-			// @ts-ignore
-			user.id = userRes.id;
-			user.roleInTechnoNatura = userRes.roleInTechnoNatura;
-			user.roles = userRes.roles;
-			user.status = userRes.status;
-			user.points = userRes.points;
-			user.accountCreated = userRes.accountCreated;
-			user.socialMedias = userRes.socialMedias;
-			user.gender = userRes.gender;
-			user.bio = user.bio;
-		}
 
 		res.send({
-			message: `Users ${user ? 'Found!' : 'Not Found!'}`,
+			message: `Users ${userRes ? 'Found!' : 'Not Found!'}`,
 			status: 'success',
-			user: user,
+			user: userRes,
 		});
 		return;
 	} catch (err) {
