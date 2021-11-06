@@ -4,9 +4,7 @@ import { VerifyAuthToken } from '../checkToken';
 
 import User, { UserBaseDocument } from '../../models/User/User.model';
 import Project from '../../models/Project/index';
-import HandleError from './handleErrors';
-
-import * as cloudinary from 'cloudinary';
+import UserProjectModel from '../../models/Project/userProject';
 
 const ProjectRouteDeleteProject = express.Router();
 
@@ -29,6 +27,13 @@ ProjectRouteDeleteProject.post('/', VerifyAuthToken, async (req, res) => {
 			await Project.deleteOne({
 				owner: req.user.id,
 				name: projectName,
+			});
+			await UserProjectModel.findOne({
+				userId: req.user.id,
+			}).updateOne({
+				$inc: {
+					projects: -1,
+				},
 			});
 			res.send({
 				message: 'Successfully Deleted Project!',

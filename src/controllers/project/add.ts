@@ -4,6 +4,8 @@ import { VerifyAuthToken } from '../checkToken';
 
 import User, { UserBaseDocument } from '../../models/User/User.model';
 import Project from '../../models/Project/index';
+import UserProjectModel from '../../models/Project/userProject';
+
 import HandleError from './handleErrors';
 
 import * as cloudinary from 'cloudinary';
@@ -110,6 +112,29 @@ ProjectRouterAddProject.post('/', VerifyAuthToken, async (req, res) => {
 				});
 
 				await project.save();
+
+				const isThere = await UserProjectModel.findOne({
+					userId: req.user.id,
+				});
+				if (
+					!isThere &&
+					// @ts-ignore
+					req.user.roleInTechnoNatura.student
+				) {
+					const user = new UserProjectModel({
+						userId: req.user.id,
+						projects: 1,
+					});
+					await user.save();
+				} else {
+					await UserProjectModel.findOne({
+						userId: req.user.id,
+					}).updateOne({
+						$inc: {
+							projects: 1,
+						},
+					});
+				}
 
 				res.json({
 					status: 'success',
