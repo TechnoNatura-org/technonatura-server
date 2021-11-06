@@ -33,7 +33,7 @@ const VerifyAuthToken = async (
 			// @ts-ignore
 			if (typeof verifyToken != 'string' && verifyToken.password) {
 				// @ts-ignore
-				const user = await User.findById(verifyToken._id);
+				const user = await User.findById(verifyToken._id).select('+password');
 
 				if (user) {
 					// verify token
