@@ -1,5 +1,5 @@
 {
-	"name": "mts-technonatura-server",
+	"name": "technonatura-server",
 	"version": "1.0.0",
 	"description": "",
 	"main": "server.js",
@@ -10,6 +10,9 @@
 		"dev": "nodemon --exec ts-node src/server.ts",
 		"build": "tsc"
 	},
+	 "engines": {
+    "node": "16.10.0"
+  },
 	"keywords": [],
 	"author": "",
 	"license": "ISC",
